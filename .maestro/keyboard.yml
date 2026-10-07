@@ -1,0 +1,32 @@
+appId: dev.perch.assistant
+name: Perch composer stays visible above the keyboard
+---
+# Clears app data. Run only against the standalone prototype in demo mode.
+# Inspect the open-keyboard screenshots for overlap and animation on the Pixel.
+- launchApp:
+    clearState: true
+- assertVisible: "What would you like to do?"
+- tapOn:
+    id: "composer"
+- inputText: "Typing while the keyboard is open"
+- assertVisible: "Typing while the keyboard is open"
+- assertVisible: "Send message"
+- takeScreenshot: artifacts/device/keyboard-new-chat
+- hideKeyboard
+- assertVisible: "Typing while the keyboard is open"
+- tapOn:
+    id: "composer"
+- assertVisible: "Typing while the keyboard is open"
+- assertVisible: "Send message"
+- takeScreenshot: artifacts/device/keyboard-reopened
+- hideKeyboard
+- tapOn: "Open sidebar"
+- tapOn: "Open Mobile companion"
+- tapOn:
+    id: "composer"
+- inputText: "A visible draft in an existing chat"
+- assertVisible: "A visible draft in an existing chat"
+- assertVisible: "Send message"
+- takeScreenshot: artifacts/device/keyboard-existing-chat
+- hideKeyboard
+- assertVisible: "A visible draft in an existing chat"

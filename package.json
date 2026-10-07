@@ -1,6 +1,6 @@
 {
   "name": "perch",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -22,6 +22,7 @@
     "tools:install": "bun install --cwd tooling --frozen-lockfile && node tooling/install-maestro.mjs",
     "test:device": "node tooling/run.mjs maestro test .maestro/smoke.yml",
     "verify:artifacts": "node src/artifacts/verify.cjs",
+    "verify:keyboard": "node scripts/verify-keyboard.cjs",
     "release:check": "node scripts/ci-android-version.mjs",
     "release:version": "node scripts/release-version.mjs"
   },

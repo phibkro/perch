@@ -32,7 +32,7 @@ Obtainium reads GitHub release data through the API and supports filename and re
 | Manual workflow, publish input off | Yes | Yes | No |
 | Manual workflow on a version tag, publish input on | Yes, with tag and ancestry checks | Yes | Creates it if it has no release |
 
-The quick job runs app TypeScript, session/protocol and artifact checks, OpenCode protocol fixtures, durable driver fixtures, durable backend unit tests and its bundle build. It also checks release guards, runtime-readiness diagnostics, and deterministic third-party license notices. These checks use local fixtures and require no real model, backend, Cloudflare, or Expo credentials.
+The quick job runs app TypeScript, native keyboard-layout regression, session/protocol and artifact checks, OpenCode protocol fixtures, durable driver fixtures, durable backend unit tests and its bundle build. It also checks release guards, runtime-readiness diagnostics, and deterministic third-party license notices. These checks use local fixtures and require no real model, backend, Cloudflare, or Expo credentials. The keyboard regression exercises the native component's layout contract; device painting and animation still need a phone or emulator.
 
 The native job uses `bun run apk`, which dispatches the existing Node build script, preserves enabled lint, builds only `arm64-v8a`, embeds the application bundle, and checks the binary package/version. It then verifies the final signer, SDK levels, non-debuggable status, ABI, bundle contents, embedded notices, ZIP uniqueness, 16 KB ZIP alignment and every native ELF LOAD segment's alignment.
 
@@ -46,18 +46,18 @@ Actions artifacts are retained for 14 days; diagnostic logs and available app li
 
 ## Prepare the next version
 
-The current initial prototype is **0.5.0 / Android version code 5**. Every subsequently distributed update must increase both the app version and Android version code. A code must exceed every previously distributed code, including a version distributed locally before a GitHub tag existed. Never delete or reuse a released version/tag to work around that rule. Android uses `versionCode` to determine upgrade ordering; see [Android versioning](https://developer.android.com/studio/publish/versioning).
+This checkout prepares the **0.5.1 / Android version code 6** keyboard hotfix. The initial published release was 0.5.0/code 5; the hotfix's build and publication remain pending until its workflow succeeds. Every subsequently distributed update must increase both the app version and Android version code. A code must exceed every previously distributed code, including a version distributed locally before a GitHub tag existed. Never delete or reuse a released version/tag to work around that rule. Android uses `versionCode` to determine upgrade ordering; see [Android versioning](https://developer.android.com/studio/publish/versioning).
 
-For example, prepare 0.5.1 with code 6:
+After the current version is published, for example, prepare 0.5.2 with code 7:
 
 ```sh
 git fetch origin --tags
-bun run release:version 0.5.1 --check
-bun run release:version 0.5.1
+bun run release:version 0.5.2 --check
+bun run release:version 0.5.2
 bun run release:check
 ```
 
-`--check` previews the proposed change without writing. The version helper defaults to the current code plus one; use `--code 6` when you need an explicit code. It updates all version locations together, validates them before writing, and preserves unrelated edits:
+`--check` previews the proposed change without writing. The version helper defaults to the current code plus one; use `--code 7` when you need an explicit code. It updates all version locations together, validates them before writing, and preserves unrelated edits:
 
 | File | Version values |
 | --- | --- |
@@ -68,7 +68,7 @@ bun run release:check
 
 The four version files are separate from `bun.lock`. Bun's text lockfile records the dependency graph and does not carry the root app version, so a version-only bump leaves it unchanged. CI requires committed, nonempty root and backend lockfiles and uses frozen installs to detect dependency/manifest drift. When dependencies change, regenerate the relevant Bun lockfile and third-party notices before committing them.
 
-Review the diff, run the app checks relevant to the change, commit the version and application changes, and push or merge them to `main`. A successful default-branch workflow will create `v0.5.1` at the exact built commit and publish the APK as a prototype prerelease. No separate local GitHub release token or signing secret is needed.
+Review the diff, run the app checks relevant to the change, commit the version and application changes, and push or merge them to `main`. A successful default-branch workflow creates the matching version tag at the exact built commit and publishes the APK as a prototype prerelease. No separate local GitHub release token or signing secret is needed.
 
 Wait for that release before starting another release version. An ordinary later push that retains an already-published version still produces a CI artifact; it leaves the existing release unchanged. Bump the version when you want Obtainium to deliver new app bytes.
 
@@ -77,8 +77,8 @@ Wait for that release before starting another release version. An ordinary later
 You can create an annotated version tag yourself after its commit reaches `main`:
 
 ```sh
-git tag -a v0.5.1 -m 'Perch 0.5.1 prototype'
-git push origin v0.5.1
+git tag -a v0.5.2 -m 'Perch 0.5.2 prototype'
+git push origin v0.5.2
 ```
 
 The tag must exactly match the app version and resolve to a commit on the fetched default branch. Versions and codes must exceed earlier version tags. The workflow accepts annotated or lightweight tags, and never moves an existing tag.

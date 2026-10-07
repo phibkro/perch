@@ -11,6 +11,10 @@ name: Perch standalone demo and artifact smoke test
 - tapOn: "Open Mobile companion"
 - tapOn: "Message to assistant"
 - inputText: "A draft kept on my phone"
+# Check while the IME is still open; hiding it first masked this regression.
+- assertVisible: "A draft kept on my phone"
+- assertVisible: "Send message"
+- takeScreenshot: artifacts/device/composer-keyboard-open
 - hideKeyboard
 - assertVisible: "A draft kept on my phone"
 - tapOn: "Open sidebar"

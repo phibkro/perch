@@ -1,5 +1,31 @@
 # Perch verification
 
+## Perch 0.5.1: Android keyboard hotfix
+
+On 7 October 2026, the installed 0.5.0 app was reported to leave the composer
+behind the keyboard on a Pixel 8a running GrapheneOS. The hotfix explicitly
+enables Android keyboard avoidance in the native thread and shared input sheet.
+It preserves the existing header and safe-area offsets, dependency versions,
+and prototype signer. The app version is 0.5.1 with Android version code 6.
+
+`bun run verify:keyboard` reproduces the failure before the change and passes
+afterward. It executes the installed native React Native component with Perch's
+actual JSX configuration and controlled layout/keyboard events. All five cases
+pass: Android portrait, landscape, an already-resized Android window, iOS
+header/home-indicator insets, and the Android input sheet. The checks include
+layout feedback, increased keyboard-panel height, and dismissal restoration.
+The command now runs in the GitHub source-check job.
+
+App TypeScript, the version/signing preflight, all 15 release-guard tests, six
+artifact-handoff tests, and actionlint passed locally. The focused
+device flow and updated smoke flow check the draft before hiding the keyboard
+and capture screenshots. No Android device or emulator was available, so these
+flows have not been executed. Native animation, live rotation, and actual Pixel
+painting remain device checks. Native build and hosted release evidence for
+0.5.1 are pending; the completed 0.5.0 records below remain historical evidence.
+See [KEYBOARD-REGRESSION.md](KEYBOARD-REGRESSION.md) for the failing output,
+test boundary, and device commands.
+
 ## Perch 0.5: connected durable backend
 
 The final 0.5 source and runtime checks ran on 7 October 2026. This release adds

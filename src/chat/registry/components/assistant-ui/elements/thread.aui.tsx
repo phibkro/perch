@@ -373,6 +373,8 @@ export const Thread: FC<ThreadProps> = ({
   // header above the thread would leave the composer covered by the header's
   // height; the viewport's window position supplies that offset, minus the
   // bottom inset the footer already pads.
+  // Android edge-to-edge windows can keep their full height with adjustResize;
+  // an explicit behavior also moves the composer in that case.
   const measureViewport = () => {
     viewportRef.current?.measureInWindow((_x, y) => setViewportTop(y));
   };
@@ -383,7 +385,7 @@ export const Thread: FC<ThreadProps> = ({
         <ThreadPrimitive.Root className="aui-root aui-thread-root bg-background flex-1">
           <KeyboardAvoidingView
             className="flex-1"
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             keyboardVerticalOffset={viewportTop - insets.bottom}
           >
             <View

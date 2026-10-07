@@ -73,7 +73,7 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
       {state.mode === 'demo' && <Pressable accessibilityRole="button" onPress={() => { sessionStore.simulateDisconnect(); openChat(); }} style={[s.settingRow, s.topLine]}><WifiOff size={20} color={t.primary} /><Text style={[s.noteTitle, s.flex]}>Simulate a connection drop</Text><ChevronRight size={18} color={t.subtle} /></Pressable>}
       {state.mode !== 'demo' && !online(state) && <Pressable accessibilityRole="button" onPress={sessionStore.reconnect} style={[s.settingRow, s.topLine]}><RefreshCw size={20} color={t.primary} /><Text style={s.noteTitle}>Reconnect</Text></Pressable>}
     </View>
-    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.5 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
+    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.5.1 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
   </ScrollView>;
 }
 function Detail({ label, value }: { label: string; value: string }) { const { s } = useUI(); return <View style={s.detail}><Text style={s.smallMuted}>{label}</Text><Text selectable style={[s.body, { flex: 1, textAlign: 'right' }]}>{value}</Text></View>; }
@@ -81,7 +81,7 @@ function Detail({ label, value }: { label: string; value: string }) { const { s 
 function Sheet({ visible, title, onClose, children, scroll = true }: { visible: boolean; title: string; onClose: () => void; children: React.ReactNode; scroll?: boolean }) {
   const { t, s } = useUI(); const insets = useSafeAreaInsets(); const { height } = useWindowDimensions();
   return <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-    <KeyboardAvoidingView style={s.modalRoot} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={s.modalRoot} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Pressable accessibilityLabel="Close sheet" onPress={onClose} style={[StyleSheet.absoluteFill, { backgroundColor: t.backdrop }]} />
       <View accessibilityViewIsModal style={[s.sheet, { paddingBottom: Math.max(22, insets.bottom + 12) }]}><View style={s.sheetHandle} /><View style={s.between}><Text accessibilityRole="header" style={[s.sectionTitle, s.flex]}>{title}</Text><IconButton icon={X} label="Close sheet" onPress={onClose} /></View>{scroll ? <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: 14 }}>{children}</ScrollView> : <View style={{ height: Math.min(560, height * .65), minHeight: 0, flexShrink: 1, paddingTop: 14 }}>{children}</View>}</View>
     </KeyboardAvoidingView>

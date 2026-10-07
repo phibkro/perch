@@ -89,6 +89,7 @@ jobs:
           node --test scripts/ci-android.test.mjs scripts/release-prototype.test.mjs verification/durable-runtime/runtime-health.test.mjs
           python3 scripts/ci-android-package.test.py
           bun run typecheck
+          bun run verify:keyboard
           bun run verify
           bun run verify:artifacts
           bun run --cwd verification/opencode test
