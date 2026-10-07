@@ -53,6 +53,30 @@ Outputs are `android/app/build/outputs/apk/release/app-release.apk` and `android
 
 The local APK commands verify the final binary package, version name, and version code with SDK `aapt2` before reporting success. These values must match `app.json`, including the development suffixes. A mismatch fails with the expected and actual identities. This caught stale incremental resources during the 0.3 build; see [ANDROID-BUILD.md](ANDROID-BUILD.md) for the targeted correction and complete artifact checks.
 
+## Develop workspace setup
+
+The phone's workspace manager sits above the existing harness drivers. It
+discovers one authenticated manifest, keeps paired credentials in native
+SecureStore, and translates the selected connection into its existing driver.
+The dependency-free Bun gateway in `server/workspace` keeps upstream adapter
+credentials on the self-hosted machine. The cloud runner provisions the
+separate Pi Durable backend. Follow [WORKSPACE-SETUP.md](WORKSPACE-SETUP.md) for
+the user flow and [CLOUD-SETUP.md](CLOUD-SETUP.md) for cloud configuration.
+
+```sh
+bun run verify:workspaces
+bun run --cwd server/workspace test
+bun run --cwd server/pi-durable test
+```
+
+These gates use local fixtures and setup subprocesses. They exercise the actual
+workspace manager, discovery, gateway, and existing drivers; no provider login
+or Cloudflare credential is needed. The backend suite includes all three
+supported model API families and mocked cloud provisioning failures. The cloud
+runner's `--plan --config /private/config.json` writes a validated private plan
+without Cloudflare authentication, deployment, or model calls. Running the
+normal interactive setup can provision resources after its displayed review.
+
 ## Develop the durable backend
 
 The Pi Durable service is a separate package in `server/pi-durable`; its server

@@ -39,6 +39,24 @@ The phone does not run a second agent loop around OMP, Pi, Pi Durable, or OpenCo
 
 This version exposes one active real connection at a time. Adding a harness means implementing the driver/update contract and a connection method, declaring capabilities, and translating its events. The chat and artifact readers remain unchanged. This is a small working boundary rather than a universal wire protocol.
 
+## One setup per workspace
+
+`src/workspace` owns pairing, workspace discovery, and saved connection access.
+A protected `/perch/workspace` response advertises the workspace identity,
+deployment, available harness connections, and default. HTTP/WS connector paths
+stay relative to the paired origin. The self-hosted gateway translates the one
+phone credential to each configured local adapter's separate credential. An OMP
+invitation is an explicit exception: it is delivered through authenticated
+discovery and used by the existing encrypted Collab client.
+
+The native app stores up to eight workspace profiles in SecureStore and loads
+their list without contacting a host. Opening a saved profile refreshes discovery
+before connecting; switching its harness does not repeat setup. No model or
+infrastructure secret appears in a profile or display catalog. Forget is ordered
+with credential writes, invalidates pending discovery, and detaches the current
+connection without deleting server chats. The browser preview uses memory only.
+See [workspace setup](WORKSPACE-SETUP.md).
+
 ## Durable backend
 
 The Pi Durable adapter talks to `server/pi-durable` through a small protected HTTP
@@ -62,8 +80,8 @@ renderer; an API download never serves a privileged HTML document.
 Stable operation IDs distinguish an uncertain response from a new request. The
 backend rejects reused IDs with different input. Reconnect first reads operation
 status and snapshots. Deliberate retry can reuse the unresolved prompt ID;
-idempotent creation can replay its exact ID. Phone tokens and pending IDs are
-memory-only in this slice. See [the protocol spec](DURABLE-BACKEND-SPEC.md) and
+idempotent creation can replay its exact ID. Pending IDs are memory-only; paired
+workspace tokens use native secure storage. See [the protocol spec](DURABLE-BACKEND-SPEC.md) and
 [setup and measured limits](DURABLE-BACKEND.md).
 
 Snapshot projection uses one published Pi ConversationView, so the live generation
@@ -124,8 +142,9 @@ Markdown uses native text and virtualized blocks. Code becomes highlighted nativ
 
 Tern's plugin SDK and TSP are not transplanted into the phone. The initial route is OMP Collab from a Tern terminal session. Arbitrary terminal, Luau, or TSP widgets need a separate rendering adapter.
 
-The phone keeps credentials, drafts, pending operation IDs, and its current view
-in memory. The Pi Durable backend now persists host history, continuation, model
+The phone saves paired workspace access in SecureStore. Direct Advanced
+credentials, drafts, pending operation IDs, and its current view remain in
+memory. The Pi Durable backend persists host history, continuation, model
 selection, and artifact manifests, with exact file bytes in a bucket binding.
 GrapheneOS notification delivery, Android process suspension, attachments, and
 multi-host management still need additional implementation or device trials.
@@ -133,7 +152,8 @@ multi-host management still need additional implementation or device trials.
 Pi Durable is the implemented foundation for a persistent assistant owned by
 Perch. [The initial evaluation](PI-DURABLE.md) and [the connected backend
 results](DURABLE-BACKEND-RESULTS.md) record the separate local crash tests.
-Cloudflare deployment and real R2 qualification remain outstanding. Switching
+The Cloudflare setup runner is implemented; live deployment and real R2
+qualification remain outstanding. Switching
 existing harnesses does not imply portable transcripts, approvals, or plugins.
 The artifact workspace supports both derived transcript artifacts and persisted
 file references; cross-message file revisions remain future work.

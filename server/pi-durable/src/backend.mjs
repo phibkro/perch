@@ -6,6 +6,7 @@ import { BACKGROUND_CONTEXT as BG } from '@earendil-works/chord/context';
 import { DURABLE_PROTOCOL, DURABLE_SERVICE } from '../../../src/harness/durable.ts';
 import { SessionData, artifactTool, artifactKey, attachmentHeaders, sha256 } from './artifacts.mjs';
 import { projectSnapshot } from './projector.mjs';
+import { workspaceManifest } from './workspace.mjs';
 import { HttpError, ID, authenticate, createInput, errorResponse, fail, fields, id, jsonBody,
   originFor, parseAccess, preflight, secureResponse, submitInput } from './http.mjs';
 
@@ -258,7 +259,9 @@ export function createBackend({ createRuntime, synthetic = false, onSessionStart
       const workspace = authenticate(request, access); assertBindings(env);
       const runtime = createRuntime(env); const models = safeModels(runtime);
       let response;
-      if (request.method === 'GET' && url.pathname === '/perch/health') {
+      if (request.method === 'GET' && url.pathname === '/perch/workspace') {
+        response = Response.json(workspaceManifest(env, workspace));
+      } else if (request.method === 'GET' && url.pathname === '/perch/health') {
         response = Response.json({ service: DURABLE_SERVICE, protocol: DURABLE_PROTOCOL,
           harness: { name: 'Pi Durable', version: '1.0.4' }, models, synthetic });
       } else {

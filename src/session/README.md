@@ -9,6 +9,16 @@ The snapshot also carries harness metadata, host-reported model metadata, and
 explicit adapter capabilities. The UI does not assume every connection is OMP.
 See [the harness contract](../harness/README.md) for the shared boundary.
 
+## Workspace pairing
+
+`src/workspace` sits above these driver connection methods. It discovers the
+available harnesses from one authenticated workspace endpoint and supplies the
+selected connection to this store. Native SecureStore retains paired workspace
+access; individual drivers still keep their active credentials in closures.
+Advanced direct connections retain their memory-only behavior. The workspace
+manager does not own another transcript, send prompts, or replay pending actions.
+See [the setup guide](../../docs/WORKSPACE-SETUP.md).
+
 ## Demo
 
 The default mode is `demo`, visibly identified in `snapshot.mode` and connection
@@ -72,8 +82,9 @@ See `THIRD_PARTY_NOTICES.md` for the exact upstream commit and local changes.
 ## Real pi
 
 `connectPi({ url, token }, displayName)` explicitly connects to our authenticated
-self-hosted pi bridge. The token remains in memory and stays separate from the
-URL. The bridge owns a long-lived pi RPC process and preserves its work across
+self-hosted pi bridge. The driver's token stays separate from the URL. Direct
+tokens remain in memory; paired workspace access is saved by the workspace
+manager. The bridge owns a long-lived pi RPC process and preserves its work across
 phone disconnects. Model/provider settings and credentials stay on the host.
 `setModel(provider, modelId)` selects only a server-configured model while idle.
 No prompt or answer is replayed automatically. Pi's UI-response protocol has no
@@ -121,7 +132,9 @@ looks up that ID; it never automatically sends a prompt again. A deliberate retr
 of the same unresolved text reuses the original ID. If creation's receipt is lost,
 each explicit reconnect can replay the same pending idempotent create ID, because
 the catalog has no separate operation lookup. It never invents a replacement ID
-for that pending create. All temporary identities and the token remain in memory.
+for that pending create. Temporary identities remain in memory. Paired workspace
+access is persisted separately by the workspace manager; an Advanced direct
+connection token remains memory-only.
 
 `storedArtifacts` contains immutable, bounded manifests. `loadArtifact(reference)`
 requires current session membership, then verifies protected download length,

@@ -9,10 +9,12 @@ import { ChatSurface } from './src/chat/ChatSurface';
 import { ArtifactWorkspace, artifactForMessage, deriveArtifacts, storedArtifactsToArtifacts, type Artifact } from './src/artifacts';
 import { NativeAction, NativeAppearanceSwitch } from './src/ui/NativeAction';
 import { ModelPicker } from './src/ui/ModelPicker';
+import { WorkspaceSetup, WorkspaceConnections } from './src/ui/WorkspaceSetup';
+import { workspaceManager } from './src/workspace';
 import { darkTheme, lightTheme, type Theme } from './src/ui/theme';
 
 type Screen = 'chat' | 'artifacts' | 'connection';
-type SheetName = 'connect' | 'question' | 'models' | 'host-new-chat' | null;
+type SheetName = 'connect' | 'advanced-connect' | 'question' | 'models' | 'host-new-chat' | null;
 const ThemeContext = createContext<Theme>(lightTheme);
 const useUI = () => { const t = useContext(ThemeContext); return { t, s: useMemo(() => styles(t), [t]) }; };
 const online = (state: SessionSnapshot) => state.connection.status === 'demo' || state.connection.status === 'live';
@@ -59,10 +61,11 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
     <Text style={s.eyebrow}>YOUR PHONE. YOUR WORKSPACE.</Text><Text style={[s.title, { marginBottom: 26 }]}>Connection</Text>
     <View style={[s.card, { padding: 22 }]}><View style={s.between}><View style={s.sessionIcon}><Server size={25} color={t.primary} /></View><Pill text={state.mode === 'demo' ? 'Demo mode' : state.readOnly && online(state) ? 'View only' : state.connection.label} attention={!online(state)} /></View>
       <Text style={[s.sectionTitle, { marginTop: 20 }]}>{state.mode === 'demo' ? 'Bring your own assistant' : state.harness.name}</Text>
-      <Text style={[s.body, { marginTop: 8, marginBottom: 20 }]}>{state.mode === 'demo' ? 'Connect Pi Durable, OMP, pi, or OpenCode. Your workspace can run on your hardware or in the cloud. Models and tools stay on that host.' : 'Perch follows the sessions on your host. Change models here, or switch workspace to use another harness or server.'}</Text>
+      <Text style={[s.body, { marginTop: 8, marginBottom: 20 }]}>{state.mode === 'demo' ? 'Pair once with your own host or a Cloudflare workspace. Choose from its assistants and models. Your host keeps the tools, credentials, and chats.' : 'Perch follows the sessions on your host. Choose another assistant below, change models, or join another workspace.'}</Text>
       <NativeAction label={state.mode === 'demo' ? 'Connect a workspace' : 'Join another workspace'} theme={t} onPress={openConnect} testID="open-connect" />
       {state.connection.error && <Text accessibilityRole="alert" style={[s.body, { color: t.error, marginTop: 12 }]}>{state.connection.error}</Text>}
     </View>
+    <WorkspaceConnections theme={t} onConnected={openChat} />
     <Text style={[s.sectionTitle, { marginTop: 26, marginBottom: 12 }]}>Session details</Text>
     <View style={s.card}><Detail label="Harness" value={state.harness.name} /><Detail label="Transport" value={state.harness.transport} /><Detail label="Model" value={state.mode === 'demo' ? 'Simulated · no model call' : state.model ? `${state.model.name || state.model.id}${state.model.provider ? ` · ${state.model.provider}` : ''}` : 'Not reported by this host'} />
       {state.capabilities.modelSelection && !!state.availableModels?.length && <View style={{ paddingHorizontal: 16 }}><TextAction label="Choose a model" onPress={openModels} /></View>}
@@ -73,7 +76,7 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
       {state.mode === 'demo' && <Pressable accessibilityRole="button" onPress={() => { sessionStore.simulateDisconnect(); openChat(); }} style={[s.settingRow, s.topLine]}><WifiOff size={20} color={t.primary} /><Text style={[s.noteTitle, s.flex]}>Simulate a connection drop</Text><ChevronRight size={18} color={t.subtle} /></Pressable>}
       {state.mode !== 'demo' && !online(state) && <Pressable accessibilityRole="button" onPress={sessionStore.reconnect} style={[s.settingRow, s.topLine]}><RefreshCw size={20} color={t.primary} /><Text style={s.noteTitle}>Reconnect</Text></Pressable>}
     </View>
-    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.5.1 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
+    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.6 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
   </ScrollView>;
 }
 function Detail({ label, value }: { label: string; value: string }) { const { s } = useUI(); return <View style={s.detail}><Text style={s.smallMuted}>{label}</Text><Text selectable style={[s.body, { flex: 1, textAlign: 'right' }]}>{value}</Text></View>; }
@@ -106,7 +109,14 @@ function QuestionSheet({ question, visible, onClose, state }: { question: Pendin
   </Sheet>;
 }
 
-function ConnectSheet({ state, visible, onClose, onConnected }: { state: SessionSnapshot; visible: boolean; onClose: () => void; onConnected: () => void }) {
+function ConnectSheet({ state, visible, onClose, onConnected, onAdvanced }: { state: SessionSnapshot; visible: boolean; onClose: () => void; onConnected: () => void; onAdvanced: () => void }) {
+  const { t } = useUI();
+  return <Sheet visible={visible} title="Connect your workspace" onClose={onClose}>
+    {visible && <WorkspaceSetup theme={t} state={state} onConnected={() => { onConnected(); onClose(); }} onAdvanced={onAdvanced} />}
+  </Sheet>;
+}
+
+function AdvancedConnectSheet({ state, visible, onClose, onConnected }: { state: SessionSnapshot; visible: boolean; onClose: () => void; onConnected: () => void }) {
   const { t, s } = useUI();
   const [kind, setKind] = useState<'durable' | 'omp' | 'pi' | 'opencode'>('durable');
   const [link, setLink] = useState(''); const [token, setToken] = useState(''); const [name, setName] = useState('Phone');
@@ -129,13 +139,15 @@ function ConnectSheet({ state, visible, onClose, onConnected }: { state: Session
       return;
     }
     setSubmitted(true);
+    workspaceManager.detach();
     const pending = kind === 'durable' ? sessionStore.connectDurable({ url: link.trim(), token: token.trim() })
       : kind === 'omp' ? sessionStore.connectCollab(link.trim(), name.trim() || 'Phone')
       : kind === 'pi' ? sessionStore.connectPi({ url: link.trim(), token: token.trim() }, name.trim() || 'Phone')
       : sessionStore.connectOpenCode({ url: link.trim(), username: username.trim() || 'perch', password: token, ...(directory.trim() ? { directory: directory.trim() } : {}) });
     void pending.catch(e => { setSubmitted(false); setError(e instanceof Error ? e.message : 'Could not join the workspace.'); });
   };
-  return <Sheet visible={visible} title="Connect your workspace" onClose={onClose}>
+  return <Sheet visible={visible} title="Advanced connection" onClose={onClose}>
+    <Text style={[s.smallMuted, { marginBottom: 14 }]}>Use this for a server that has not added workspace pairing yet.</Text>
     <View style={s.harnessTabs}>{(['durable', 'omp', 'pi', 'opencode'] as const).map(value => <Pressable key={value} accessibilityRole="tab" aria-selected={kind === value} accessibilityState={{ selected: kind === value }} onPress={() => { setKind(value); setLink(''); setToken(''); setDirectory(''); setError(''); setSubmitted(false); }} disabled={connecting} style={[s.harnessTab, kind === value && { backgroundColor: t.primarySoft, borderColor: t.primary }]}><Text style={{ color: kind === value ? t.primary : t.muted, fontWeight: '600' }}>{labels[value]}</Text></Pressable>)}</View>
     <Text style={[s.body, { marginBottom: 19 }]}>{descriptions[kind]}</Text>
     <Text style={s.inputLabel}>{urlLabels[kind]}</Text><TextInput accessibilityLabel={urlLabels[kind]} testID="collab-link" secureTextEntry={kind === 'omp'} autoCapitalize="none" autoCorrect={false} autoComplete="off" value={link} onChangeText={setLink} placeholder={placeholders[kind]} placeholderTextColor={t.subtle} style={s.input} />
@@ -175,7 +187,7 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
   const openArtifact = (artifact: Artifact) => { setSelectedArtifactId(artifact.id); navigate('artifacts'); };
   const openMessage = (id: string) => { const message = state.messages.find(item => item.id === id); if (!message) return; const artifact = artifactForMessage(message); if (!artifact) return; setDocumentIds(prev => prev.includes(id) ? prev : [...prev, id]); openArtifact(artifact); };
   const openChat = (id = state.activeSessionId) => { sessionStore.selectSession(id); setSheet(null); navigate('chat'); };
-  const startDemo = () => { ++creationRequest.current; setDrafts({}); setSubmittedCopies({}); sessionStore.useDemo(); setSheet(null); navigate('chat'); };
+  const startDemo = () => { ++creationRequest.current; setDrafts({}); setSubmittedCopies({}); workspaceManager.detach(); sessionStore.useDemo(); setSheet(null); navigate('chat'); };
   const newChat = () => {
     Keyboard.dismiss(); setDrawerOpen(false);
     const current = sessionStore.getSnapshot();
@@ -225,7 +237,8 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
       </View>
     </Modal>
     <QuestionSheet question={state.pendingQuestion} state={state} visible={sheet === 'question'} onClose={() => setSheet(null)} />
-    <ConnectSheet state={state} visible={sheet === 'connect'} onClose={() => setSheet(null)} onConnected={() => { setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setSubmittedCopies(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setScreen('chat'); }} />
+    <ConnectSheet state={state} visible={sheet === 'connect'} onClose={() => setSheet(null)} onAdvanced={() => setSheet('advanced-connect')} onConnected={() => { setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setSubmittedCopies(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setScreen('chat'); }} />
+    <AdvancedConnectSheet state={state} visible={sheet === 'advanced-connect'} onClose={() => setSheet(null)} onConnected={() => { setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setSubmittedCopies(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setScreen('chat'); }} />
     <Sheet visible={sheet === 'host-new-chat'} title="New chats start on your host" onClose={() => setSheet(null)}>
       <Text style={[s.body, { marginBottom: 20 }]}>{state.harness.name} shares one active session with this app. Start a new session on the host, then connect to it here.</Text>
       <NativeAction label="Return to current chat" theme={t} onPress={() => { setSheet(null); navigate('chat'); }} />

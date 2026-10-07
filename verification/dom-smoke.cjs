@@ -139,6 +139,7 @@ function createDurableFixture() {
       assert.equal(new Headers(init.headers).get('authorization'), `Bearer ${token}`, 'durable UI uses its configured workspace token');
       const body = init.body ? JSON.parse(init.body) : undefined;
       calls.push({ method, path: url.pathname, body });
+      if (method === 'GET' && url.pathname === '/perch/workspace') return json({ protocol: 'perch-workspace', version: 1, workspace: { id: 'synthetic-workspace', name: 'Synthetic durable workspace', deployment: 'self-hosted' }, defaultConnectionId: 'durable', connections: [{ id: 'durable', name: 'Pi Durable', kind: 'durable', path: '' }] });
       if (method === 'GET' && url.pathname === '/perch/health') return json({ service: 'perch-durable', protocol: 1, harness: { name: 'Pi Durable', version: 'synthetic-dom-fixture' }, models, synthetic: true });
       if (method === 'GET' && url.pathname === '/perch/sessions') return json({ sessions });
       if (method === 'POST' && url.pathname === '/perch/sessions') {
@@ -260,7 +261,15 @@ async function input(el, value) {
     await waitFor(() => doc.querySelector('[data-testid="new-chat-welcome"]') && byLabel('Message to assistant'), 'startup opens an empty New chat with a composer');
     if (process.argv.includes('--connection-only')) {
       await press(byLabel('Connect a workspace'));
-      await waitFor(() => byTab('Pi Durable') && byLabel('Pi Durable access token'), 'connection sheet defaults to Pi Durable');
+      await waitFor(() => byLabel('Self-hosted setup') && byLabel('Cloud setup') && byLabel('Workspace pairing code'), 'connection sheet offers two workspace setup choices and one pairing field');
+      assert.equal(byLabel('Workspace pairing code').type, 'password');
+      assert.equal(byLabel('Self-hosted setup').getAttribute('aria-selected'), 'true');
+      await press(byLabel('Cloud setup'));
+      assert.equal(byLabel('Cloud setup').getAttribute('aria-selected'), 'true');
+      assert.ok(text().includes('Cloudflare')); assert.ok(text().includes('bun run setup:cloud'));
+      assert.equal(byLabel('Pi Durable access token'), null);
+      await press(byText('Advanced connection · existing servers'));
+      await waitFor(() => byTab('Pi Durable') && byLabel('Pi Durable access token'), 'older servers are available through Advanced connection');
       const tabs = ['Pi Durable', 'OMP Collab', 'pi bridge', 'OpenCode'];
       assert.equal(byTab('Pi Durable').getAttribute('aria-selected'), 'true');
       for (const selected of ['OMP Collab', 'pi bridge', 'OpenCode', 'Pi Durable']) {
@@ -384,7 +393,10 @@ async function input(el, value) {
     // below runs the real phone adapter against an in-memory protocol fixture.
     assert.equal(openCode.calls.length + secondOpenCode.calls.length, 0);
     await press(byLabel('Back to chat')); await showSidebar(); await press(byText('Connect a workspace'));
-    await waitFor(() => byTab('OpenCode'), 'connection sheet includes a separate OpenCode tab');
+    await waitFor(() => byLabel('Workspace pairing code'), 'workspace pairing is the default connection screen');
+    assert.ok(byLabel('Self-hosted setup')); assert.ok(byLabel('Cloud setup'));
+    await press(byText('Advanced connection · existing servers'));
+    await waitFor(() => byTab('OpenCode'), 'advanced connection retains a separate OpenCode tab');
     assert.ok(byTab('OMP Collab')); assert.ok(byTab('pi bridge')); assert.ok(byTab('Pi Durable'));
     assert.ok(byLabel('Durable server URL')); assert.equal(byLabel('Pi Durable access token').type, 'password');
     assert.equal(byLabel('Participant name'), null);
@@ -500,6 +512,7 @@ async function input(el, value) {
     await openHistory('Fixture planning');
     await input(byLabel('Message to assistant'), 'Private first-host draft');
     await showSidebar(); await press(byText('Switch workspace'));
+    await press(byText('Advanced connection · existing servers'));
     await input(byLabel('OpenCode server URL'), secondOpenCode.origin);
     await input(byLabel('OpenCode server password'), 'second-fixture-password');
     await input(byLabel('OpenCode workspace directory'), secondOpenCode.directory);
@@ -521,15 +534,15 @@ async function input(el, value) {
     // Exercise the connected durable reader through rendered controls, not by
     // calling its driver directly. Files are fetched only after selection.
     assert.equal(durable.calls.length, 0);
-    await showSidebar(); await press(byText('Connect a workspace')); await press(byTab('Pi Durable'));
-    assert.equal(byLabel('Durable server URL').value, '');
-    assert.equal(byLabel('Pi Durable access token').value, '');
-    assert.equal(doc.querySelector('[data-testid="join-session"]').disabled, true);
-    await input(byLabel('Durable server URL'), durable.origin);
-    await input(byLabel('Pi Durable access token'), durable.token);
-    durable.enable(); await press(doc.querySelector('[data-testid="join-session"]'));
-    await waitFor(() => !byLabel('Pi Durable access token') && text().includes('Your workspace is connected. Start your first chat.'), 'empty Pi Durable host opens the connected New chat welcome');
-    assert.equal(durable.calls[0].path, '/perch/health');
+    await showSidebar(); await press(byText('Connect a workspace'));
+    assert.equal(byLabel('Workspace pairing code').value, '');
+    assert.equal(doc.querySelector('[data-testid="join-workspace"]').disabled, true);
+    const pairingCode = 'perch://pair#' + Buffer.from(JSON.stringify({ version: 1, url: durable.origin, token: durable.token })).toString('base64url');
+    await input(byLabel('Workspace pairing code'), pairingCode);
+    durable.enable(); await press(doc.querySelector('[data-testid="join-workspace"]'));
+    await waitFor(() => !byLabel('Workspace pairing code') && text().includes('Your workspace is connected. Start your first chat.'), 'one pairing code discovers the durable workspace and opens New chat');
+    assert.equal(durable.calls[0].path, '/perch/workspace');
+    assert.equal(durable.calls[1].path, '/perch/health');
     assert.equal(durable.created, 0, 'connection does not silently create a durable session');
     assert.equal(durable.artifactCalls().length, 0);
     assert.equal(byLabel('Message to assistant').value, '');
@@ -614,6 +627,20 @@ async function input(el, value) {
     assert.equal(durable.artifactCalls().length, 5);
     await showSidebar(); await press(byLabel('Connection')); await press(byText('Restart the demo'));
     await waitFor(() => doc.querySelector('[data-testid="new-chat-welcome"]') && !byLabel('Choose a model'), 'returning to demo also detaches the durable host and its saved artifacts');
+
+    const submissionsBeforeReopen = durable.calls.filter(call => call.path.endsWith('/submit')).length;
+    await press(byLabel('Connect a workspace'));
+    await waitFor(() => byLabel('Connect Synthetic durable workspace'), 'the workspace can be reopened without entering another token');
+    assert.equal(byLabel('Workspace pairing code').value, '');
+    await press(byLabel('Connect Synthetic durable workspace'));
+    await waitFor(() => !byLabel('Workspace pairing code') && byLabel('Choose a model'), 'saved workspace refreshes discovery and reconnects to its existing host');
+    assert.equal(durable.created, 2); assert.equal(durable.calls.filter(call => call.path.endsWith('/submit')).length, submissionsBeforeReopen);
+    await showSidebar(); await press(byLabel('Connection'));
+    await waitFor(() => byLabel('Use Pi Durable'), 'the paired workspace exposes a harness chooser in settings');
+    await press(byText('Join another workspace')); await press(byLabel('Forget Synthetic durable workspace'));
+    await waitFor(() => !byLabel('Connect Synthetic durable workspace'), 'forget removes the saved device connection');
+    await press(byLabel('Close sheet'));
+    checks.push('saved workspace reopen and removal do not create chats, replay prompts, or expose credentials');
 
     assert.deepEqual(errors, []); assert.deepEqual(logs.filter(entry => entry[0] === 'error'), []); assert.deepEqual(blocked, []);
     console.log(JSON.stringify({ result: 'PASS (DOM emulation only; synthetic OpenCode and Pi Durable protocols, no real host or model)', checks, fixtureRequests: openCode.calls.length + secondOpenCode.calls.length, durableFixtureRequests: durable.calls.length, durableArtifactRequests: durable.artifactCalls().length, errors, cssLimitations, logs, blocked }, null, 2));

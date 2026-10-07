@@ -92,6 +92,8 @@ jobs:
           bun run verify:keyboard
           bun run verify
           bun run verify:artifacts
+          bun run verify:workspaces
+          bun run --cwd server/workspace test
           bun run --cwd verification/opencode test
           bun run --cwd verification/durable test
           bun run --cwd server/pi-durable test

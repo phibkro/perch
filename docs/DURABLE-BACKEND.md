@@ -49,11 +49,15 @@ deployment, use your runtime's secret mechanism.
 | `PERCH_TOKENS` | A JSON map from workspace IDs to distinct random tokens, each 32–512 printable characters |
 | `PERCH_MODELS` | Explicit models, endpoints, and credentials; first model is the new-chat default |
 | `PERCH_ALLOWED_ORIGINS` | Exact browser origins; `[]` allows native requests without Origin |
+| `PERCH_WORKSPACE_NAME` | Display name returned by authenticated workspace discovery |
+| `PERCH_DEPLOYMENT` | `self-hosted` (default) or `cloudflare`; Cloudflare setup sets this explicitly |
 | `PERCH_CATALOGS` | SQLite object namespace for `PerchCatalog` |
 | `PERCH_SESSIONS` | SQLite object namespace for `PerchSession` |
 | `ARTIFACTS` | An R2-style bucket binding for generated files |
 
-This slice uses Pi's OpenAI-completions provider implementation. A model entry
+The backend supports Pi's `openai-completions`, `openai-responses`, and
+`anthropic-messages` implementations. The optional `api` field selects one;
+omitting it preserves the original OpenAI-completions behavior. A model entry
 looks like this:
 
 ```json
@@ -70,7 +74,8 @@ looks like this:
 
 Use `apiKey` instead of `keyless` when your endpoint requires a key. The endpoint
 is resolved from the backend host, so loopback means that host. Models under one
-provider ID must share endpoint and credential settings. The model must support
+provider ID must share credential settings. Each model keeps the base URL for
+its selected API family. The model must support
 the tool-calling behavior needed by `write_artifact`.
 
 With celld installed, start the development project:
@@ -97,10 +102,11 @@ a live browser connection needs the served origin.
 
 ## Open it on your phone
 
-1. Install the standalone Perch 0.5 ARM64 APK.
+1. Install the standalone Perch 0.6 ARM64 APK.
 2. Open the sidebar and choose **Connect a workspace**.
-3. Choose **Pi Durable**, enter the HTTPS server address and workspace token,
-   then choose **Join workspace**.
+3. Paste the pairing code from [workspace setup](WORKSPACE-SETUP.md), or use
+   **Enter an address and token** for the current backend. For an older backend,
+   choose **Advanced connection → Pi Durable** and enter its address/token.
 4. Choose **New chat**, select a model if needed, and send a prompt.
 5. Ask for a complete document or file. The backend's `write_artifact` tool saves
    it for **Artifacts**, where you can preview, inspect source, copy, or export.
@@ -109,10 +115,10 @@ For example: “Create a short Markdown plan and a self-contained HTML summary.
 Save both as artifacts so I can read them on my phone.”
 
 The application keeps the traditional chat layout: New chat home, sidebar
-navigation, main conversation, and bottom composer. OMP, Pi RPC, and OpenCode
-remain separate connection options. The durable route currently exposes fewer
-provider APIs than the full Pi RPC catalog; expanding provider adapters is
-separate work from making this first storage and client path reliable.
+navigation, main conversation, and bottom composer. A paired workspace can
+advertise OMP, Pi RPC, and OpenCode alongside Pi Durable. The durable route still
+exposes fewer provider APIs than the full Pi RPC catalog. Subscription OAuth
+and full Linux harness hosting remain separate integrations.
 
 ## What survives a disconnect
 
@@ -124,7 +130,7 @@ separate work from making this first storage and client path reliable.
 | User deliberately retries unresolved text | Reuse the original ID while it remains in this client process |
 | Chat creation receipt is lost | Replay the original idempotent create ID, never a replacement ID |
 | User changes workspace | Invalidate old requests, drafts' credential scope, and artifact readers |
-| Phone process restarts | Re-enter the connection token and inspect host history; local drafts and pending IDs are gone |
+| Phone process restarts | Reopen the saved workspace and inspect host history; Advanced direct tokens, local drafts, and pending IDs are gone |
 | Backend execution is interrupted | Pi's persisted continuation and Lifecycle wake-up resume eligible work according to the runtime's storage guarantees |
 
 The phone polls authoritative snapshots every 750 ms while working and every six

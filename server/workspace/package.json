@@ -1,0 +1,14 @@
+{
+  "name": "@perch/workspace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "One authenticated workspace connection for Perch's existing host adapters",
+  "packageManager": "bun@1.4.2",
+  "engines": { "bun": ">=1.4.2" },
+  "scripts": {
+    "start": "bun index.mjs",
+    "setup": "bun setup.mjs",
+    "test": "bun test ./test"
+  }
+}

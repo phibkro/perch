@@ -1,5 +1,63 @@
 # Perch verification
 
+## Perch 0.6: one workspace setup
+
+Perch 0.6.0 / Android code 7 includes the published keyboard fix and adds saved
+native workspace pairing, two setup choices, host-side discovery and credential
+translation, and the Cloudflare setup runner. Checks below ran on 7 October
+2026 against the implementation. Physical device and real-account checks are
+listed separately from source and controlled protocol evidence.
+
+| Check | Result | What it establishes |
+| --- | --- | --- |
+| App TypeScript | Passed | Native setup, workspace state, and existing assistant-ui integration compile |
+| Native keyboard regression | Passed, five cases | The installed React Native layout contract retains the 0.5.1 correction |
+| Workspace protocol and storage | Passed, 10 tests / 62 assertions | Strict pairing/discovery, bounded manifests, same-origin paths, saved credentials, deletion failure recovery, identity checks, stale discovery, and no prompt replay |
+| Real workspace-to-driver integration | Passed, four tests / 54 assertions | Actual WorkspaceManager, discovery, Bun gateway, and Durable/Pi/OpenCode drivers; host history, model identity, streaming, lost-receipt reconciliation, bodyless OpenCode Stop, rejected pairing, clean disconnects, and no prompt replay |
+| Host gateway and setup | Passed, 13 tests / 140 assertions | Actual loopback HTTP/WebSocket transport, credential substitution, private configuration, no redirects/replay, OpenCode directory scope, bodyless abort compatibility, exact artifact bytes, SSE cancellation, and ambient proxy isolation |
+| Durable backend, providers, and cloud setup | Passed, 29 tests | Existing backend contracts plus actual Pi converters for Chat Completions, Responses, and Anthropic Messages; OpenCode Go headers; authenticated discovery; provisioning failures and private resumable state |
+| Production backend bundle | Passed | Pinned Pi Durable backend compiles with all three configured API families |
+| Actual Wrangler packaging | Passed | Wrangler 4.148.0 accepted generated config, secrets file, strict mode, both SQLite DO bindings, and R2 in a credential-free deploy dry-run; no resources were created |
+| Fresh web export | Passed | 8,603,641-byte standalone preview with all seven JavaScript chunks and exact dependency notices |
+| Full rendered-app DOM fixture | Passed | New chat, sidebar, composer, artifacts, existing OpenCode flows, one-code durable pairing, saved reopen, harness chooser, and Forget; 66 OpenCode and 23 durable requests, five artifact downloads, zero JavaScript errors or outside network attempts |
+| Existing protocol/artifact gates | Passed | OMP/demo verifier, artifact boundary verifier, OpenCode fixtures, and durable driver fixtures remain valid |
+| Version and packaged notices | Passed | All version locations agree on 0.6.0/code 7; prototype signer and 581 dependency notices are preserved |
+| Physical Pixel / GrapheneOS or iOS | Not performed | Actual keyboard painting/animation, native networking, secure-store lifecycle, and file sharing require a device |
+| Real Cloudflare provisioning, provider entitlement, or R2 recovery | Not performed | No account credential or real inference request was used; dry-run packaging and local fixtures do not establish those results |
+
+The DOM runner uses the actual exported application with controlled transport
+responses. It verifies rendered structure and interaction, not native layout or
+browser enforcement; jsdom reports one known CSS parser limitation. The native
+keyboard fixture likewise verifies layout logic rather than a physical IME.
+
+The new integration gates caught and fixed two transport issues before release.
+Bun 1.4.2's ambient proxy behavior required explicit direct HTTP agents for
+both the gateway and host doctor; a separate-process check confirms that local
+adapter credentials never reach the configured test proxy. The OpenCode driver's
+bodyless Stop request also required a narrow gateway exception. Every other
+POST still requires valid JSON, and the real driver's Stop now passes through
+both gateway layers.
+
+Self-hosted setup requires existing local adapters and a reachable HTTPS reverse
+proxy. Its doctor checks local adapters without calling a model. It validates
+an OMP invitation's format; the phone verifies the live share. The Cloudflare
+runner deploys Pi Durable's Worker backend, not a Linux CLI harness. New OMP
+SDK/RPC, Codex subscription login, and a Tern Android renderer are researched
+directions rather than implemented adapters in this release.
+
+### Repeat the 0.6 setup checks
+
+```sh
+bun run typecheck
+bun run verify:keyboard
+bun run verify:workspaces
+bun run --cwd server/workspace test
+bun run --cwd server/pi-durable test
+bun run --cwd server/pi-durable build
+bun run preview:export
+node verification/dom-smoke.cjs ../outputs/perch-prototype.html
+```
+
 ## Perch 0.5.1: Android keyboard hotfix
 
 On 7 October 2026, the installed 0.5.0 app was reported to leave the composer
@@ -21,8 +79,20 @@ artifact-handoff tests, and actionlint passed locally. The focused
 device flow and updated smoke flow check the draft before hiding the keyboard
 and capture screenshots. No Android device or emulator was available, so these
 flows have not been executed. Native animation, live rotation, and actual Pixel
-painting remain device checks. Native build and hosted release evidence for
-0.5.1 are pending; the completed 0.5.0 records below remain historical evidence.
+painting remain device checks.
+
+[The 0.5.1 workflow](https://github.com/phibkro/perch/actions/runs/37594858477)
+passed all three jobs on its first attempt, from commit
+`58eae30b3763d19076f7b954c16ecfb99fddbbf7`. The
+[prerelease](https://github.com/phibkro/perch/releases/tag/v0.5.1) was published
+at 08:49:49 UTC on 7 October 2026. The overall run took 13 minutes 43 seconds;
+the native build step took 11 minutes 16 seconds with restored caches.
+All three published assets were downloaded and verified against the workflow,
+source, GitHub digests, and checksum file at 08:51:46 UTC. The APK is
+47,736,870 bytes, with SHA-256
+`bee88a99cace76c547fa6bbec43f13b7f021110fe41324dfea4511ea31152d75`.
+Package/version, preserved signer, SDK levels, ARM64 ABI, non-debuggable status,
+embedded bundle/notices, ZIP alignment, and all 21 native ELF files passed.
 See [KEYBOARD-REGRESSION.md](KEYBOARD-REGRESSION.md) for the failing output,
 test boundary, and device commands.
 

@@ -11,6 +11,15 @@ Requires Node 22.19 or later to build. Dependencies are pinned: Agents SDK 0.26.
 Pi Durable/Pi AI/Chord 1.0.4. Install inside this directory; these packages do not
 belong in the native app bundle.
 
+For the guided Cloudflare path, run `bun run setup:cloud` from the repository
+root. It selects the account, models, and credentials on the host, reviews the
+plan, and provisions only after a typed confirmation. It then prints one private
+workspace pairing code. `--plan --config /private/config.json` saves a plan
+without Cloudflare authentication or provisioning; `--apply` enables explicit
+noninteractive use. See [Cloud setup](../../docs/CLOUD-SETUP.md) for credential
+requirements, private configuration, ownership checks, and recovery. The runner
+uses pinned Wrangler 4.148.0 and performs no model inference itself.
+
 Install the root app dependencies once as well: the unit regressions compile the
 actual phone validator and artifact model, whose dependencies live at the root.
 From the repository root:
@@ -42,17 +51,31 @@ build or unit tests. The production entry has no synthetic fallback.
 | `PERCH_TOKENS` | Secret JSON object mapping workspace IDs to distinct random bearer tokens, at least 32 characters each |
 | `PERCH_ALLOWED_ORIGINS` | JSON array of exact allowed browser origins; default `[]`. Native requests without Origin work. |
 | `PERCH_MODELS` | Secret JSON array of explicitly configured model descriptors. The first is the new-session default. |
+| `PERCH_WORKSPACE_NAME` | Safe display name for discovery, at most 120 characters; default `Perch workspace` |
+| `PERCH_DEPLOYMENT` | `self-hosted` (default) or `cloudflare`; explicitly set by cloud setup |
 | `PERCH_CATALOGS` | SQLite DO namespace bound to `PerchCatalog` |
 | `PERCH_SESSIONS` | SQLite DO namespace bound to `PerchSession` |
 | `ARTIFACTS` | R2-style bucket binding supporting conditional `put` and `get` |
 
 A model descriptor has `provider`, `id`, `name`, `baseUrl`, `contextWindow`, and
 `maxTokens`. Supply either `apiKey` or explicit `keyless: true`; `reasoning` is
-optional. Models under the same provider must share endpoint and credentials.
-This version uses Pi's `openai-completions` implementation, suitable for a
-compatible self-hosted server or service. Provider IDs are host-defined. Only
+optional. The optional `api` is `openai-completions` (the backward-compatible
+default), `openai-responses`, or `anthropic-messages`. Models under the same
+provider share credentials but retain their own API-family endpoint roots.
+This version uses Pi's actual lazy implementations for those three APIs.
+Provider IDs are host-defined. Only
 `provider`, `id`, and `name` leave the server. Cost tracking is not exposed; the
 adapter's zero cost metadata does not claim a service is free.
+
+The cloud wizard can select OpenCode Go, Anthropic API, OpenAI API, and a custom
+compatible HTTPS endpoint. Its catalog helper is setup-only and does not enter
+the Worker bundle. For `opencode-go`, requests include Perch's User-Agent and
+Pi's durable provider-session ID in `x-opencode-session`, preserving conversation
+identity through eviction and changing it when Pi forks. Go's Anthropic root is
+`https://opencode.ai/zen/go`; its Completions/Responses root ends in `/v1`.
+The SDK supplies the remaining path. OAuth login, consumer subscription-token
+import, and credential refresh are not installed by these API descriptors.
+Known Claude OAuth tokens and non-API tokens for direct OpenAI are rejected.
 
 Keep token and model settings in the runtime's secret mechanism. With Cloudflare,
 use secret bindings; do not add secrets to the checked-in `vars` object. With
@@ -72,6 +95,7 @@ the repository root.
 
 | Method/path | Input or result |
 |---|---|
+| `GET /workspace` | Authenticated `perch-workspace` discovery: workspace identity/name/deployment and one `durable` connection |
 | `GET /health` | Service/protocol version, safe models, explicit synthetic flag |
 | `GET /sessions` | `{sessions}` |
 | `POST /sessions` | `{operationId,title?}` → `{session,accepted}` |
@@ -135,8 +159,11 @@ the manifest commit; `onArtifactCommitted(session,manifest)` runs after that
 commit. A test can stop or hold these points without altering production auth,
 PiHarness, SQLite, artifact tools, or the external HTTP contract.
 
-`bun run test` covers auth/CORS, limits, provider metadata validation, snapshot
-projection, and immutable artifact retries. Runtime recovery evidence belongs in
+`bun run test` covers auth/CORS, limits, provider configuration and all three
+actual API converters with controlled streaming responses, Go session identity,
+workspace discovery, provisioning failure paths, private setup files, snapshot
+projection, and immutable artifact retries. No real credential is needed.
+Runtime recovery evidence belongs in
 the repository's verification directory; these unit tests do not prove R2 or
 multi-node behavior.
 
