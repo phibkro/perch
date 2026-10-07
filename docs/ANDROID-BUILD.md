@@ -1,15 +1,62 @@
 # Android build verification
 
-The current standalone build is **Perch 0.5.0 / code 5**, built with Bun from the
-published source. Its [0.5 build record](#perch-05-standalone-release--2026-10-07)
-includes the verified bundle, complete notices and preserved signer. The 0.4
-records below remain historical evidence; the development APK is still 0.4.
+The current standalone release is **Perch 0.6.0 / code 7**, built on GitHub with
+Bun 1.4.2 from the published source. The verified APK retains the original
+prototype package and signer. Earlier 0.5 and 0.4 records remain historical
+evidence. The last verified development APK is still 0.4.
 
-The final distributed binary is the successful
+## Current hosted Perch 0.6 — 2026-10-07
+
+[GitHub run 37598249819](https://github.com/phibkro/perch/actions/runs/37598249819)
+built commit [`a78c4f976426dc24eb691ede260fc72839c66007`](https://github.com/phibkro/perch/commit/a78c4f976426dc24eb691ede260fc72839c66007),
+tree `f46ac138564e0596ad25f985c291c5c49cdbae7d`.
+The [v0.6.0 release tag](https://github.com/phibkro/perch/releases/tag/v0.6.0)
+points to that commit. GitHub published the release at **09:24:10 UTC**.
+Independent download verification completed at **09:25:42 UTC**.
+
+| Check | Verified GitHub APK |
+| --- | --- |
+| Delivery file | `perch-prototype-arm64.apk` |
+| Package | `dev.perch.assistant` |
+| Version / code | `0.6.0` / `7` |
+| Bytes | 47,793,490 |
+| APK SHA-256 | `8111032dfa12381868b6c2ee016beacaa20ddeedde007c4c91b74b16d046f34a` |
+| Minimum / target / compile SDK | 24 / 36 / 36 |
+| ABI / debuggable | `arm64-v8a` only / No |
+| Signature | v2 verified, one preserved prototype signer |
+| Signer certificate SHA-256 | `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c` |
+| Embedded application bundle | `assets/index.android.bundle`, 6,458,840 bytes |
+| Bundle SHA-256 | `c79135a1d0c2c01ba10070127848b24c1c51e647435b533008705eda431bdb4f` |
+| Packaged license notices | `assets/third-party-notices.txt`, 1,069,848 bytes |
+| Notices SHA-256 | `685cc1f116afc3c4a0875c2d29555f51f34aa801f4c5941a0fed22c906aa2f54` |
+| ZIP alignment | `zipalign -c -P 16 4` passed, no duplicate ZIP entries |
+| Native ELF alignment | All LOAD segments in all 21 libraries have alignment of at least 16,384 bytes |
+
+All three GitHub asset digests matched the downloads. `SHA256SUMS` also matched
+the APK and `release-metadata.json`. The metadata identifies the exact source,
+release tag and successful workflow attempt. Independent verification used
+`aapt2`, `apksigner`, `zipalign` and ELF inspection.
+
+The embedded bundle matched the release metadata. CI also verified that the
+embedded bundle matched its generated build output. The notices matched blob
+`3b5fbad454bf560038997d7712ad81a94c8eb92d` in the exact source tree.
+
+All three jobs succeeded on attempt 1: source checks took 46 seconds, the native
+job took 17 minutes, and publication took 18 seconds. Native compilation and lint
+took 15 minutes 56 seconds. The complete workflow took 18 minutes 16 seconds.
+
+No device or emulator ran this release during verification. Installation,
+upgrades, startup, Pixel keyboard clearance, WebView behavior, GrapheneOS
+permissions and live-host networking remain device checks.
+
+## Historical hosted Perch 0.5
+
+The final distributed 0.5 binary was the successful
 [GitHub-built v0.5.0 APK](https://github.com/phibkro/perch/releases/tag/v0.5.0):
 47,736,738 bytes, SHA-256
 `2f43af6ab3788e4387e71a9293124ec8492218fb513d1cd64829b3ff1bfe235e`.
-Its release metadata records all binary gates. The local 0.5 build below is a
+Its release metadata records all binary gates. The
+[local 0.5 build](#perch-05-standalone-release--2026-10-07) is a
 separately verified binary; both contain identical application bundle and notice
 bytes. [GITHUB-RELEASES.md](GITHUB-RELEASES.md#first-hosted-release-verified) records
 the first hosted run, published assets and independent download checks.

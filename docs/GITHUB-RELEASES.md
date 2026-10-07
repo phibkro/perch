@@ -46,9 +46,9 @@ Actions artifacts are retained for 14 days; diagnostic logs and available app li
 
 ## Prepare the next version
 
-This checkout prepares **0.6.0 / Android version code 7**, with unified workspace setup and the keyboard fix. The keyboard hotfix is already published as [0.5.1/code 6](https://github.com/phibkro/perch/releases/tag/v0.5.1). Every subsequently distributed update must increase both the app version and Android version code. A code must exceed every previously distributed code, including a version distributed locally before a GitHub tag existed. Never delete or reuse a released version/tag to work around that rule. Android uses `versionCode` to determine upgrade ordering; see [Android versioning](https://developer.android.com/studio/publish/versioning).
+The current published prototype is **[0.6.0 / Android version code 7](https://github.com/phibkro/perch/releases/tag/v0.6.0)**, with unified workspace setup and the keyboard fix. The earlier keyboard hotfix remains available as [0.5.1/code 6](https://github.com/phibkro/perch/releases/tag/v0.5.1). Every subsequently distributed update must increase both the app version and Android version code. A code must exceed every previously distributed code, including a version distributed locally before a GitHub tag existed. Never delete or reuse a released version/tag to work around that rule. Android uses `versionCode` to determine upgrade ordering; see [Android versioning](https://developer.android.com/studio/publish/versioning).
 
-After the current version is published, for example, prepare 0.6.1 with code 8:
+For example, prepare 0.6.1 with code 8:
 
 ```sh
 git fetch origin --tags
@@ -141,6 +141,37 @@ The workflow YAML was parsed and its triggers, immutable action pins, permission
 After the Bun migration, all 15 Node guards and six Python artifact tests passed again without npm-lock assumptions. An actual Bun 1.4.2 command fixture verified that `bun run --cwd` uses the requested directory and dispatches an explicit `node` package script under Node 24.19.0. The app and native backend runtime have not been switched to Bun by changing the package manager.
 
 The pre-notice APK was also inspected with the real Android tools: its identity, signer, SDK, ABI, embedded bundle and ELF checks passed, and the newly required notice gate correctly rejected it before writing distribution files. The final local Bun APK subsequently passed the same packaging command with the exact committed notices and a clean source tree at `44bc088014567ce16db4399b741dac9a06e97652`. Its 47,736,890 bytes have SHA-256 `4389a727cde3d69cc8581d7736ff3933bfefea88d459ca5e722980eb47b59bc3`.
+
+## Current hosted release: 0.6.0 verified
+
+[Run 37598249819](https://github.com/phibkro/perch/actions/runs/37598249819)
+passed all three jobs on its first attempt on 7 October 2026, from
+[`a78c4f976426dc24eb691ede260fc72839c66007`](https://github.com/phibkro/perch/commit/a78c4f976426dc24eb691ede260fc72839c66007).
+The publisher created `v0.6.0` at that exact source commit and published the
+[0.6.0/code 7 prerelease](https://github.com/phibkro/perch/releases/tag/v0.6.0)
+at 09:24:10 UTC. The run took 18 minutes 16 seconds overall, with a 46-second
+source job, 17-minute Android job, and 18-second publication job. The native
+compile/lint step reported 15 minutes 56 seconds. These are observed timings,
+not a promise for subsequent builds.
+
+| Published asset | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `perch-prototype-arm64.apk` | 47,793,490 | `8111032dfa12381868b6c2ee016beacaa20ddeedde007c4c91b74b16d046f34a` |
+| `release-metadata.json` | 3,927 | `bee4a9a95976ba893a561c7e458c8550dffeab3c42296ccdfad3f1cae0a6c7e3` |
+| `SHA256SUMS` | 180 | `30ffbae152308868ff634f4018f2a40d4b51353fa4c53c5a6ac8fb03b6b71f90` |
+
+All three assets were downloaded independently and verified at 09:25:42 UTC.
+Their complete bytes match GitHub's digests and the checksum file. The tag,
+metadata, successful run, and downloaded binary agree on source and version.
+The actual APK passed package, SDK, ARM64, non-debuggable, preserved signer,
+signature v2, 16 KB ZIP, and all 21 native ELF alignment checks. Its embedded
+bundle matches the published metadata, and its notices match the exact source
+blob. CI separately checks the bundle against its generated build output.
+
+The delivered APK is this GitHub-built binary. No separate local 0.6 APK was
+built. Pixel installation, keyboard painting, and live provider/Cloudflare
+qualification remain device and account checks. See the current records in
+[VERIFICATION.md](VERIFICATION.md) and [ANDROID-BUILD.md](ANDROID-BUILD.md).
 
 ## First hosted release: verified
 

@@ -22,6 +22,8 @@ listed separately from source and controlled protocol evidence.
 | Full rendered-app DOM fixture | Passed | New chat, sidebar, composer, artifacts, existing OpenCode flows, one-code durable pairing, saved reopen, harness chooser, and Forget; 66 OpenCode and 23 durable requests, five artifact downloads, zero JavaScript errors or outside network attempts |
 | Existing protocol/artifact gates | Passed | OMP/demo verifier, artifact boundary verifier, OpenCode fixtures, and durable driver fixtures remain valid |
 | Version and packaged notices | Passed | All version locations agree on 0.6.0/code 7; prototype signer and 581 dependency notices are preserved |
+| Hosted Android build and publication | Passed, first attempt | All three jobs succeeded; lint-enabled ARM64 build, binary gate, trusted artifact handoff, exact source tag, and published prerelease |
+| Independent release download verification | Passed | All three GitHub digests and SHA256SUMS match; actual APK identity, preserved signer, SDK/ABI, bundle/notices, and 16 KB ZIP/native ELF alignment verified |
 | Physical Pixel / GrapheneOS or iOS | Not performed | Actual keyboard painting/animation, native networking, secure-store lifecycle, and file sharing require a device |
 | Real Cloudflare provisioning, provider entitlement, or R2 recovery | Not performed | No account credential or real inference request was used; dry-run packaging and local fixtures do not establish those results |
 
@@ -29,6 +31,26 @@ The DOM runner uses the actual exported application with controlled transport
 responses. It verifies rendered structure and interaction, not native layout or
 browser enforcement; jsdom reports one known CSS parser limitation. The native
 keyboard fixture likewise verifies layout logic rather than a physical IME.
+
+[The 0.6 workflow](https://github.com/phibkro/perch/actions/runs/37598249819)
+passed all three jobs on its first attempt, from commit
+`a78c4f976426dc24eb691ede260fc72839c66007`, tree
+`f46ac138564e0596ad25f985c291c5c49cdbae7d`. The
+[0.6.0 prerelease](https://github.com/phibkro/perch/releases/tag/v0.6.0)
+was published at 09:24:10 UTC on 7 October 2026. Source checks took 46 seconds;
+the native job took 17 minutes, including 15 minutes 56 seconds for compile/lint.
+Publication took 18 seconds. The complete workflow took 18 minutes 16 seconds.
+
+All three release assets were downloaded and independently verified at
+09:25:42 UTC. The APK is 47,793,490 bytes, with SHA-256
+`8111032dfa12381868b6c2ee016beacaa20ddeedde007c4c91b74b16d046f34a`.
+It is `dev.perch.assistant` 0.6.0/code 7, non-debuggable and ARM64-only, with
+SDK levels 24/36/36 and the preserved signing certificate. Its 6,458,840-byte
+application bundle matches the release metadata; CI also checked it against
+the generated build bundle. Packaged notices match the exact released source
+blob. APK v2 signing, duplicate-entry, ZIP alignment, and all 21 native ELF
+alignment checks passed. No additional local 0.6 native build was required.
+See [ANDROID-BUILD.md](ANDROID-BUILD.md) for the binary record.
 
 The new integration gates caught and fixed two transport issues before release.
 Bun 1.4.2's ambient proxy behavior required explicit direct HTTP agents for

@@ -9,6 +9,12 @@ and one R2 bucket for artifacts. It uses the existing production Perch backend.
 It does not install the OpenCode CLI, OMP, Tern, Codex, or a Linux sandbox.
 For those host adapters, use the [workspace setup guide](WORKSPACE-SETUP.md).
 
+Moving the provisioning step into Perch's mobile setup is a proposed next
+iteration. [The Alchemy runtime design](ALCHEMY-RUNTIME.md) explains an
+app-triggered Bun job on Cloudflare, deployment state, and the limits of running
+the stock deployment engine inside a Worker. The commands below use the
+implemented 0.6 setup runner.
+
 ## First setup
 
 From the Perch checkout, with Node 22.19+ and Bun installed:
