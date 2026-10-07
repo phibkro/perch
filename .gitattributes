@@ -1,0 +1,2 @@
+# Preserve the generated upstream license text byte for byte, including spaces.
+android/app/src/main/assets/third-party-notices.txt -text -whitespace

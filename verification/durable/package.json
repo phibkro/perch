@@ -1,0 +1,13 @@
+{
+  "name": "perch-durable-verification",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Independent local HTTP fixtures for the native-compatible durable driver",
+  "scripts": {
+    "test": "node verify.cjs"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "packageManager": "bun@1.4.2"
+}

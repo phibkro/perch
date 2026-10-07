@@ -1,0 +1,236 @@
+name: Android prototype
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.agents/**'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.agents/**'
+  workflow_dispatch:
+    inputs:
+      publish_prerelease:
+        description: 'Publish the selected existing version tag as a prototype prerelease (branches only build artifacts)'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # Never interrupt tag creation/publication with a newer default-branch push.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CI: 'true'
+  EXPO_NO_TELEMETRY: '1'
+  DO_NOT_TRACK: '1'
+  PERCH_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+  PERCH_PUBLISH_PRERELEASE: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_prerelease || false }}
+
+jobs:
+  checks:
+    name: App, protocols, and durable backend
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      version_code: ${{ steps.version.outputs.version_code }}
+      release_tag: ${{ steps.version.outputs.release_tag }}
+      publish: ${{ steps.version.outputs.publish }}
+    steps:
+      - name: Check out source and release history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Check versions, prototype key, and release eligibility
+        id: version
+        run: node scripts/ci-android-version.mjs --github
+      - name: Set up pinned Bun package manager
+        id: bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+          no-cache: ${{ github.event_name == 'pull_request' }}
+      - name: Restore Bun package cache
+        id: bun-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ steps.bun.outputs.bun-version }}-${{ hashFiles('bun.lock', 'server/pi-durable/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-${{ runner.arch }}-${{ steps.bun.outputs.bun-version }}-
+      - name: Install app and backend dependencies
+        run: |
+          test -s bun.lock
+          test -s server/pi-durable/bun.lock
+          bun ci
+          bun install --cwd server/pi-durable --frozen-lockfile
+          bun scripts/generate-third-party-notices.mjs --check
+      - name: Check app types, protocols, artifacts, and durable behavior
+        run: |
+          node --test scripts/ci-android.test.mjs scripts/release-prototype.test.mjs verification/durable-runtime/runtime-health.test.mjs
+          python3 scripts/ci-android-package.test.py
+          bun run typecheck
+          bun run verify
+          bun run verify:artifacts
+          bun run --cwd verification/opencode test
+          bun run --cwd verification/durable test
+          bun run --cwd server/pi-durable test
+          bun run --cwd server/pi-durable build
+      - name: Save Bun package cache from the default branch
+        if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && steps.bun-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ steps.bun-cache.outputs.cache-primary-key }}
+
+  android:
+    name: Standalone ARM64 APK
+    needs: checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      PERCH_RELEASE_TAG: ${{ needs.checks.outputs.release_tag }}
+    steps:
+      - name: Check out the exact build source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Set up pinned Bun package manager
+        id: bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
+          no-cache: ${{ github.event_name == 'pull_request' }}
+      - name: Restore Bun package cache
+        id: bun-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ runner.arch }}-${{ steps.bun.outputs.bun-version }}-${{ hashFiles('bun.lock', 'server/pi-durable/bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-${{ runner.arch }}-${{ steps.bun.outputs.bun-version }}-
+      - name: Install JDK 17 toolchain and JDK 21 build runtime
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          architecture: x64
+          java-version: |
+            17
+            21
+      - name: Restore Gradle dependencies and build cache
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          cache-provider: basic
+          # Default-branch native builds warm the cache that future tags can read.
+          # PRs, other branches, and tags never write to the shared Gradle cache.
+          cache-read-only: ${{ github.event_name == 'pull_request' || github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+          dependency-graph: disabled
+      - name: Install exact Android tools and bound build memory
+        timeout-minutes: 20
+        run: bash scripts/ci-android-setup.sh
+      - name: Install locked app dependencies
+        run: |
+          test -s bun.lock
+          bun ci
+          bun scripts/generate-third-party-notices.mjs --check
+      - name: Build the standalone APK with enabled lint
+        run: bun run apk 2>&1 | tee "$RUNNER_TEMP/perch-android-build.log"
+      - name: Verify and package the prototype assets
+        run: |
+          python3 scripts/ci-android-package.py package \
+            --output-dir "$RUNNER_TEMP/perch-release" \
+            --tag "$PERCH_RELEASE_TAG"
+      - name: Upload APK, checksums, and metadata
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-prototype-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/perch-release/perch-prototype-arm64.apk
+            ${{ runner.temp }}/perch-release/SHA256SUMS
+            ${{ runner.temp }}/perch-release/release-metadata.json
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
+      - name: Save Bun package cache from the default branch
+        if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && steps.bun-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ steps.bun-cache.outputs.cache-primary-key }}
+      - name: Keep build log and available lint reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/perch-android-build.log
+            android/app/build/reports/lint-results-*.html
+            android/app/build/reports/lint-results-*.xml
+          if-no-files-found: ignore
+          retention-days: 7
+
+  publish:
+    name: Publish trusted prototype prerelease
+    needs: [checks, android]
+    if: >-
+      needs.checks.outputs.publish == 'true' &&
+      (github.ref_type == 'tag' ||
+       (github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))) &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    concurrency:
+      group: perch-prototype-publication
+      cancel-in-progress: false
+    env:
+      PERCH_RELEASE_TAG: ${{ needs.checks.outputs.release_tag }}
+    steps:
+      - name: Check out the trusted source and current branch history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Node without package caching
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Recheck release version and default-branch ancestry
+        run: node scripts/ci-android-version.mjs --github
+      - name: Download assets from this exact workflow run
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: android-prototype-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/perch-release
+      - name: Verify assets and publish a new prototype prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/release-prototype.mjs \
+            --directory "$RUNNER_TEMP/perch-release" \
+            --notes "$RUNNER_TEMP/perch-release-notes.md"

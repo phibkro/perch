@@ -1,0 +1,8 @@
+# Copy to .dev.vars for local development only. Supply real random tokens and
+# model credentials; do not commit .dev.vars or publish it in an app bundle.
+PERCH_TOKENS='{"personal":"replace-me"}'
+PERCH_ALLOWED_ORIGINS='[]'
+# Example local OpenAI-completions server. Model ID must exist on your host.
+PERCH_MODELS='[{"provider":"homelab","id":"YOUR_MODEL_ID","name":"Homelab model","baseUrl":"http://127.0.0.1:8080/v1","keyless":true,"contextWindow":32768,"maxTokens":4096}]'
+# For an authenticated service, omit keyless and set apiKey in the descriptor.
+# Never put provider keys or workspace tokens in wrangler vars or mobile code.

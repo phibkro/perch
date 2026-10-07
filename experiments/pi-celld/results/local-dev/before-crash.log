@@ -1,0 +1,35 @@
+celld dev
+  Project  /workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-kVa1ff/project/wrangler.json
+  State    /workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-kVa1ff/project/.celld/dev
+  Watch    disabled
+  ● opening the local storage
+  ● building the application
+ celld 0.6.1
+───────────────────────────────────────────────
+Total Upload: 902.71 KiB / gzip: 171.60 KiB
+Your Worker has access to the following bindings:
+Binding                                Resource
+env.PROBE_SESSIONS (ProbeSession)      Durable Object (SQLite)
+env.PROBE_CONTROL_URL (Text)           Environment Variable
+Bundled perch-pi-celld-probe (0.06 sec)
+2026-10-07T05:38:48.990056Z  INFO celld: host runtime initialized event="host_runtime" worker_count=8
+2026-10-07T05:38:49.055700Z  INFO celld::pool: isolate started isolate=1 slot=0 total=1
+2026-10-07T05:38:49.067360Z  INFO celld::actor::effects: node lease attempt started event="node_lease_attempt_started" node=dev-bfc9083b5aff attempt="acquire" prior_authority_headroom_ms=0
+2026-10-07T05:38:49.067761Z  INFO celld::actor::effects: node lease attempt completed event="node_lease_attempt" node=dev-bfc9083b5aff attempt="acquire" outcome="applied" elapsed_ms=1 prior_authority_headroom_ms=0 candidate_headroom_ms=9999
+2026-10-07T05:38:49.071054Z  INFO celld: the fleet is settled; serving readiness is open event="ready_gate_open" readiness_reason="fleet_settled" waited_ms=4
+2026-10-07T05:38:49.071682Z  INFO celld::ownership_store: refreshed the shared fleet sample event="fleet_sample_refreshed" leases=1 elapsed_ms=2
+2026-10-07T05:38:49.071723Z  INFO celld: every live lease reads a paged epoch, or one does not event="paged_gate" open=true format=2 live_leases=1 view_age_ms=0
+celld listening on 127.0.0.1:36413 (ownership=dev)
+celld internal listening on 127.0.0.1:36151 (advertise=127.0.0.1:36151)
+  ready  http://127.0.0.1:36413
+2026-10-07T05:38:49.138580Z  INFO celld::pool: isolate started isolate=2 slot=0 total=1
+2026-10-07T05:38:49.139704Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 fresh=true total_us=37673
+2026-10-07T05:38:49.139782Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 isolate_startup_us=37673
+2026-10-07T05:38:49.248918Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 fresh=true total_us=1127
+2026-10-07T05:38:49.248968Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 isolate_startup_us=1127
+2026-10-07T05:38:49.295417Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 fresh=true total_us=766
+2026-10-07T05:38:49.295481Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 isolate_startup_us=766
+2026-10-07T05:38:49.340271Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 fresh=true total_us=898
+2026-10-07T05:38:49.340317Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 isolate_startup_us=898
+2026-10-07T05:38:49.514164Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 fresh=true total_us=974
+2026-10-07T05:38:49.514235Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=1 isolate_startup_us=974

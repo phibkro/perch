@@ -1,0 +1,4275 @@
+{
+  "runId": "2d497245-ba0f-4380-aa2f-5a45fc0570f6",
+  "startedAt": "2026-10-07T05:41:15.437Z",
+  "mode": "celld-dev-local-object-store",
+  "syntheticModel": true,
+  "realR2": false,
+  "freshCacheWhilePending": true,
+  "checks": [
+    {
+      "name": "Official PiHarness loads and completes a tool-backed session",
+      "status": "passed",
+      "receipt": {
+        "operationId": "completed-1",
+        "session": "1",
+        "accepted": true
+      }
+    },
+    {
+      "name": "All interrupted sessions reached recorded crash boundaries with queued input",
+      "status": "passed"
+    },
+    {
+      "name": "Alarms resume and complete accepted work without a client session request",
+      "status": "passed"
+    },
+    {
+      "name": "safe: recovery, submission deduplication, queue and session identity",
+      "status": "passed"
+    },
+    {
+      "name": "unsafe: recovery, submission deduplication, queue and session identity",
+      "status": "passed"
+    },
+    {
+      "name": "model: recovery, submission deduplication, queue and session identity",
+      "status": "passed"
+    },
+    {
+      "name": "lost-ack: recovery, submission deduplication, queue and session identity",
+      "status": "passed"
+    },
+    {
+      "name": "Completed transcript and tool result survive reopening without another effect",
+      "status": "passed"
+    },
+    {
+      "name": "Every transcript restores after removing celld local caches and retaining only its dev object store",
+      "status": "passed"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-07T05:41:15.736Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.751Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.770Z",
+      "phase": "before-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+      "sessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.779Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351705768,
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.784Z",
+      "phase": "before-crash",
+      "path": "/tool-attempt",
+      "type": "tool-attempt",
+      "artifactId": "79cd6958-8aee-4086-b8ca-7c0248441e5a",
+      "filename": "artifact.md",
+      "mimeType": "text/markdown",
+      "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.801Z",
+      "phase": "before-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+      "sessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.806Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Produce an artifact",
+      "text": "The artifact is ready.",
+      "attempt": 2,
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.809Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "completed-1",
+      "result": {
+        "operationId": "completed-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.810Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351705808,
+      "sessionName": "completed",
+      "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.835Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "safe",
+      "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.840Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "safe",
+      "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.851Z",
+      "phase": "before-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+      "sessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+      "sessionName": "safe",
+      "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.852Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351705846,
+      "sessionName": "safe",
+      "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.867Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351705864,
+      "sessionName": "safe",
+      "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.867Z",
+      "phase": "before-crash",
+      "path": "/tool-attempt",
+      "type": "tool-attempt",
+      "artifactId": "ac29dbb7-0dde-4b68-9b46-a97db52b1ed6",
+      "filename": "artifact.md",
+      "mimeType": "text/markdown",
+      "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+      "sessionName": "safe",
+      "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.980Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "unsafe",
+      "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.984Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "unsafe",
+      "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.992Z",
+      "phase": "before-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+      "sessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+      "sessionName": "unsafe",
+      "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.996Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351705990,
+      "sessionName": "unsafe",
+      "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:15.998Z",
+      "phase": "before-crash",
+      "path": "/tool-attempt",
+      "type": "tool-attempt",
+      "artifactId": "efbea0f9-7bee-44fc-8a88-f910339d45d0",
+      "filename": "artifact.md",
+      "mimeType": "text/markdown",
+      "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+      "sessionName": "unsafe",
+      "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.006Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351706003,
+      "sessionName": "unsafe",
+      "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.017Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "model",
+      "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:16.021Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "model",
+      "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:16.030Z",
+      "phase": "before-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+      "sessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+      "sessionName": "model",
+      "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:16.030Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351706026,
+      "sessionName": "model",
+      "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:16.056Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351706036,
+      "sessionName": "model",
+      "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:16.178Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "lost-ack",
+      "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.181Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "lost-ack",
+      "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.189Z",
+      "phase": "before-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+      "sessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+      "sessionName": "lost-ack",
+      "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.192Z",
+      "phase": "before-crash",
+      "type": "dropped-receipt",
+      "sessionName": "lost-ack",
+      "receipt": {
+        "operationId": "lost-ack-1",
+        "session": "1",
+        "accepted": true
+      }
+    },
+    {
+      "at": "2026-10-07T05:41:16.193Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351706188,
+      "sessionName": "lost-ack",
+      "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.196Z",
+      "phase": "before-crash",
+      "path": "/tool-attempt",
+      "type": "tool-attempt",
+      "artifactId": "4c32cdd2-1440-4e3d-afc3-b999c47a82ac",
+      "filename": "artifact.md",
+      "mimeType": "text/markdown",
+      "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+      "sessionName": "lost-ack",
+      "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:16.204Z",
+      "phase": "before-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351706201,
+      "sessionName": "lost-ack",
+      "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.884Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "alarm",
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.901Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "alarm",
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.905Z",
+      "phase": "after-crash",
+      "path": "/tool-attempt",
+      "type": "tool-attempt",
+      "artifactId": "ac29dbb7-0dde-4b68-9b46-a97db52b1ed6",
+      "filename": "artifact.md",
+      "mimeType": "text/markdown",
+      "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.925Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351735901,
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.927Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+      "sessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.939Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Produce an artifact",
+      "text": "The artifact is ready.",
+      "attempt": 2,
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.941Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Queued follow-up",
+      "text": "Queued follow-up",
+      "providerSessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+      "sessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.941Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "safe-1",
+      "result": {
+        "operationId": "safe-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.947Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Queued follow-up",
+      "text": "The queued follow-up was answered.",
+      "attempt": 3,
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.950Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "safe-2",
+      "result": {
+        "operationId": "safe-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:45.956Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351735948,
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.014Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "alarm",
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.025Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+      "sessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.025Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "alarm",
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.042Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "unsafe-1",
+      "result": {
+        "operationId": "unsafe-1",
+        "session": "1",
+        "status": "done",
+        "text": "The earlier tool may have run; no automatic second effect was attempted."
+      },
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.042Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "alarm",
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.042Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Produce an artifact",
+      "text": "The earlier tool may have run; no automatic second effect was attempted.",
+      "attempt": 2,
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.047Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736030,
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.047Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Queued follow-up",
+      "text": "Queued follow-up",
+      "providerSessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+      "sessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.049Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "alarm",
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.050Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+      "sessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.056Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Produce an artifact",
+      "text": "The interrupted model request was restarted.",
+      "attempt": 2,
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.058Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Queued follow-up",
+      "text": "The queued follow-up was answered.",
+      "attempt": 3,
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.059Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736050,
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.059Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "model-1",
+      "result": {
+        "operationId": "model-1",
+        "session": "1",
+        "status": "done",
+        "text": "The interrupted model request was restarted."
+      },
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.060Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "unsafe-2",
+      "result": {
+        "operationId": "unsafe-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.061Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Queued follow-up",
+      "text": "Queued follow-up",
+      "providerSessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+      "sessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.064Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Queued follow-up",
+      "text": "The queued follow-up was answered.",
+      "attempt": 3,
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.065Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "model-2",
+      "result": {
+        "operationId": "model-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.068Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736065,
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.072Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736070,
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.207Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "alarm",
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.212Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "alarm",
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.212Z",
+      "phase": "after-crash",
+      "path": "/tool-attempt",
+      "type": "tool-attempt",
+      "artifactId": "4c32cdd2-1440-4e3d-afc3-b999c47a82ac",
+      "filename": "artifact.md",
+      "mimeType": "text/markdown",
+      "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.224Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736212,
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.226Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Produce an artifact",
+      "text": "Produce an artifact",
+      "providerSessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+      "sessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.232Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Produce an artifact",
+      "text": "The artifact is ready.",
+      "attempt": 2,
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.233Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "lost-ack-1",
+      "result": {
+        "operationId": "lost-ack-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.234Z",
+      "phase": "after-crash",
+      "path": "/model-attempt",
+      "type": "model-attempt",
+      "input": "Queued follow-up",
+      "text": "Queued follow-up",
+      "providerSessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+      "sessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.239Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "model-completed",
+      "input": "Queued follow-up",
+      "text": "The queued follow-up was answered.",
+      "attempt": 3,
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.239Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "lost-ack-2",
+      "result": {
+        "operationId": "lost-ack-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.243Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736239,
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.333Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736330,
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.343Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736340,
+      "sessionName": "safe",
+      "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.357Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736355,
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.364Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736362,
+      "sessionName": "unsafe",
+      "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.381Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736378,
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.387Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736385,
+      "sessionName": "model",
+      "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.403Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736401,
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.411Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "alarm",
+      "alarmAt": 1791351736409,
+      "sessionName": "lost-ack",
+      "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.438Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "completed",
+      "bootId": "b21cd854-dc15-450f-a921-f59a0ee02376",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.440Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "completed",
+      "bootId": "b21cd854-dc15-450f-a921-f59a0ee02376",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.440Z",
+      "phase": "after-crash",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "completed-1",
+      "result": {
+        "operationId": "completed-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "completed",
+      "bootId": "b21cd854-dc15-450f-a921-f59a0ee02376",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.830Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "completed",
+      "bootId": "266cfbb5-59ba-48f3-aa31-bd8e608989c8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.834Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "completed",
+      "bootId": "266cfbb5-59ba-48f3-aa31-bd8e608989c8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.835Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "completed-1",
+      "result": {
+        "operationId": "completed-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "completed",
+      "bootId": "266cfbb5-59ba-48f3-aa31-bd8e608989c8",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.880Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "safe",
+      "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.887Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "safe",
+      "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.887Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "safe-1",
+      "result": {
+        "operationId": "safe-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "safe",
+      "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.887Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "safe-2",
+      "result": {
+        "operationId": "safe-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "safe",
+      "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.895Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "unsafe",
+      "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.896Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "unsafe",
+      "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.897Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "unsafe-1",
+      "result": {
+        "operationId": "unsafe-1",
+        "session": "1",
+        "status": "done",
+        "text": "The earlier tool may have run; no automatic second effect was attempted."
+      },
+      "sessionName": "unsafe",
+      "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.897Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "unsafe-2",
+      "result": {
+        "operationId": "unsafe-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "unsafe",
+      "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+      "scenario": "unsafe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.918Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "model",
+      "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.920Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "model",
+      "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.920Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "model-2",
+      "result": {
+        "operationId": "model-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "model",
+      "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.920Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "model-1",
+      "result": {
+        "operationId": "model-1",
+        "session": "1",
+        "status": "done",
+        "text": "The interrupted model request was restarted."
+      },
+      "sessionName": "model",
+      "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+      "scenario": "model"
+    },
+    {
+      "at": "2026-10-07T05:41:46.931Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "boot",
+      "activatedBy": "fetch",
+      "sessionName": "lost-ack",
+      "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.933Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "lost-ack-2",
+      "result": {
+        "operationId": "lost-ack-2",
+        "session": "1",
+        "status": "done",
+        "text": "The queued follow-up was answered."
+      },
+      "sessionName": "lost-ack",
+      "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.933Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "ready",
+      "activatedBy": "fetch",
+      "sessionName": "lost-ack",
+      "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+      "scenario": "safe"
+    },
+    {
+      "at": "2026-10-07T05:41:46.934Z",
+      "phase": "fresh-cache",
+      "path": "/events",
+      "type": "settled",
+      "operationId": "lost-ack-1",
+      "result": {
+        "operationId": "lost-ack-1",
+        "session": "1",
+        "status": "done",
+        "text": "The artifact is ready."
+      },
+      "sessionName": "lost-ack",
+      "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+      "scenario": "safe"
+    }
+  ],
+  "processKills": [
+    {
+      "reason": "Crash while four sessions have unfinished accepted work",
+      "supervisor": 51,
+      "code": null,
+      "signal": "SIGKILL",
+      "nodeDeathMechanism": "Linux PR_SET_PDEATHSIG=SIGKILL",
+      "nodeListenerClosed": true
+    },
+    {
+      "reason": "Drop all local cell caches after completed work",
+      "supervisor": 108,
+      "code": null,
+      "signal": "SIGKILL",
+      "nodeDeathMechanism": "Linux PR_SET_PDEATHSIG=SIGKILL",
+      "nodeListenerClosed": true
+    },
+    {
+      "reason": "Experiment cleanup",
+      "supervisor": 183,
+      "code": null,
+      "signal": "SIGKILL",
+      "nodeDeathMechanism": "Linux PR_SET_PDEATHSIG=SIGKILL",
+      "nodeListenerClosed": true
+    }
+  ],
+  "celldVersion": "celld 0.6.1",
+  "evidenceDirectory": "/workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-TcyuVY",
+  "port": 34225,
+  "completedBefore": {
+    "sessionName": "completed",
+    "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+    "scenario": "safe",
+    "snapshot": {
+      "type": "snapshot",
+      "entries": [
+        {
+          "model": [
+            {
+              "role": "user",
+              "content": "Produce an artifact",
+              "timestamp": 1791351675751
+            }
+          ],
+          "kind": "pi.user",
+          "id": 7,
+          "conversationId": 1
+        },
+        {
+          "model": [
+            {
+              "role": "system",
+              "content": "",
+              "toolsAdded": [
+                {
+                  "name": "produce_artifact",
+                  "description": "Ask the loopback test observer to write a synthetic artifact",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {}
+                  }
+                }
+              ],
+              "timestamp": 1791351675758
+            }
+          ],
+          "kind": "pi.system",
+          "id": 10,
+          "conversationId": 1,
+          "byTaskId": 9
+        },
+        {
+          "model": [
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "toolCall",
+                  "id": "artifact-call",
+                  "name": "produce_artifact",
+                  "arguments": {}
+                }
+              ],
+              "api": "perch-celld-synthetic",
+              "provider": "perch-celld-synthetic",
+              "model": "synthetic",
+              "usage": {
+                "input": 1,
+                "output": 1,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 2,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "toolUse",
+              "timestamp": 1791351675771
+            }
+          ],
+          "kind": "pi.assistant",
+          "id": 11,
+          "conversationId": 1,
+          "byTaskId": 9
+        },
+        {
+          "model": [
+            {
+              "role": "toolResult",
+              "toolCallId": "artifact-call",
+              "toolName": "produce_artifact",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Artifact write completed."
+                }
+              ],
+              "details": {
+                "artifactId": "79cd6958-8aee-4086-b8ca-7c0248441e5a",
+                "filename": "artifact.md",
+                "mimeType": "text/markdown"
+              },
+              "isError": false,
+              "timestamp": 1791351675786
+            }
+          ],
+          "data": {
+            "diagnostics": []
+          },
+          "kind": "pi.tool-result",
+          "id": 13,
+          "conversationId": 1,
+          "byTaskId": 12
+        },
+        {
+          "model": [
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "The artifact is ready."
+                }
+              ],
+              "api": "perch-celld-synthetic",
+              "provider": "perch-celld-synthetic",
+              "model": "synthetic",
+              "usage": {
+                "input": 1,
+                "output": 1,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 2,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "stop",
+              "timestamp": 1791351675802
+            }
+          ],
+          "kind": "pi.assistant",
+          "id": 15,
+          "conversationId": 1,
+          "byTaskId": 14
+        }
+      ],
+      "tools": [],
+      "compactions": [],
+      "inbox": [],
+      "agent": {
+        "model": {
+          "provider": "perch-celld-synthetic",
+          "modelId": "synthetic"
+        }
+      },
+      "usage": {
+        "models": {
+          "perch-celld-synthetic/synthetic": {
+            "input": 2,
+            "output": 2,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 4,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0,
+              "total": 0
+            }
+          }
+        },
+        "tools": {}
+      }
+    },
+    "pending": [],
+    "alarmAt": null
+  },
+  "pendingCacheRemoval": {
+    "removed": "/workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-TcyuVY/project/.celld/dev/runtime",
+    "retainedObjectStore": "/workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-TcyuVY/project/.celld/dev/objects.sqlite3",
+    "retainedStoreSidecars": true
+  },
+  "freshCache": {
+    "removed": "/workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-TcyuVY/project/.celld/dev/runtime",
+    "retainedObjectStore": "/workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-TcyuVY/project/.celld/dev/objects.sqlite3"
+  },
+  "status": "passed",
+  "finishedAt": "2026-10-07T05:41:47.040Z",
+  "sessions": {
+    "completed": {
+      "scenario": "safe",
+      "hold": false,
+      "events": [
+        {
+          "at": "2026-10-07T05:41:15.736Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.751Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.779Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351705768,
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.806Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Produce an artifact",
+          "text": "The artifact is ready.",
+          "attempt": 2,
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.809Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "completed-1",
+          "result": {
+            "operationId": "completed-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.810Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351705808,
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.438Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "completed",
+          "bootId": "b21cd854-dc15-450f-a921-f59a0ee02376",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.440Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "completed",
+          "bootId": "b21cd854-dc15-450f-a921-f59a0ee02376",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.440Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "completed-1",
+          "result": {
+            "operationId": "completed-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "completed",
+          "bootId": "b21cd854-dc15-450f-a921-f59a0ee02376",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.830Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "completed",
+          "bootId": "266cfbb5-59ba-48f3-aa31-bd8e608989c8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.834Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "completed",
+          "bootId": "266cfbb5-59ba-48f3-aa31-bd8e608989c8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.835Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "completed-1",
+          "result": {
+            "operationId": "completed-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "completed",
+          "bootId": "266cfbb5-59ba-48f3-aa31-bd8e608989c8",
+          "scenario": "safe"
+        }
+      ],
+      "models": [
+        {
+          "at": "2026-10-07T05:41:15.770Z",
+          "phase": "before-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+          "sessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.801Z",
+          "phase": "before-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+          "sessionId": "01a114e1-5b59-73f8-bb50-5d6dd86525f6",
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        }
+      ],
+      "tools": [
+        {
+          "at": "2026-10-07T05:41:15.784Z",
+          "phase": "before-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "79cd6958-8aee-4086-b8ca-7c0248441e5a",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "completed",
+          "bootId": "62948477-795f-441a-840b-09bae5a870d2",
+          "scenario": "safe"
+        }
+      ],
+      "effects": []
+    },
+    "safe": {
+      "scenario": "safe",
+      "hold": true,
+      "events": [
+        {
+          "at": "2026-10-07T05:41:15.835Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "safe",
+          "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.840Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "safe",
+          "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.852Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351705846,
+          "sessionName": "safe",
+          "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.867Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351705864,
+          "sessionName": "safe",
+          "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.884Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "alarm",
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.901Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "alarm",
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.925Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351735901,
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.939Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Produce an artifact",
+          "text": "The artifact is ready.",
+          "attempt": 2,
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.941Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "safe-1",
+          "result": {
+            "operationId": "safe-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.947Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Queued follow-up",
+          "text": "The queued follow-up was answered.",
+          "attempt": 3,
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.950Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "safe-2",
+          "result": {
+            "operationId": "safe-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.956Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351735948,
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.333Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736330,
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.343Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736340,
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.880Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "safe",
+          "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.887Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "safe",
+          "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.887Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "safe-1",
+          "result": {
+            "operationId": "safe-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "safe",
+          "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.887Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "safe-2",
+          "result": {
+            "operationId": "safe-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "safe",
+          "bootId": "f16172a1-63a0-4723-ab36-14467c4ec3e1",
+          "scenario": "safe"
+        }
+      ],
+      "models": [
+        {
+          "at": "2026-10-07T05:41:15.851Z",
+          "phase": "before-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+          "sessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+          "sessionName": "safe",
+          "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.927Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+          "sessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.941Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Queued follow-up",
+          "text": "Queued follow-up",
+          "providerSessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+          "sessionId": "01a114e1-5bbc-73f8-bb50-5d6ff372342e",
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        }
+      ],
+      "tools": [
+        {
+          "at": "2026-10-07T05:41:15.867Z",
+          "phase": "before-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "ac29dbb7-0dde-4b68-9b46-a97db52b1ed6",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "safe",
+          "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:45.905Z",
+          "phase": "after-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "ac29dbb7-0dde-4b68-9b46-a97db52b1ed6",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "safe",
+          "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+          "scenario": "safe"
+        }
+      ],
+      "effects": [],
+      "receipt": {
+        "operationId": "safe-1",
+        "session": "1",
+        "accepted": true
+      },
+      "queued": {
+        "operationId": "safe-2",
+        "session": "1",
+        "accepted": true
+      },
+      "before": {
+        "sessionName": "safe",
+        "bootId": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+        "scenario": "safe",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351675840
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351675843
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "artifact-call",
+                      "name": "produce_artifact",
+                      "arguments": {}
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "toolUse",
+                  "timestamp": 1791351675855
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 12,
+              "conversationId": 1,
+              "byTaskId": 9
+            }
+          ],
+          "run": {
+            "inputs": [
+              8
+            ]
+          },
+          "tools": [
+            {
+              "callId": "artifact-call",
+              "name": "produce_artifact",
+              "taskId": 13,
+              "status": "running"
+            }
+          ],
+          "compactions": [],
+          "inbox": [
+            {
+              "id": 11,
+              "mode": "followUp"
+            }
+          ],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 1,
+                "output": 1,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 2,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [
+          {
+            "operationId": "safe-1",
+            "session": "1",
+            "status": "running"
+          },
+          {
+            "operationId": "safe-2",
+            "session": "1",
+            "status": "queued"
+          }
+        ],
+        "alarmAt": 1791351705864
+      },
+      "bootBefore": "da8e9eab-7068-45b4-a396-f1c66bf88ee8",
+      "after": {
+        "sessionName": "safe",
+        "bootId": "d976958c-57b1-46d2-bfa6-4143d6a666f2",
+        "scenario": "safe",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351675840
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351675843
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "artifact-call",
+                      "name": "produce_artifact",
+                      "arguments": {}
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "toolUse",
+                  "timestamp": 1791351675855
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 12,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "toolResult",
+                  "toolCallId": "artifact-call",
+                  "toolName": "produce_artifact",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Artifact write completed."
+                    }
+                  ],
+                  "details": {
+                    "artifactId": "ac29dbb7-0dde-4b68-9b46-a97db52b1ed6",
+                    "filename": "artifact.md",
+                    "mimeType": "text/markdown"
+                  },
+                  "isError": false,
+                  "timestamp": 1791351705909
+                }
+              ],
+              "data": {
+                "diagnostics": []
+              },
+              "kind": "pi.tool-result",
+              "id": 14,
+              "conversationId": 1,
+              "byTaskId": 13
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The artifact is ready."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351705928
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 16,
+              "conversationId": 1,
+              "byTaskId": 15
+            },
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Queued follow-up",
+                  "timestamp": 1791351705930
+                }
+              ],
+              "kind": "pi.user",
+              "id": 17,
+              "conversationId": 1,
+              "byTaskId": 15
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The queued follow-up was answered."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351705941
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 19,
+              "conversationId": 1,
+              "byTaskId": 18
+            }
+          ],
+          "tools": [],
+          "compactions": [],
+          "inbox": [],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 3,
+                "output": 3,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 6,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [],
+        "alarmAt": null
+      },
+      "artifactSha256": "76b78e12b372e5771127c75d7aac76e83b9afe990399fa4633625323c3b23349"
+    },
+    "unsafe": {
+      "scenario": "unsafe",
+      "hold": true,
+      "events": [
+        {
+          "at": "2026-10-07T05:41:15.980Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.984Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:15.996Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351705990,
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:16.006Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351706003,
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.014Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "alarm",
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.025Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "alarm",
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.042Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "unsafe-1",
+          "result": {
+            "operationId": "unsafe-1",
+            "session": "1",
+            "status": "done",
+            "text": "The earlier tool may have run; no automatic second effect was attempted."
+          },
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.042Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Produce an artifact",
+          "text": "The earlier tool may have run; no automatic second effect was attempted.",
+          "attempt": 2,
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.047Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736030,
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.058Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Queued follow-up",
+          "text": "The queued follow-up was answered.",
+          "attempt": 3,
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.060Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "unsafe-2",
+          "result": {
+            "operationId": "unsafe-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.072Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736070,
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.357Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736355,
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.364Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736362,
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.895Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "unsafe",
+          "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.896Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "unsafe",
+          "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.897Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "unsafe-1",
+          "result": {
+            "operationId": "unsafe-1",
+            "session": "1",
+            "status": "done",
+            "text": "The earlier tool may have run; no automatic second effect was attempted."
+          },
+          "sessionName": "unsafe",
+          "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.897Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "unsafe-2",
+          "result": {
+            "operationId": "unsafe-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "unsafe",
+          "bootId": "c708bcb8-54a6-45b7-bd1d-8c5c2f9a396b",
+          "scenario": "unsafe"
+        }
+      ],
+      "models": [
+        {
+          "at": "2026-10-07T05:41:15.992Z",
+          "phase": "before-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+          "sessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.025Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+          "sessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.047Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Queued follow-up",
+          "text": "Queued follow-up",
+          "providerSessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+          "sessionId": "01a114e1-5c4d-73f8-bb50-5d71ad7b5df2",
+          "sessionName": "unsafe",
+          "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+          "scenario": "unsafe"
+        }
+      ],
+      "tools": [
+        {
+          "at": "2026-10-07T05:41:15.998Z",
+          "phase": "before-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "efbea0f9-7bee-44fc-8a88-f910339d45d0",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        }
+      ],
+      "effects": [
+        {
+          "at": "2026-10-07T05:41:15.998Z",
+          "phase": "before-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "efbea0f9-7bee-44fc-8a88-f910339d45d0",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "unsafe",
+          "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+          "scenario": "unsafe"
+        }
+      ],
+      "receipt": {
+        "operationId": "unsafe-1",
+        "session": "1",
+        "accepted": true
+      },
+      "queued": {
+        "operationId": "unsafe-2",
+        "session": "1",
+        "accepted": true
+      },
+      "before": {
+        "sessionName": "unsafe",
+        "bootId": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+        "scenario": "unsafe",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351675984
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351675987
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "artifact-call",
+                      "name": "produce_artifact",
+                      "arguments": {}
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "toolUse",
+                  "timestamp": 1791351675993
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 11,
+              "conversationId": 1,
+              "byTaskId": 9
+            }
+          ],
+          "run": {
+            "inputs": [
+              8
+            ]
+          },
+          "tools": [
+            {
+              "callId": "artifact-call",
+              "name": "produce_artifact",
+              "taskId": 12,
+              "status": "running"
+            }
+          ],
+          "compactions": [],
+          "inbox": [
+            {
+              "id": 13,
+              "mode": "followUp"
+            }
+          ],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 1,
+                "output": 1,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 2,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [
+          {
+            "operationId": "unsafe-1",
+            "session": "1",
+            "status": "running"
+          },
+          {
+            "operationId": "unsafe-2",
+            "session": "1",
+            "status": "queued"
+          }
+        ],
+        "alarmAt": 1791351706003
+      },
+      "bootBefore": "b1eed6ff-a7db-446f-bc56-d711dd3f168f",
+      "after": {
+        "sessionName": "unsafe",
+        "bootId": "9e504f7a-cd7b-4878-b1ab-c0dc16dd52ed",
+        "scenario": "unsafe",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351675984
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351675987
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "artifact-call",
+                      "name": "produce_artifact",
+                      "arguments": {}
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "toolUse",
+                  "timestamp": 1791351675993
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 11,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "toolResult",
+                  "toolCallId": "artifact-call",
+                  "toolName": "produce_artifact",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "<harness>\n[error] Tool produce_artifact was interrupted and may have partially run\n</harness>"
+                    }
+                  ],
+                  "isError": true,
+                  "timestamp": 1791351706014
+                }
+              ],
+              "data": {
+                "diagnostics": [
+                  {
+                    "severity": "error",
+                    "code": "interrupted",
+                    "message": "Tool produce_artifact was interrupted and may have partially run"
+                  }
+                ]
+              },
+              "kind": "pi.tool-result",
+              "id": 14,
+              "conversationId": 1,
+              "byTaskId": 12
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The earlier tool may have run; no automatic second effect was attempted."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351706025
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 16,
+              "conversationId": 1,
+              "byTaskId": 15
+            },
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Queued follow-up",
+                  "timestamp": 1791351706025
+                }
+              ],
+              "kind": "pi.user",
+              "id": 17,
+              "conversationId": 1,
+              "byTaskId": 15
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The queued follow-up was answered."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351706047
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 19,
+              "conversationId": 1,
+              "byTaskId": 18
+            }
+          ],
+          "tools": [],
+          "compactions": [],
+          "inbox": [],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 3,
+                "output": 3,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 6,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [],
+        "alarmAt": null
+      }
+    },
+    "model": {
+      "scenario": "model",
+      "hold": true,
+      "events": [
+        {
+          "at": "2026-10-07T05:41:16.017Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "model",
+          "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:16.021Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "model",
+          "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:16.030Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351706026,
+          "sessionName": "model",
+          "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:16.056Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351706036,
+          "sessionName": "model",
+          "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.042Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "alarm",
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.049Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "alarm",
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.056Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Produce an artifact",
+          "text": "The interrupted model request was restarted.",
+          "attempt": 2,
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.059Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736050,
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.059Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "model-1",
+          "result": {
+            "operationId": "model-1",
+            "session": "1",
+            "status": "done",
+            "text": "The interrupted model request was restarted."
+          },
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.064Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Queued follow-up",
+          "text": "The queued follow-up was answered.",
+          "attempt": 3,
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.065Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "model-2",
+          "result": {
+            "operationId": "model-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.068Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736065,
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.381Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736378,
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.387Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736385,
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.918Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "model",
+          "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.920Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "model",
+          "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.920Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "model-2",
+          "result": {
+            "operationId": "model-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "model",
+          "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.920Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "model-1",
+          "result": {
+            "operationId": "model-1",
+            "session": "1",
+            "status": "done",
+            "text": "The interrupted model request was restarted."
+          },
+          "sessionName": "model",
+          "bootId": "c6d0235f-b2ca-4c39-aef1-ec8f6d4acb2f",
+          "scenario": "model"
+        }
+      ],
+      "models": [
+        {
+          "at": "2026-10-07T05:41:16.030Z",
+          "phase": "before-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+          "sessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+          "sessionName": "model",
+          "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.050Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+          "sessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        },
+        {
+          "at": "2026-10-07T05:41:46.061Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Queued follow-up",
+          "text": "Queued follow-up",
+          "providerSessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+          "sessionId": "01a114e1-5c72-73f8-bb50-5d73334025df",
+          "sessionName": "model",
+          "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+          "scenario": "model"
+        }
+      ],
+      "tools": [],
+      "effects": [],
+      "receipt": {
+        "operationId": "model-1",
+        "session": "1",
+        "accepted": true
+      },
+      "queued": {
+        "operationId": "model-2",
+        "session": "1",
+        "accepted": true
+      },
+      "before": {
+        "sessionName": "model",
+        "bootId": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+        "scenario": "model",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351676021
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351676023
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            }
+          ],
+          "run": {
+            "inputs": [
+              8
+            ]
+          },
+          "generation": {
+            "attempt": 1,
+            "message": {
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "A partial answer committed before the crash."
+                }
+              ],
+              "api": "perch-celld-synthetic",
+              "provider": "perch-celld-synthetic",
+              "model": "synthetic",
+              "usage": {
+                "input": 1,
+                "output": 1,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 2,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              },
+              "stopReason": "stop",
+              "timestamp": 1791351676030
+            }
+          },
+          "tools": [],
+          "compactions": [],
+          "inbox": [
+            {
+              "id": 11,
+              "mode": "followUp"
+            }
+          ],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {},
+            "tools": {}
+          }
+        },
+        "pending": [
+          {
+            "operationId": "model-1",
+            "session": "1",
+            "status": "running"
+          },
+          {
+            "operationId": "model-2",
+            "session": "1",
+            "status": "queued"
+          }
+        ],
+        "alarmAt": 1791351706036
+      },
+      "bootBefore": "059ae2cb-8e20-4e8a-9e1e-16dabc16ae19",
+      "after": {
+        "sessionName": "model",
+        "bootId": "75ec206a-70ac-44ee-b8d4-9270ebdeb366",
+        "scenario": "model",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351676021
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351676023
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "A partial answer committed before the crash."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "aborted",
+                  "timestamp": 1791351676030
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 12,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The interrupted model request was restarted."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351706051
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 13,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Queued follow-up",
+                  "timestamp": 1791351706052
+                }
+              ],
+              "kind": "pi.user",
+              "id": 14,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The queued follow-up was answered."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351706061
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 16,
+              "conversationId": 1,
+              "byTaskId": 15
+            }
+          ],
+          "tools": [],
+          "compactions": [],
+          "inbox": [],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 3,
+                "output": 3,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 6,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [],
+        "alarmAt": null
+      }
+    },
+    "lost-ack": {
+      "scenario": "safe",
+      "hold": true,
+      "events": [
+        {
+          "at": "2026-10-07T05:41:16.178Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "lost-ack",
+          "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:16.181Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "lost-ack",
+          "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:16.193Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351706188,
+          "sessionName": "lost-ack",
+          "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:16.204Z",
+          "phase": "before-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351706201,
+          "sessionName": "lost-ack",
+          "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.207Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "alarm",
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.212Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "alarm",
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.224Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736212,
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.232Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Produce an artifact",
+          "text": "The artifact is ready.",
+          "attempt": 2,
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.233Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "lost-ack-1",
+          "result": {
+            "operationId": "lost-ack-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.239Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "model-completed",
+          "input": "Queued follow-up",
+          "text": "The queued follow-up was answered.",
+          "attempt": 3,
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.239Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "lost-ack-2",
+          "result": {
+            "operationId": "lost-ack-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.243Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736239,
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.403Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736401,
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.411Z",
+          "phase": "after-crash",
+          "path": "/events",
+          "type": "alarm",
+          "alarmAt": 1791351736409,
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.931Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "boot",
+          "activatedBy": "fetch",
+          "sessionName": "lost-ack",
+          "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.933Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "lost-ack-2",
+          "result": {
+            "operationId": "lost-ack-2",
+            "session": "1",
+            "status": "done",
+            "text": "The queued follow-up was answered."
+          },
+          "sessionName": "lost-ack",
+          "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.933Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "ready",
+          "activatedBy": "fetch",
+          "sessionName": "lost-ack",
+          "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.934Z",
+          "phase": "fresh-cache",
+          "path": "/events",
+          "type": "settled",
+          "operationId": "lost-ack-1",
+          "result": {
+            "operationId": "lost-ack-1",
+            "session": "1",
+            "status": "done",
+            "text": "The artifact is ready."
+          },
+          "sessionName": "lost-ack",
+          "bootId": "42c350d9-5068-40b6-9681-ea9bd58ced38",
+          "scenario": "safe"
+        }
+      ],
+      "models": [
+        {
+          "at": "2026-10-07T05:41:16.189Z",
+          "phase": "before-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+          "sessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+          "sessionName": "lost-ack",
+          "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.226Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Produce an artifact",
+          "text": "Produce an artifact",
+          "providerSessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+          "sessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.234Z",
+          "phase": "after-crash",
+          "path": "/model-attempt",
+          "type": "model-attempt",
+          "input": "Queued follow-up",
+          "text": "Queued follow-up",
+          "providerSessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+          "sessionId": "01a114e1-5d12-73f8-bb50-5d74ecccb090",
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        }
+      ],
+      "tools": [
+        {
+          "at": "2026-10-07T05:41:16.196Z",
+          "phase": "before-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "4c32cdd2-1440-4e3d-afc3-b999c47a82ac",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "lost-ack",
+          "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+          "scenario": "safe"
+        },
+        {
+          "at": "2026-10-07T05:41:46.212Z",
+          "phase": "after-crash",
+          "path": "/tool-attempt",
+          "type": "tool-attempt",
+          "artifactId": "4c32cdd2-1440-4e3d-afc3-b999c47a82ac",
+          "filename": "artifact.md",
+          "mimeType": "text/markdown",
+          "content": "# Durable artifact\n\nThis exact file survives the interrupted operation.\n",
+          "sessionName": "lost-ack",
+          "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+          "scenario": "safe"
+        }
+      ],
+      "effects": [],
+      "receipt": {
+        "operationId": "lost-ack-1",
+        "session": "1",
+        "accepted": true
+      },
+      "queued": {
+        "operationId": "lost-ack-2",
+        "session": "1",
+        "accepted": true
+      },
+      "before": {
+        "sessionName": "lost-ack",
+        "bootId": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+        "scenario": "safe",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351676181
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351676184
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "artifact-call",
+                      "name": "produce_artifact",
+                      "arguments": {}
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "toolUse",
+                  "timestamp": 1791351676189
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 11,
+              "conversationId": 1,
+              "byTaskId": 9
+            }
+          ],
+          "run": {
+            "inputs": [
+              8
+            ]
+          },
+          "tools": [
+            {
+              "callId": "artifact-call",
+              "name": "produce_artifact",
+              "taskId": 12,
+              "status": "running"
+            }
+          ],
+          "compactions": [],
+          "inbox": [
+            {
+              "id": 13,
+              "mode": "followUp"
+            }
+          ],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 1,
+                "output": 1,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 2,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [
+          {
+            "operationId": "lost-ack-1",
+            "session": "1",
+            "status": "running"
+          },
+          {
+            "operationId": "lost-ack-2",
+            "session": "1",
+            "status": "queued"
+          }
+        ],
+        "alarmAt": 1791351706201
+      },
+      "bootBefore": "887bea7b-f3c5-4b13-8d63-023edbebae4f",
+      "after": {
+        "sessionName": "lost-ack",
+        "bootId": "90571e54-dac8-4b0e-96bf-d63a6626c66c",
+        "scenario": "safe",
+        "snapshot": {
+          "type": "snapshot",
+          "entries": [
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Produce an artifact",
+                  "timestamp": 1791351676181
+                }
+              ],
+              "kind": "pi.user",
+              "id": 7,
+              "conversationId": 1
+            },
+            {
+              "model": [
+                {
+                  "role": "system",
+                  "content": "",
+                  "toolsAdded": [
+                    {
+                      "name": "produce_artifact",
+                      "description": "Ask the loopback test observer to write a synthetic artifact",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  ],
+                  "timestamp": 1791351676184
+                }
+              ],
+              "kind": "pi.system",
+              "id": 10,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "toolCall",
+                      "id": "artifact-call",
+                      "name": "produce_artifact",
+                      "arguments": {}
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "toolUse",
+                  "timestamp": 1791351676189
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 11,
+              "conversationId": 1,
+              "byTaskId": 9
+            },
+            {
+              "model": [
+                {
+                  "role": "toolResult",
+                  "toolCallId": "artifact-call",
+                  "toolName": "produce_artifact",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Artifact write completed."
+                    }
+                  ],
+                  "details": {
+                    "artifactId": "4c32cdd2-1440-4e3d-afc3-b999c47a82ac",
+                    "filename": "artifact.md",
+                    "mimeType": "text/markdown"
+                  },
+                  "isError": false,
+                  "timestamp": 1791351706218
+                }
+              ],
+              "data": {
+                "diagnostics": []
+              },
+              "kind": "pi.tool-result",
+              "id": 14,
+              "conversationId": 1,
+              "byTaskId": 12
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The artifact is ready."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351706226
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 16,
+              "conversationId": 1,
+              "byTaskId": 15
+            },
+            {
+              "model": [
+                {
+                  "role": "user",
+                  "content": "Queued follow-up",
+                  "timestamp": 1791351706226
+                }
+              ],
+              "kind": "pi.user",
+              "id": 17,
+              "conversationId": 1,
+              "byTaskId": 15
+            },
+            {
+              "model": [
+                {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "The queued follow-up was answered."
+                    }
+                  ],
+                  "api": "perch-celld-synthetic",
+                  "provider": "perch-celld-synthetic",
+                  "model": "synthetic",
+                  "usage": {
+                    "input": 1,
+                    "output": 1,
+                    "cacheRead": 0,
+                    "cacheWrite": 0,
+                    "totalTokens": 2,
+                    "cost": {
+                      "input": 0,
+                      "output": 0,
+                      "cacheRead": 0,
+                      "cacheWrite": 0,
+                      "total": 0
+                    }
+                  },
+                  "stopReason": "stop",
+                  "timestamp": 1791351706234
+                }
+              ],
+              "kind": "pi.assistant",
+              "id": 19,
+              "conversationId": 1,
+              "byTaskId": 18
+            }
+          ],
+          "tools": [],
+          "compactions": [],
+          "inbox": [],
+          "agent": {
+            "model": {
+              "provider": "perch-celld-synthetic",
+              "modelId": "synthetic"
+            }
+          },
+          "usage": {
+            "models": {
+              "perch-celld-synthetic/synthetic": {
+                "input": 3,
+                "output": 3,
+                "cacheRead": 0,
+                "cacheWrite": 0,
+                "totalTokens": 6,
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0,
+                  "total": 0
+                }
+              }
+            },
+            "tools": {}
+          }
+        },
+        "pending": [],
+        "alarmAt": null
+      },
+      "artifactSha256": "76b78e12b372e5771127c75d7aac76e83b9afe990399fa4633625323c3b23349"
+    }
+  }
+}

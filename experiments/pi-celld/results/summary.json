@@ -1,0 +1,166 @@
+{
+  "checkedAt": "2026-10-07",
+  "runs": [
+    {
+      "file": "local-dev.json",
+      "status": "passed",
+      "startedAt": "2026-10-07T05:38:48.851Z",
+      "finishedAt": "2026-10-07T05:39:50.924Z",
+      "celldVersion": "celld 0.6.1",
+      "checks": 9,
+      "freshCacheWhilePending": false,
+      "sessions": {
+        "completed": {
+          "toolAttempts": 1,
+          "modelAttempts": 2,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "fetch"
+          ],
+          "completedOperations": [
+            "completed-1"
+          ],
+          "artifactSha256": null
+        },
+        "safe": {
+          "toolAttempts": 2,
+          "modelAttempts": 3,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "safe-1",
+            "safe-2"
+          ],
+          "artifactSha256": "76b78e12b372e5771127c75d7aac76e83b9afe990399fa4633625323c3b23349"
+        },
+        "unsafe": {
+          "toolAttempts": 1,
+          "modelAttempts": 3,
+          "externalEffects": 1,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "unsafe-1",
+            "unsafe-2"
+          ],
+          "artifactSha256": null
+        },
+        "model": {
+          "toolAttempts": 0,
+          "modelAttempts": 3,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "model-1",
+            "model-2"
+          ],
+          "artifactSha256": null
+        },
+        "lost-ack": {
+          "toolAttempts": 2,
+          "modelAttempts": 3,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "lost-ack-1",
+            "lost-ack-2"
+          ],
+          "artifactSha256": "76b78e12b372e5771127c75d7aac76e83b9afe990399fa4633625323c3b23349"
+        }
+      }
+    },
+    {
+      "file": "fresh-cache-pending.json",
+      "status": "passed",
+      "startedAt": "2026-10-07T05:41:15.437Z",
+      "finishedAt": "2026-10-07T05:41:47.040Z",
+      "celldVersion": "celld 0.6.1",
+      "checks": 9,
+      "freshCacheWhilePending": true,
+      "sessions": {
+        "completed": {
+          "toolAttempts": 1,
+          "modelAttempts": 2,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "fetch"
+          ],
+          "completedOperations": [
+            "completed-1"
+          ],
+          "artifactSha256": null
+        },
+        "safe": {
+          "toolAttempts": 2,
+          "modelAttempts": 3,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "safe-1",
+            "safe-2"
+          ],
+          "artifactSha256": "76b78e12b372e5771127c75d7aac76e83b9afe990399fa4633625323c3b23349"
+        },
+        "unsafe": {
+          "toolAttempts": 1,
+          "modelAttempts": 3,
+          "externalEffects": 1,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "unsafe-1",
+            "unsafe-2"
+          ],
+          "artifactSha256": null
+        },
+        "model": {
+          "toolAttempts": 0,
+          "modelAttempts": 3,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "model-1",
+            "model-2"
+          ],
+          "artifactSha256": null
+        },
+        "lost-ack": {
+          "toolAttempts": 2,
+          "modelAttempts": 3,
+          "externalEffects": 0,
+          "afterCrashActivation": [
+            "alarm"
+          ],
+          "completedOperations": [
+            "lost-ack-1",
+            "lost-ack-2"
+          ],
+          "artifactSha256": "76b78e12b372e5771127c75d7aac76e83b9afe990399fa4633625323c3b23349"
+        }
+      }
+    }
+  ],
+  "realR2": false,
+  "multiNodeFleet": false,
+  "physicalPowerLoss": false,
+  "realProvider": false,
+  "sourceHashes": {
+    "src/worker.mjs": "15d9cbdc67c117d3cd3e802a8bbfc4a652b2eb39f84f9a32b6577a57302f244c",
+    "src/fixture.mjs": "abc7a5356cbe54efc8f46f8b43f5b98fd2bd28011cad3429e2b1bd6eb0c9d4ea",
+    "test/recovery.mjs": "a7ab84586d95d8fcb45f6df9285495d47b10071c1862193e29fdf7a0cf8eb9a8",
+    "package-lock.json": "e6952b8dc8d8e95064e38b7d13cd679141de7c24f55fa8be6050d038dc01ac1a",
+    "dist/worker.mjs": "9830fcb372d583ec9a313a9494c2ee53928ff470495c2577eaa1fae43ff9c21c"
+  }
+}

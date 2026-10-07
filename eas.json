@@ -1,0 +1,31 @@
+{
+  "cli": {
+    "version": ">= 24.11.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "development": {
+      "bun": "1.4.2",
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug",
+        "withoutCredentials": true
+      }
+    },
+    "preview": {
+      "bun": "1.4.2",
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleRelease -PreactNativeArchitectures=arm64-v8a",
+        "withoutCredentials": true
+      }
+    },
+    "device-test": {
+      "extends": "preview",
+      "android": {
+        "gradleCommand": ":app:assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64"
+      }
+    }
+  }
+}

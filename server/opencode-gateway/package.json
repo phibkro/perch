@@ -1,0 +1,15 @@
+{
+  "name": "perch-opencode-gateway",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Authenticated display-only provider catalog gateway for the Perch mobile client",
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "node --test gateway.test.mjs"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "packageManager": "bun@1.4.2"
+}

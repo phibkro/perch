@@ -1,0 +1,56 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@theme {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius-3xl: 28px;
+}
+
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #f5f5f0;
+      --color-foreground: #25332d;
+      --color-card: #ffffff;
+      --color-card-foreground: #25332d;
+      --color-popover: #ffffff;
+      --color-popover-foreground: #25332d;
+      --color-primary: #345e49;
+      --color-primary-foreground: #ffffff;
+      --color-secondary: #eceee7;
+      --color-secondary-foreground: #25332d;
+      --color-muted: #eceee7;
+      --color-muted-foreground: #67746c;
+      --color-accent: #e6eedf;
+      --color-accent-foreground: #345e49;
+      --color-destructive: #a33f3b;
+      --color-border: #e0e5dc;
+      --color-input: #e0e5dc;
+      --color-ring: #345e49;
+    }
+    @variant dark {
+      --color-background: #17221d;
+      --color-foreground: #e5eddf;
+      --color-card: #202e26;
+      --color-card-foreground: #e5eddf;
+      --color-popover: #202e26;
+      --color-popover-foreground: #e5eddf;
+      --color-primary: #c2dba4;
+      --color-primary-foreground: #21371f;
+      --color-secondary: #2a3930;
+      --color-secondary-foreground: #e5eddf;
+      --color-muted: #2a3930;
+      --color-muted-foreground: #a6b4a6;
+      --color-accent: #324c34;
+      --color-accent-foreground: #c2dba4;
+      --color-destructive: #ffb4a8;
+      --color-border: #36493b;
+      --color-input: #36493b;
+      --color-ring: #c2dba4;
+    }
+  }
+}

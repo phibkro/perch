@@ -1,0 +1,19 @@
+appId: dev.perch.assistant
+name: Perch simulated tool and decision loop
+---
+- launchApp:
+    clearState: true
+- assertVisible: "What would you like to do?"
+- tapOn: "Open sidebar"
+- tapOn: "Open Mobile companion"
+- tapOn: "Try a demo turn"
+- extendedWaitUntil:
+    visible: "Answer agent question"
+    timeout: 30000
+- tapOn: "Answer agent question"
+- tapOn: "Explain only"
+- tapOn: "Send answer"
+- extendedWaitUntil:
+    visible: "Try a demo turn"
+    timeout: 30000
+- assertVisible: "Message to assistant"

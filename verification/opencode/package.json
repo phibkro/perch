@@ -1,0 +1,17 @@
+{
+  "name": "perch-opencode-verification",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local-only OpenCode adapter and real server verification",
+  "scripts": {
+    "test": "node verify.cjs",
+    "test:integration": "node integration.cjs"
+  },
+  "dependencies": {
+    "opencode-ai": "1.18.35"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "packageManager": "bun@1.4.2"
+}

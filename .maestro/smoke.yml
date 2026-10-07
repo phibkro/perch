@@ -1,0 +1,38 @@
+appId: dev.perch.assistant
+name: Perch standalone demo and artifact smoke test
+---
+# Clears Perch app data. Run against the standalone prototype, not a live session.
+- launchApp:
+    clearState: true
+- assertVisible: "What would you like to do?"
+- assertVisible: "Message to assistant"
+- tapOn: "Open sidebar"
+- assertVisible: "New chat"
+- tapOn: "Open Mobile companion"
+- tapOn: "Message to assistant"
+- inputText: "A draft kept on my phone"
+- hideKeyboard
+- assertVisible: "A draft kept on my phone"
+- tapOn: "Open sidebar"
+- scrollUntilVisible:
+    element: "Open A workspace you can preview"
+    direction: DOWN
+- tapOn: "Open A workspace you can preview"
+- tapOn: "Open artifacts"
+- assertVisible:
+    id: "artifact-workspace"
+- tapOn: "Open artifact mobile-workspace.md"
+- assertVisible:
+    id: "artifact-markdown"
+- tapOn: "Copy artifact"
+- assertVisible: "Complete file copied."
+- tapOn: "Artifact source"
+- assertVisible: "Toggle line wrapping"
+- tapOn: "Back to artifacts"
+- tapOn: "Open artifact workspace-card.html"
+- assertVisible:
+    id: "artifact-html"
+- assertVisible: "HTML interaction"
+- tapOn: "Artifact source"
+- assertVisible: "Toggle line wrapping"
+- takeScreenshot: artifacts/device/artifact-source

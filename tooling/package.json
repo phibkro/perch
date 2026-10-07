@@ -1,0 +1,24 @@
+{
+  "name": "perch-development-tools",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Project-local native development and device verification tools for Perch",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "doctor": "node doctor.mjs",
+    "maestro:install": "node install-maestro.mjs",
+    "agent-device": "node run.mjs agent-device",
+    "maestro": "node run.mjs maestro",
+    "eas": "node run.mjs eas",
+    "mcp:maestro": "node run.mjs maestro mcp",
+    "mcp:device": "node run.mjs agent-device mcp"
+  },
+  "dependencies": {
+    "agent-device": "0.21.22",
+    "eas-cli": "24.11.0",
+    "extract-zip": "2.0.1"
+  },
+  "packageManager": "bun@1.4.2"
+}

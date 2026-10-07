@@ -1,0 +1,1095 @@
+{
+  "startedAt": "2026-10-07T07:49:30.948Z",
+  "syntheticModel": true,
+  "productionEntry": false,
+  "runtime": "celld dev with local backing object store",
+  "realR2": false,
+  "checks": [
+    {
+      "name": "Authenticated health, origin checks, and independent workspace catalogs",
+      "status": "passed"
+    },
+    {
+      "name": "Actual SessionStore creates a chat and reconciles a lost receipt without duplicate submission",
+      "status": "passed"
+    },
+    {
+      "name": "Markdown, HTML, and code bytes pass the real phone loader; another workspace cannot read them",
+      "status": "passed"
+    },
+    {
+      "name": "A fresh phone store reopens host history, model selection, and immutable artifacts",
+      "status": "passed"
+    },
+    {
+      "name": "Phone Stop aborts the actual Pi run and records an interrupted response",
+      "status": "passed"
+    },
+    {
+      "name": "Artifact upload and model stream reach real interruption boundaries with queued input",
+      "status": "passed"
+    },
+    {
+      "name": "Fresh runtime restores both unfinished chats and completes queued work through alarms alone",
+      "status": "passed"
+    },
+    {
+      "name": "Interrupted upload converges on the original artifact identity; recovered prompts stay deduplicated",
+      "status": "passed"
+    },
+    {
+      "name": "Fresh phone reopens completed and recovered artifacts after cache deletion; credential switch revokes old references",
+      "status": "passed"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-07T07:49:31.605Z",
+      "phase": "before-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.640Z",
+      "phase": "before-crash",
+      "type": "lost-receipt",
+      "receipt": {
+        "operationId": "op_76df8fdd-d27a-4bdf-a018-7a146d272176",
+        "session": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "accepted": true
+      }
+    },
+    {
+      "at": "2026-10-07T07:49:31.651Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Create three artifacts",
+      "providerSessionId": "01a11556-c93e-707a-9a4b-4917fbea38ae",
+      "modelId": "fixture",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.671Z",
+      "phase": "before-crash",
+      "path": "/stored",
+      "manifest": {
+        "id": "8ccd5726-248a-419b-a92b-5ab27719e3cc",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable plan",
+        "filename": "durable-plan.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+        "bytes": 85,
+        "createdAt": 1791359371663,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:13"
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.680Z",
+      "phase": "before-crash",
+      "path": "/committed",
+      "manifest": {
+        "id": "8ccd5726-248a-419b-a92b-5ab27719e3cc",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable plan",
+        "filename": "durable-plan.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+        "bytes": 85,
+        "createdAt": 1791359371663,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:13"
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.700Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Create three artifacts",
+      "providerSessionId": "01a11556-c93e-707a-9a4b-4917fbea38ae",
+      "modelId": "fixture",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.715Z",
+      "phase": "before-crash",
+      "path": "/stored",
+      "manifest": {
+        "id": "da0bb841-4732-4b53-8cb2-fbf15795e8fe",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable card",
+        "filename": "durable-card.html",
+        "mimeType": "text/html",
+        "language": "html",
+        "sha256": "6d5983cbccf649a8fb74a327ba49661db65e058becc267211579983692a04041",
+        "bytes": 97,
+        "createdAt": 1791359371704,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:17"
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.719Z",
+      "phase": "before-crash",
+      "path": "/committed",
+      "manifest": {
+        "id": "da0bb841-4732-4b53-8cb2-fbf15795e8fe",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable card",
+        "filename": "durable-card.html",
+        "mimeType": "text/html",
+        "language": "html",
+        "sha256": "6d5983cbccf649a8fb74a327ba49661db65e058becc267211579983692a04041",
+        "bytes": 97,
+        "createdAt": 1791359371704,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:17"
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.727Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Create three artifacts",
+      "providerSessionId": "01a11556-c93e-707a-9a4b-4917fbea38ae",
+      "modelId": "fixture",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.747Z",
+      "phase": "before-crash",
+      "path": "/stored",
+      "manifest": {
+        "id": "b9d5f723-ad17-48c1-8739-054f3bc1e979",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable helper",
+        "filename": "durable-helper.ts",
+        "mimeType": "text/plain",
+        "language": "typescript",
+        "sha256": "6e996f65b042c4fbfa63dd14e4be4879dc6b644d21c5f911e5b6505c82f55383",
+        "bytes": 86,
+        "createdAt": 1791359371731,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:21"
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.751Z",
+      "phase": "before-crash",
+      "path": "/committed",
+      "manifest": {
+        "id": "b9d5f723-ad17-48c1-8739-054f3bc1e979",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable helper",
+        "filename": "durable-helper.ts",
+        "mimeType": "text/plain",
+        "language": "typescript",
+        "sha256": "6e996f65b042c4fbfa63dd14e4be4879dc6b644d21c5f911e5b6505c82f55383",
+        "bytes": 86,
+        "createdAt": 1791359371731,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:21"
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.762Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Create three artifacts",
+      "providerSessionId": "01a11556-c93e-707a-9a4b-4917fbea38ae",
+      "modelId": "fixture",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:31.769Z",
+      "phase": "before-crash",
+      "path": "/event",
+      "type": "model-finished",
+      "input": "Create three artifacts",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "079c07bf-24f1-4f57-af82-ccb50b93411a",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:32.834Z",
+      "phase": "before-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "18b23405-dc82-4f8f-b727-309ae8bc6de4",
+      "title": "New chat",
+      "bootId": "9a64253b-9955-4422-8f41-caffc98b316b",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:32.870Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Stop this response",
+      "providerSessionId": "01a11556-ce1b-707a-9a4b-4919822070fe",
+      "modelId": "fixture",
+      "sessionId": "18b23405-dc82-4f8f-b727-309ae8bc6de4",
+      "title": "New chat",
+      "bootId": "9a64253b-9955-4422-8f41-caffc98b316b",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:33.786Z",
+      "phase": "before-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "5e7ebef8-a446-4cb5-b456-bd359cc34d86",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:33.796Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Recover upload",
+      "providerSessionId": "01a11556-d1d2-707a-9a4b-491bf0aeb6f1",
+      "modelId": "fixture",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "5e7ebef8-a446-4cb5-b456-bd359cc34d86",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:33.811Z",
+      "phase": "before-crash",
+      "path": "/stored",
+      "manifest": {
+        "id": "79771113-33b1-44c9-b5a3-b462b3580e06",
+        "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+        "title": "Durable plan",
+        "filename": "durable-plan.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+        "bytes": 85,
+        "createdAt": 1791359373801,
+        "sourceId": "tool:bddb648e-ba35-4d54-8638-f652cf5d6eea:tool-task:13"
+      },
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "5e7ebef8-a446-4cb5-b456-bd359cc34d86",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:33.824Z",
+      "phase": "before-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "6ca6048c-578c-4c61-b333-49db919a37b5",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:49:33.837Z",
+      "phase": "before-crash",
+      "path": "/model",
+      "input": "Recover partial",
+      "providerSessionId": "01a11556-d1fa-707a-9a4b-491d84107df4",
+      "modelId": "fixture",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "6ca6048c-578c-4c61-b333-49db919a37b5",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:50:34.500Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.501Z",
+      "phase": "after-crash",
+      "path": "/model",
+      "input": "Recover partial",
+      "providerSessionId": "01a11556-d1fa-707a-9a4b-491d84107df4",
+      "modelId": "fixture",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.511Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.543Z",
+      "phase": "after-crash",
+      "path": "/stored",
+      "manifest": {
+        "id": "79771113-33b1-44c9-b5a3-b462b3580e06",
+        "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+        "title": "Durable plan",
+        "filename": "durable-plan.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+        "bytes": 85,
+        "createdAt": 1791359373801,
+        "sourceId": "tool:bddb648e-ba35-4d54-8638-f652cf5d6eea:tool-task:13"
+      },
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.558Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "settled",
+      "operationId": "partial-one",
+      "result": {
+        "operationId": "partial-one",
+        "session": "1",
+        "status": "done",
+        "text": "The interrupted response resumed."
+      },
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.558Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "model-finished",
+      "input": "Recover partial",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.558Z",
+      "phase": "after-crash",
+      "path": "/model",
+      "input": "Queued follow-up",
+      "providerSessionId": "01a11556-d1fa-707a-9a4b-491d84107df4",
+      "modelId": "fixture",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.559Z",
+      "phase": "after-crash",
+      "path": "/committed",
+      "manifest": {
+        "id": "79771113-33b1-44c9-b5a3-b462b3580e06",
+        "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+        "title": "Durable plan",
+        "filename": "durable-plan.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+        "bytes": 85,
+        "createdAt": 1791359373801,
+        "sourceId": "tool:bddb648e-ba35-4d54-8638-f652cf5d6eea:tool-task:13"
+      },
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.571Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "model-finished",
+      "input": "Queued follow-up",
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.584Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "settled",
+      "operationId": "partial-two",
+      "result": {
+        "operationId": "partial-two",
+        "session": "1",
+        "status": "done",
+        "text": "Answered: Queued follow-up"
+      },
+      "sessionId": "3e612727-1c57-4089-b95c-8191edd23682",
+      "title": "recover-partial",
+      "bootId": "61cfe1c2-d5bb-4816-816b-dda9d493eed2",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.600Z",
+      "phase": "after-crash",
+      "path": "/model",
+      "input": "Recover upload",
+      "providerSessionId": "01a11556-d1d2-707a-9a4b-491bf0aeb6f1",
+      "modelId": "fixture",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.611Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "model-finished",
+      "input": "Recover upload",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.614Z",
+      "phase": "after-crash",
+      "path": "/model",
+      "input": "Queued follow-up",
+      "providerSessionId": "01a11556-d1d2-707a-9a4b-491bf0aeb6f1",
+      "modelId": "fixture",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.622Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "settled",
+      "operationId": "upload-one",
+      "result": {
+        "operationId": "upload-one",
+        "session": "1",
+        "status": "done",
+        "text": "Your saved artifacts are ready."
+      },
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.623Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "model-finished",
+      "input": "Queued follow-up",
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.629Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "settled",
+      "operationId": "upload-two",
+      "result": {
+        "operationId": "upload-two",
+        "session": "1",
+        "status": "done",
+        "text": "Answered: Queued follow-up"
+      },
+      "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+      "title": "recover-upload",
+      "bootId": "2a48d512-e59d-4199-90cc-d069d4f50196",
+      "activatedBy": "alarm"
+    },
+    {
+      "at": "2026-10-07T07:50:34.884Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "boot",
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "6f2933f2-13a1-444f-8fc9-62ee035af9eb",
+      "activatedBy": "fetch"
+    },
+    {
+      "at": "2026-10-07T07:50:34.889Z",
+      "phase": "after-crash",
+      "path": "/event",
+      "type": "settled",
+      "operationId": "op_76df8fdd-d27a-4bdf-a018-7a146d272176",
+      "result": {
+        "operationId": "op_76df8fdd-d27a-4bdf-a018-7a146d272176",
+        "session": "1",
+        "status": "done",
+        "text": "Your saved artifacts are ready."
+      },
+      "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+      "title": "New chat",
+      "bootId": "6f2933f2-13a1-444f-8fc9-62ee035af9eb",
+      "activatedBy": "fetch"
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/perch/health"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions",
+      "body": {
+        "operationId": "op_b91e0ae2-d7c6-4e4e-b9e0-62f43de0e815"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/submit",
+      "body": {
+        "operationId": "op_76df8fdd-d27a-4bdf-a018-7a146d272176",
+        "text": "Create three artifacts"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/operations/op_76df8fdd-d27a-4bdf-a018-7a146d272176"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/8ccd5726-248a-419b-a92b-5ab27719e3cc"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/da0bb841-4732-4b53-8cb2-fbf15795e8fe"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/b9d5f723-ad17-48c1-8739-054f3bc1e979"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/model",
+      "body": {
+        "provider": "perch-fixture",
+        "modelId": "fixture-two"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/health"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/8ccd5726-248a-419b-a92b-5ab27719e3cc"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions",
+      "body": {
+        "operationId": "op_f3d19483-e291-44e0-804d-c57af1e639f5"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/18b23405-dc82-4f8f-b727-309ae8bc6de4"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions/18b23405-dc82-4f8f-b727-309ae8bc6de4/submit",
+      "body": {
+        "operationId": "op_6d24df57-f1e6-4226-9952-df2fe6da593f",
+        "text": "Stop this response"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/18b23405-dc82-4f8f-b727-309ae8bc6de4"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/18b23405-dc82-4f8f-b727-309ae8bc6de4"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions/18b23405-dc82-4f8f-b727-309ae8bc6de4/abort",
+      "body": {}
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/18b23405-dc82-4f8f-b727-309ae8bc6de4"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/health"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3e612727-1c57-4089-b95c-8191edd23682"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/8ccd5726-248a-419b-a92b-5ab27719e3cc"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/da0bb841-4732-4b53-8cb2-fbf15795e8fe"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/3687ac5c-5253-46bf-9bdd-709f5ac2c343/artifacts/b9d5f723-ad17-48c1-8739-054f3bc1e979"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/bddb648e-ba35-4d54-8638-f652cf5d6eea"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/bddb648e-ba35-4d54-8638-f652cf5d6eea/artifacts/79771113-33b1-44c9-b5a3-b462b3580e06"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/health"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    }
+  ],
+  "processKills": [
+    {
+      "reason": "Crash before artifact manifest commit and during model streaming",
+      "code": null,
+      "signal": "SIGKILL",
+      "listenerClosed": true,
+      "mechanism": "celld dev supervisor SIGKILL; Linux child PR_SET_PDEATHSIG=SIGKILL"
+    },
+    {
+      "reason": "Integration cleanup",
+      "code": null,
+      "signal": "SIGKILL",
+      "listenerClosed": true,
+      "mechanism": "celld dev supervisor SIGKILL; Linux child PR_SET_PDEATHSIG=SIGKILL"
+    }
+  ],
+  "celldVersion": "celld 0.6.1",
+  "evidenceDirectory": "/workspace/scratch/b1d2212c27ee/perch/verification/durable-runtime/.runs/run-czBdMv",
+  "port": 38049,
+  "runtimeReadiness": [
+    {
+      "phase": "before-crash",
+      "at": "2026-10-07T07:49:31.378Z",
+      "health": {
+        "ok": true
+      },
+      "cgroupCurrentBytes": 5466734592,
+      "cgroupLimitBytes": 8589934592
+    },
+    {
+      "phase": "after-crash",
+      "at": "2026-10-07T07:49:34.326Z",
+      "health": {
+        "ok": true
+      },
+      "cgroupCurrentBytes": 5502840832,
+      "cgroupLimitBytes": 8589934592
+    }
+  ],
+  "baseline": {
+    "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+    "manifests": [
+      {
+        "id": "8ccd5726-248a-419b-a92b-5ab27719e3cc",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable plan",
+        "filename": "durable-plan.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+        "bytes": 85,
+        "createdAt": 1791359371663,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:13"
+      },
+      {
+        "id": "da0bb841-4732-4b53-8cb2-fbf15795e8fe",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable card",
+        "filename": "durable-card.html",
+        "mimeType": "text/html",
+        "language": "html",
+        "sha256": "6d5983cbccf649a8fb74a327ba49661db65e058becc267211579983692a04041",
+        "bytes": 97,
+        "createdAt": 1791359371704,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:17"
+      },
+      {
+        "id": "b9d5f723-ad17-48c1-8739-054f3bc1e979",
+        "sessionId": "3687ac5c-5253-46bf-9bdd-709f5ac2c343",
+        "title": "Durable helper",
+        "filename": "durable-helper.ts",
+        "mimeType": "text/plain",
+        "language": "typescript",
+        "sha256": "6e996f65b042c4fbfa63dd14e4be4879dc6b644d21c5f911e5b6505c82f55383",
+        "bytes": 86,
+        "createdAt": 1791359371731,
+        "sourceId": "tool:3687ac5c-5253-46bf-9bdd-709f5ac2c343:tool-task:21"
+      }
+    ]
+  },
+  "cacheRemoval": {
+    "removed": "/workspace/scratch/b1d2212c27ee/perch/verification/durable-runtime/.runs/run-czBdMv/project/.celld/dev/runtime",
+    "retained": "/workspace/scratch/b1d2212c27ee/perch/verification/durable-runtime/.runs/run-czBdMv/project/.celld/dev/objects.sqlite3",
+    "retainedSidecars": true
+  },
+  "recovered": {
+    "upload": {
+      "protocol": 1,
+      "operations": [
+        {
+          "operationId": "upload-one",
+          "status": "done"
+        },
+        {
+          "operationId": "upload-two",
+          "status": "done"
+        }
+      ],
+      "state": {
+        "harness": {
+          "id": "pi-durable",
+          "name": "Pi Durable",
+          "transport": "durable-http",
+          "version": "1.0.4"
+        },
+        "model": {
+          "id": "fixture",
+          "name": "Synthetic integration model",
+          "provider": "perch-fixture"
+        },
+        "availableModels": [
+          {
+            "id": "fixture",
+            "name": "Synthetic integration model",
+            "provider": "perch-fixture"
+          },
+          {
+            "id": "fixture-two",
+            "name": "Second synthetic model",
+            "provider": "perch-fixture"
+          }
+        ],
+        "capabilities": {
+          "prompt": true,
+          "interrupt": true,
+          "questions": false,
+          "steer": false,
+          "attachments": false,
+          "modelSelection": true,
+          "sessionSelection": true,
+          "sessionCreation": true
+        },
+        "connection": {
+          "status": "live",
+          "label": "Synthetic durable test backend"
+        },
+        "session": {
+          "id": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+          "title": "recover-upload",
+          "project": "Durable workspace",
+          "status": "idle"
+        },
+        "messages": [
+          {
+            "id": "bddb648e-ba35-4d54-8638-f652cf5d6eea:entry:8:0",
+            "role": "user",
+            "text": "Recover upload",
+            "createdAt": 1791359373787,
+            "streaming": false
+          },
+          {
+            "id": "bddb648e-ba35-4d54-8638-f652cf5d6eea:assistant-task:16:0",
+            "role": "assistant",
+            "text": "Your saved artifacts are ready.",
+            "createdAt": 1791359434600,
+            "streaming": false
+          },
+          {
+            "id": "bddb648e-ba35-4d54-8638-f652cf5d6eea:entry:18:0",
+            "role": "user",
+            "text": "Queued follow-up",
+            "createdAt": 1791359434601,
+            "streaming": false
+          },
+          {
+            "id": "bddb648e-ba35-4d54-8638-f652cf5d6eea:assistant-task:19:0",
+            "role": "assistant",
+            "text": "Answered: Queued follow-up",
+            "createdAt": 1791359434615,
+            "streaming": false
+          }
+        ],
+        "tools": [
+          {
+            "id": "bddb648e-ba35-4d54-8638-f652cf5d6eea:tool-task:13",
+            "name": "write_artifact",
+            "label": "write_artifact",
+            "status": "done",
+            "detail": "Tool completed",
+            "output": "Saved durable-plan.md as artifact 79771113-33b1-44c9-b5a3-b462b3580e06."
+          }
+        ],
+        "pendingQuestion": null,
+        "agents": [],
+        "isWorking": false,
+        "readOnly": false,
+        "storedArtifacts": [
+          {
+            "id": "79771113-33b1-44c9-b5a3-b462b3580e06",
+            "sessionId": "bddb648e-ba35-4d54-8638-f652cf5d6eea",
+            "title": "Durable plan",
+            "filename": "durable-plan.md",
+            "mimeType": "text/markdown",
+            "language": "markdown",
+            "sha256": "46e11579d180ed5c44a17dd0d8ebf7a06a0c8088c2b631f1214f100998ab50f4",
+            "bytes": 85,
+            "createdAt": 1791359373801,
+            "sourceId": "tool:bddb648e-ba35-4d54-8638-f652cf5d6eea:tool-task:13"
+          }
+        ]
+      }
+    },
+    "partial": {
+      "protocol": 1,
+      "operations": [
+        {
+          "operationId": "partial-one",
+          "status": "done"
+        },
+        {
+          "operationId": "partial-two",
+          "status": "done"
+        }
+      ],
+      "state": {
+        "harness": {
+          "id": "pi-durable",
+          "name": "Pi Durable",
+          "transport": "durable-http",
+          "version": "1.0.4"
+        },
+        "model": {
+          "id": "fixture",
+          "name": "Synthetic integration model",
+          "provider": "perch-fixture"
+        },
+        "availableModels": [
+          {
+            "id": "fixture",
+            "name": "Synthetic integration model",
+            "provider": "perch-fixture"
+          },
+          {
+            "id": "fixture-two",
+            "name": "Second synthetic model",
+            "provider": "perch-fixture"
+          }
+        ],
+        "capabilities": {
+          "prompt": true,
+          "interrupt": true,
+          "questions": false,
+          "steer": false,
+          "attachments": false,
+          "modelSelection": true,
+          "sessionSelection": true,
+          "sessionCreation": true
+        },
+        "connection": {
+          "status": "live",
+          "label": "Synthetic durable test backend"
+        },
+        "session": {
+          "id": "3e612727-1c57-4089-b95c-8191edd23682",
+          "title": "recover-partial",
+          "project": "Durable workspace",
+          "status": "idle"
+        },
+        "messages": [
+          {
+            "id": "3e612727-1c57-4089-b95c-8191edd23682:entry:8:0",
+            "role": "user",
+            "text": "Recover partial",
+            "createdAt": 1791359373825,
+            "streaming": false
+          },
+          {
+            "id": "3e612727-1c57-4089-b95c-8191edd23682:assistant-task:10:0",
+            "role": "assistant",
+            "text": "[Response interrupted]\n\nA committed partial response before the restart.",
+            "createdAt": 1791359373838,
+            "streaming": false
+          },
+          {
+            "id": "3e612727-1c57-4089-b95c-8191edd23682:assistant-task:10:1",
+            "role": "assistant",
+            "text": "The interrupted response resumed.",
+            "createdAt": 1791359434511,
+            "streaming": false
+          },
+          {
+            "id": "3e612727-1c57-4089-b95c-8191edd23682:entry:15:0",
+            "role": "user",
+            "text": "Queued follow-up",
+            "createdAt": 1791359434511,
+            "streaming": false
+          },
+          {
+            "id": "3e612727-1c57-4089-b95c-8191edd23682:assistant-task:16:0",
+            "role": "assistant",
+            "text": "Answered: Queued follow-up",
+            "createdAt": 1791359434559,
+            "streaming": false
+          }
+        ],
+        "tools": [],
+        "pendingQuestion": null,
+        "agents": [],
+        "isWorking": false,
+        "readOnly": false,
+        "storedArtifacts": []
+      }
+    }
+  },
+  "status": "passed",
+  "finishedAt": "2026-10-07T07:50:35.284Z"
+}

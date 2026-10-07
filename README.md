@@ -29,28 +29,33 @@ The demo is synthetic, clearly labelled, and works without a server. It does not
 Use a supported Node version; Node 24 is a convenient common choice for the app and development tools.
 
 ```sh
-npm ci
-npm run web
+bun install --frozen-lockfile
+bun run web
 ```
 
 To develop on Android:
 
 ```sh
-npm run tools:install
-npm run tools:doctor
-npm run dev:android
+bun run tools:install
+bun run tools:doctor
+bun run dev:android
 ```
 
 To build a standalone APK or a separate development client:
 
 ```sh
-npm run apk
-npm run apk:development
+bun run apk
+bun run apk:development
 ```
 
 The standalone app keeps the original package ID and prototype signing key so it can update earlier versions. The development app has a separate identity and can be installed alongside it. See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for SDK setup, Expo MCP, agent-device, Maestro, EAS profiles, and output locations.
 
 Development CLIs are pinned separately in `tooling/` so they do not become application dependencies. EAS services and Expo MCP still require your own account connection. Local builds and the demo do not.
+
+Install dependencies with **Bun 1.4.2** and the committed `bun.lock` files.
+Use `bun install --frozen-lockfile`, followed by `bun run dev:android` or
+`bun run apk`. Keep Node 24 installed for the Expo, Android, and agent runtimes.
+The project uses Bun's hoisted dependency layout for React Native compatibility.
 
 ## Build and update through GitHub
 
@@ -92,7 +97,7 @@ This route uses OMP's existing interface inside Tern and does not depend on Tern
 ## Connect Pi to your models
 
 ```sh
-npm ci --prefix server/pi-bridge
+bun install --cwd server/pi-bridge --frozen-lockfile
 ```
 
 Follow [the Pi bridge guide](server/pi-bridge/README.md) to select a working directory, configure a token, and expose the bridge to your phone over WSS. Use **Connect a workspace → pi bridge** in the sidebar to enter its address and token.
@@ -144,25 +149,25 @@ HTML starts with scripts disabled. Its preview uses an opaque-origin inner frame
 ## Verify and explore
 
 ```sh
-npm ci
-npm run typecheck
-npm run verify
-npm run verify:artifacts
-npm test --prefix verification/durable
-npm ci --prefix server/pi-durable
-npm test --prefix server/pi-durable
-npm run build --prefix server/pi-durable
-npm ci --prefix server/pi-bridge
-npm run typecheck --prefix server/pi-bridge
-npm test --prefix server/pi-bridge
-npm test --prefix server/opencode-gateway
-npm ci --prefix verification/opencode
-npm test --prefix verification/opencode
-npm run test:integration --prefix verification/opencode
-npm ci --ignore-scripts --prefix experiments/pi-durable
-npm test --prefix experiments/pi-durable
+bun install --frozen-lockfile
+bun run typecheck
+bun run verify
+bun run verify:artifacts
+bun run --cwd verification/durable test
+bun install --cwd server/pi-durable --frozen-lockfile
+bun run --cwd server/pi-durable test
+bun run --cwd server/pi-durable build
+bun install --cwd server/pi-bridge --frozen-lockfile
+bun run --cwd server/pi-bridge typecheck
+bun run --cwd server/pi-bridge test
+bun run --cwd server/opencode-gateway test
+bun install --cwd verification/opencode --frozen-lockfile
+bun run --cwd verification/opencode test
+bun run --cwd verification/opencode test:integration
+bun install --cwd experiments/pi-durable --frozen-lockfile --ignore-scripts
+bun run --cwd experiments/pi-durable test
 node docs/provider-audit/audit.mjs --verify
-npm run preview:export
+bun run preview:export
 ```
 
 | Path | Responsibility |

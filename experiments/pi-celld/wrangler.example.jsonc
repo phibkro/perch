@@ -1,0 +1,11 @@
+{
+  "name": "perch-pi-celld-probe",
+  "main": "dist/worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "durable_objects": {
+    "bindings": [{ "name": "PROBE_SESSIONS", "class_name": "ProbeSession" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["ProbeSession"] }],
+  "vars": { "PROBE_CONTROL_URL": "http://127.0.0.1:9341" }
+}

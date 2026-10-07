@@ -1,0 +1,22 @@
+# Optional hosted emulator test. Requires an EAS plan with Maestro jobs.
+# The device-test profile includes x86_64 for the hosted Android emulator.
+name: Perch Android smoke test
+on:
+  workflow_dispatch: {}
+defaults:
+  image: sdk-57
+jobs:
+  build:
+    name: Build emulator-compatible standalone APK
+    type: build
+    params:
+      platform: android
+      profile: device-test
+  smoke:
+    name: Test deterministic demo
+    needs: [build]
+    type: maestro
+    params:
+      build_id: ${{ needs.build.outputs.build_id }}
+      flow_path: .maestro/smoke.yml
+      maestro_version: 2.11.0

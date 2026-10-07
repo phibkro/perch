@@ -1,0 +1,50 @@
+celld dev
+  Project  /workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-kVa1ff/project/wrangler.json
+  State    /workspace/scratch/b1d2212c27ee/perch/experiments/pi-celld/.runs/run-kVa1ff/project/.celld/dev
+  Watch    disabled
+  ● opening the local storage
+  ● building the application
+ celld 0.6.1
+───────────────────────────────────────────────
+Total Upload: 902.71 KiB / gzip: 171.60 KiB
+Your Worker has access to the following bindings:
+Binding                                Resource
+env.PROBE_SESSIONS (ProbeSession)      Durable Object (SQLite)
+env.PROBE_CONTROL_URL (Text)           Environment Variable
+Bundled perch-pi-celld-probe (0.08 sec)
+2026-10-07T05:39:50.503906Z  INFO celld: host runtime initialized event="host_runtime" worker_count=8
+2026-10-07T05:39:50.574322Z  INFO celld::pool: isolate started isolate=1 slot=0 total=1
+2026-10-07T05:39:50.583821Z  INFO celld::actor::effects: node lease attempt started event="node_lease_attempt_started" node=dev-bfc9083b5aff attempt="acquire" prior_authority_headroom_ms=0
+2026-10-07T05:39:50.584358Z  INFO celld::actor::effects: node lease attempt completed event="node_lease_attempt" node=dev-bfc9083b5aff attempt="acquire" outcome="applied" elapsed_ms=1 prior_authority_headroom_ms=0 candidate_headroom_ms=9999
+2026-10-07T05:39:50.590160Z  INFO celld::ownership_store: refreshed the shared fleet sample event="fleet_sample_refreshed" leases=1 elapsed_ms=4
+2026-10-07T05:39:50.590224Z  INFO celld: every live lease reads a paged epoch, or one does not event="paged_gate" open=true format=2 live_leases=1 view_age_ms=0
+2026-10-07T05:39:50.590328Z  INFO celld: the fleet is settled; serving readiness is open event="ready_gate_open" readiness_reason="fleet_settled" waited_ms=6
+celld listening on 127.0.0.1:36413 (ownership=dev)
+celld internal listening on 127.0.0.1:40929 (advertise=127.0.0.1:40929)
+  ready  http://127.0.0.1:36413
+2026-10-07T05:39:50.612848Z  INFO celld::ltx_repl: cloned below the paged threshold cell="ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a" from=2 to=3 bytes=11783 min=268435456
+2026-10-07T05:39:50.613780Z  INFO celld::ltx_repl: restored remote replica cell="ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a" from=2 to=3
+2026-10-07T05:39:50.614577Z  INFO celld::ltx_repl: computed restore plan event="restore_plan" cell="ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a" epoch=2 to=3 objects=1 bytes=11783 levels=L0:1 total_us=14000 source_lookup_us=12000 plan_us=2 map_us=0 download_us=487 apply_us=401 paged=false db_open_us=1000
+2026-10-07T05:39:50.651780Z  INFO celld::pool: isolate started isolate=2 slot=0 total=1
+2026-10-07T05:39:50.652713Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 fresh=false total_us=37623
+2026-10-07T05:39:50.652853Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:6d053104a73010bf725946ac5c0f92a3f1d5512945fb1ce3dfe2c04cc0e6121a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 isolate_startup_us=37623
+2026-10-07T05:39:50.686718Z  INFO celld::ltx_repl: cloned below the paged threshold cell="ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8" from=2 to=3 bytes=45813 min=268435456
+2026-10-07T05:39:50.691105Z  INFO celld::ltx_repl: restored remote replica cell="ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8" from=2 to=3
+2026-10-07T05:39:50.691924Z  INFO celld::ltx_repl: computed restore plan event="restore_plan" cell="ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8" epoch=2 to=3 objects=16 bytes=45813 levels=L0:16 total_us=13000 source_lookup_us=8000 plan_us=3 map_us=0 download_us=3429 apply_us=916 paged=false db_open_us=1000
+2026-10-07T05:39:50.693074Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 fresh=false total_us=709
+2026-10-07T05:39:50.693104Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:56f3e5931d3120819ffe70fee8e0982b6de1da04b4d2cf7cc9723ede53b837c8 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 isolate_startup_us=709
+2026-10-07T05:39:50.722504Z  INFO celld::ltx_repl: cloned below the paged threshold cell="ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6" from=2 to=3 bytes=44847 min=268435456
+2026-10-07T05:39:50.744626Z  INFO celld::ltx_repl: restored remote replica cell="ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6" from=2 to=3
+2026-10-07T05:39:50.745837Z  INFO celld::ltx_repl: computed restore plan event="restore_plan" cell="ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6" epoch=2 to=3 objects=15 bytes=44847 levels=L0:15 total_us=30000 source_lookup_us=7000 plan_us=3 map_us=0 download_us=21109 apply_us=967 paged=false db_open_us=1000
+2026-10-07T05:39:50.747327Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 fresh=false total_us=1014
+2026-10-07T05:39:50.747365Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:35e842b240b082ae3d9cfa2717b43ca598ecd77d6d47ea43c7c82aee810c77c6 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 isolate_startup_us=1014
+2026-10-07T05:39:50.773097Z  INFO celld::ltx_repl: cloned below the paged threshold cell="ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a" from=2 to=3 bytes=31087 min=268435456
+2026-10-07T05:39:50.776042Z  INFO celld::ltx_repl: restored remote replica cell="ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a" from=2 to=3
+2026-10-07T05:39:50.777176Z  INFO celld::ltx_repl: computed restore plan event="restore_plan" cell="ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a" epoch=2 to=3 objects=16 bytes=31087 levels=L0:16 total_us=12000 source_lookup_us=8000 plan_us=3 map_us=0 download_us=2180 apply_us=699 paged=false db_open_us=1000
+2026-10-07T05:39:50.778394Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 fresh=false total_us=737
+2026-10-07T05:39:50.778429Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:09ba8f2c3e0c1d6ef529afa759da3bfcb6b268a171b8ebd72b23752c97dc1a5a node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 isolate_startup_us=737
+2026-10-07T05:39:50.802350Z  INFO celld::ltx_repl: cloned below the paged threshold cell="ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61" from=2 to=3 bytes=46366 min=268435456
+2026-10-07T05:39:50.807737Z  INFO celld::ltx_repl: restored remote replica cell="ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61" from=2 to=3
+2026-10-07T05:39:50.808563Z  INFO celld::ltx_repl: computed restore plan event="restore_plan" cell="ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61" epoch=2 to=3 objects=18 bytes=46366 levels=L0:18 total_us=17000 source_lookup_us=11000 plan_us=5 map_us=0 download_us=4426 apply_us=921 paged=false db_open_us=1000
+2026-10-07T05:39:50.810039Z  INFO celld::runtime: cell isolate startup completed event="cell_isolate_startup_timing" outcome="ready" failure_phase="" scope=ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 fresh=false total_us=892
+2026-10-07T05:39:50.810086Z  INFO celld::runtime: cell runtime published event="cell_runtime_publication" outcome="published" scope=ProbeSession:66312fd33087ace0804d4e74384c3c6ee89b37b1fff5ebcb851f273feed0be61 node=dev-bfc9083b5aff region=us-east-1 runtime_version="0.6.1" epoch=3 isolate_startup_us=892

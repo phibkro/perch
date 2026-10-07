@@ -1,0 +1,27 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "@/*": [
+        "./src/chat/registry/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "uniwind-types.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist-web",
+    "dist-android",
+    "server",
+    "experiments",
+    "verification",
+    "tooling"
+  ]
+}

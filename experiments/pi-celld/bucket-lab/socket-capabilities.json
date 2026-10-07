@@ -1,0 +1,10 @@
+{
+  "route-netlink": {
+    "available": false,
+    "errno": 1,
+    "error": "[Errno 1] Operation not permitted"
+  },
+  "udp-ipv4": {
+    "available": true
+  }
+}

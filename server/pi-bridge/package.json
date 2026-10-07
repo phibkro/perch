@@ -1,0 +1,27 @@
+{
+  "name": "@perch/pi-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "start": "node --import tsx server.ts",
+    "dev": "node --import tsx --watch server.ts",
+    "test": "node --import tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "pi": "pi"
+  },
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "1.0.4",
+    "ws": "8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/ws": "8.18.1",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3"
+  },
+  "packageManager": "bun@1.4.2"
+}

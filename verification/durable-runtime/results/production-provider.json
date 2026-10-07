@@ -1,0 +1,195 @@
+{
+  "startedAt": "2026-10-07T07:50:41.840Z",
+  "syntheticModel": true,
+  "productionEntry": true,
+  "runtime": "celld dev with local backing object store",
+  "realR2": false,
+  "checks": [
+    {
+      "name": "Production entry uses the real OpenAI-completions adapter, host credentials, Pi tool execution, and protected artifact download",
+      "status": "passed"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-07T07:50:42.739Z",
+      "phase": "before-crash",
+      "type": "production-provider-request",
+      "model": "local-fixture"
+    },
+    {
+      "at": "2026-10-07T07:50:42.777Z",
+      "phase": "before-crash",
+      "type": "production-provider-request",
+      "model": "local-fixture"
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/perch/health"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions",
+      "body": {
+        "operationId": "op_6d1e2dd5-abea-4edd-9ad0-1eafc7dd6188"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/8c6d91dc-473c-4af4-9c6d-c0076274ebed"
+    },
+    {
+      "method": "POST",
+      "path": "/perch/sessions/8c6d91dc-473c-4af4-9c6d-c0076274ebed/submit",
+      "body": {
+        "operationId": "op_5c2a1bb5-f27c-46b6-9c58-eb5d8f863ca6",
+        "text": "Write a Markdown artifact with the configured provider."
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/8c6d91dc-473c-4af4-9c6d-c0076274ebed"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/8c6d91dc-473c-4af4-9c6d-c0076274ebed"
+    },
+    {
+      "method": "GET",
+      "path": "/perch/sessions/8c6d91dc-473c-4af4-9c6d-c0076274ebed/artifacts/edb0aad4-e274-49d5-823a-e45c17249cd4"
+    }
+  ],
+  "processKills": [
+    {
+      "reason": "Integration cleanup",
+      "code": null,
+      "signal": "SIGKILL",
+      "listenerClosed": true,
+      "mechanism": "celld dev supervisor SIGKILL; Linux child PR_SET_PDEATHSIG=SIGKILL"
+    }
+  ],
+  "celldVersion": "celld 0.6.1",
+  "evidenceDirectory": "/workspace/scratch/b1d2212c27ee/perch/verification/durable-runtime/.runs/run-Iduaxa",
+  "port": 36367,
+  "runtimeReadiness": [
+    {
+      "phase": "before-crash",
+      "at": "2026-10-07T07:50:42.504Z",
+      "health": {
+        "ok": true
+      },
+      "cgroupCurrentBytes": 5507526656,
+      "cgroupLimitBytes": 8589934592
+    }
+  ],
+  "productionSnapshot": {
+    "mode": "durable",
+    "connection": {
+      "status": "live",
+      "label": "Connected to Pi Durable"
+    },
+    "displayName": "Perch",
+    "connectionEpoch": 1,
+    "harness": {
+      "id": "pi-durable",
+      "name": "Pi Durable",
+      "transport": "durable-http",
+      "version": "1.0.4"
+    },
+    "capabilities": {
+      "prompt": true,
+      "interrupt": true,
+      "questions": false,
+      "steer": false,
+      "attachments": false,
+      "modelSelection": true,
+      "sessionSelection": true,
+      "sessionCreation": true
+    },
+    "model": {
+      "id": "local-fixture",
+      "name": "Configured local fixture",
+      "provider": "local"
+    },
+    "availableModels": [
+      {
+        "id": "local-fixture",
+        "name": "Configured local fixture",
+        "provider": "local"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "8c6d91dc-473c-4af4-9c6d-c0076274ebed",
+        "title": "New chat",
+        "project": "Durable workspace",
+        "status": "idle"
+      }
+    ],
+    "activeSessionId": "8c6d91dc-473c-4af4-9c6d-c0076274ebed",
+    "messages": [
+      {
+        "id": "8c6d91dc-473c-4af4-9c6d-c0076274ebed:entry:8:0",
+        "role": "user",
+        "text": "Write a Markdown artifact with the configured provider.",
+        "createdAt": 1791359442678,
+        "streaming": false
+      },
+      {
+        "id": "8c6d91dc-473c-4af4-9c6d-c0076274ebed:assistant-task:15:0",
+        "role": "assistant",
+        "text": "The configured provider saved your artifact.",
+        "createdAt": 1791359442768,
+        "streaming": false
+      }
+    ],
+    "tools": [
+      {
+        "id": "8c6d91dc-473c-4af4-9c6d-c0076274ebed:tool-task:13",
+        "name": "write_artifact",
+        "label": "write_artifact",
+        "status": "done",
+        "detail": "Tool completed",
+        "output": "Saved provider.md as artifact edb0aad4-e274-49d5-823a-e45c17249cd4."
+      }
+    ],
+    "storedArtifacts": [
+      {
+        "id": "edb0aad4-e274-49d5-823a-e45c17249cd4",
+        "sessionId": "8c6d91dc-473c-4af4-9c6d-c0076274ebed",
+        "title": "Configured provider artifact",
+        "filename": "provider.md",
+        "mimeType": "text/markdown",
+        "language": "markdown",
+        "sha256": "a8ea961e7cfaf51bd3e4919859f5d94041f29b22ad5adda29b12f218b7ee60bf",
+        "bytes": 93,
+        "createdAt": 1791359442755,
+        "sourceId": "tool:8c6d91dc-473c-4af4-9c6d-c0076274ebed:tool-task:13"
+      }
+    ],
+    "pendingQuestion": null,
+    "agents": [],
+    "isWorking": false,
+    "readOnly": false
+  },
+  "status": "passed",
+  "finishedAt": "2026-10-07T07:50:43.694Z"
+}

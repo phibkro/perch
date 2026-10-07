@@ -1,0 +1,25 @@
+# Optional hosted build. Run explicitly after linking your Expo account/project.
+# No push, pull-request, schedule, submission, or update-publishing trigger.
+name: Perch Android preview
+on:
+  workflow_dispatch: {}
+defaults:
+  image: sdk-57
+  tools:
+    bun: '1.4.2'
+jobs:
+  verify:
+    name: Check application
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - run: bun run typecheck
+      - run: bun run verify
+      - run: node src/artifacts/verify.cjs
+  build:
+    name: Build standalone ARM64 APK
+    needs: [verify]
+    type: build
+    params:
+      platform: android
+      profile: preview

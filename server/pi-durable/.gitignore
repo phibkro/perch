@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.dev.vars
+.env
+.env.local
+wrangler.json
+wrangler.jsonc
+.wrangler/
+.celld/
+test-results/

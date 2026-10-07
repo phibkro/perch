@@ -1,0 +1,12 @@
+{
+  "version": "0.6.1",
+  "platform": "linux-x86_64",
+  "officialRelease": "https://github.com/denoland/celld/releases/tag/v0.6.1",
+  "download": "https://github.com/denoland/celld/releases/download/v0.6.1/celld-x86_64-unknown-linux-gnu.gz",
+  "sha256": "79a8253cff5d4e8a4a9f7a2611e393390f7fe9025f00e88467875b007c44866b",
+  "verifiedDownloadSha256": "79a8253cff5d4e8a4a9f7a2611e393390f7fe9025f00e88467875b007c44866b",
+  "node": "24.19.0",
+  "esbuild": "0.28.2",
+  "piDurable": "1.0.4",
+  "agents": "0.26.0"
+}

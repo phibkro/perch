@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-07",
+  "runtime": "celld 0.6.1 dev, local backing object store",
+  "bun": "1.4.2",
+  "node": "24.19.0",
+  "observations": [
+    {
+      "outcome": "runtime refused admission; recovery wait timed out",
+      "runtimeReadinessStatus": 503,
+      "sampledAt": "2026-10-07T07:39:14.183000+00:00",
+      "cgroupCurrentBytes": 7118413824,
+      "cgroupWorkingSetBytes": 2746085376,
+      "cgroupLimitBytes": 8589934592,
+      "memoryHeadroom": false,
+      "pressured": false,
+      "residentCellsAtSample": 0,
+      "restoringCellsAtSample": 0,
+      "shedCells": 0
+    },
+    {
+      "outcome": "unchanged recovery scenario passed all nine groups",
+      "runtimeReadinessStatus": 200,
+      "sampledAt": "2026-10-07T07:47:51.280000+00:00",
+      "cgroupCurrentBytes": 5472075776,
+      "cgroupWorkingSetBytes": 2840494080,
+      "cgroupLimitBytes": 8589934592,
+      "memoryHeadroom": true,
+      "pressured": false,
+      "residentCellsAtSample": 0,
+      "restoringCellsAtSample": 0,
+      "shedCells": 0
+    }
+  ],
+  "oomKillsObserved": 0,
+  "alarmWakeEntriesPreservedInFailedRun": 2,
+  "dependencyVersionsChangedBetweenRuns": false,
+  "runtimeMemoryProtectionChanged": false,
+  "conclusion": "Shared cgroup headroom prevented runtime readiness and cell admission; the unchanged scenario recovered when capacity was available.",
+  "verifierCorrection": "Require celld runtime readiness in addition to application health, record cgroup usage at startup, and fail immediately on supervisor exit."
+}

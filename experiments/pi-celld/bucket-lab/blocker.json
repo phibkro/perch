@@ -1,0 +1,21 @@
+{
+  "status": "blocked",
+  "celld": "0.6.1",
+  "minio": "RELEASE.2025-04-22T22-12-26Z",
+  "minio_sha256": "53e2a2cb16c5366ea6fbbc479c19ddb4c6a0948273e752f740fb1fbf27bb817c",
+  "minio_exit_code": 2,
+  "blocker": "AF_NETLINK/NETLINK_ROUTE socket creation is denied with EPERM. MinIO unconditionally enumerates network interfaces during package initialization and exits before CLI configuration.",
+  "attempted": [
+    "Official release binary download and SHA-256 validation",
+    "MinIO --version",
+    "MinIO server with explicit loopback listeners",
+    "Python netlink socket and interface capability checks"
+  ],
+  "not_executed": [
+    "S3 conditional contract probe",
+    "celld bucket deployment",
+    "two-node ownership transfer",
+    "fresh-compute-directory bucket restore",
+    "real Cloudflare R2 operations"
+  ]
+}

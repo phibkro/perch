@@ -1,0 +1,24 @@
+{
+  "name": "@perch/pi-durable-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/unit.test.mjs",
+    "dev": "celld dev . --no-watch"
+  },
+  "dependencies": {
+    "@earendil-works/chord": "1.0.4",
+    "@earendil-works/pi-ai": "1.0.4",
+    "@earendil-works/pi-durable": "1.0.4",
+    "agents": "0.26.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "packageManager": "bun@1.4.2"
+}

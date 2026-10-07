@@ -1,0 +1,10 @@
+{
+  "name": "perch-preview-verification",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Offline DOM smoke test; does not validate browser layout or native controls",
+  "dependencies": {
+    "jsdom": "26.1.0"
+  },
+  "packageManager": "bun@1.4.2"
+}

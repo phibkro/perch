@@ -1,0 +1,14 @@
+// Bound each native build as in the successful local prototype build.
+// CMake pools also cover Gradle's direct Ninja calls, unlike an environment-only
+// CMAKE_BUILD_PARALLEL_LEVEL setting. Two Gradle workers are allowed overall.
+allprojects { project ->
+    ['com.android.application', 'com.android.library'].each { pluginId ->
+        project.pluginManager.withPlugin(pluginId) {
+            project.extensions.getByName('android').defaultConfig.externalNativeBuild.cmake.arguments.addAll([
+                '-DCMAKE_JOB_POOLS=perch_compile=1;perch_link=1',
+                '-DCMAKE_JOB_POOL_COMPILE=perch_compile',
+                '-DCMAKE_JOB_POOL_LINK=perch_link'
+            ])
+        }
+    }
+}

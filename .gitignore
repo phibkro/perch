@@ -1,0 +1,19 @@
+node_modules/
+.expo/
+dist-web/
+dist-android/
+android/.gradle/
+android/.cxx/
+android/**/build/
+android/local.properties
+ios/Pods/
+*.log
+**/.cxx/
+**/.gradle/
+**/.kotlin/
+
+# Project-local developer downloads and workstation settings
+tooling/.cache/
+tooling/local.json
+artifacts/device/
+tooling/reference/

@@ -1,0 +1,23 @@
+{
+  "name": "@perch/pi-celld-experiment",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node test/recovery.mjs"
+  },
+  "dependencies": {
+    "@earendil-works/chord": "1.0.4",
+    "@earendil-works/pi-ai": "1.0.4",
+    "@earendil-works/pi-durable": "1.0.4",
+    "agents": "0.26.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "packageManager": "bun@1.4.2"
+}
