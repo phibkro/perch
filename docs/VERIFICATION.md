@@ -21,7 +21,9 @@ Native binary evidence is recorded in [ANDROID-BUILD.md](ANDROID-BUILD.md).
 | Final web export | Passed | 8,569,021-byte standalone application, rebuilt through Bun with all seven JavaScript chunks inlined and dependency notices embedded as inert text |
 | Full DOM integration | Passed | Existing chat/OpenCode flows plus durable creation, composer, lazy artifacts, corruption/retry, source/copy, and session isolation; 66 OpenCode and 18 durable fixture requests, five artifact downloads |
 | Focused connection DOM check | Passed | Default Pi Durable tab and exactly one selected accessibility state across all four tabs |
-| Initial Android APK | Passed; final Bun/notices rebuild pending | Lint-enabled standalone build; 0.5.0/code 5, ARM64, preserved signer, ZIP and native ELF alignment verified; release packaging also requires the newly embedded notice asset |
+| Final local Android APK | Passed | Bun-driven, lint-enabled standalone build; 0.5.0/code 5, ARM64, preserved signer, current embedded bundle and notices, ZIP and native ELF alignment verified; positive CI packaging gate |
+| First GitHub build and release | Passed, first attempt | Frozen Bun installs, source gates, cold Android build, binary verification, protected artifact handoff, exact version tag and published prerelease |
+| Published downloads | Passed | All three release assets downloaded and checked against GitHub digests; APK and metadata match SHA256SUMS, source identity and workflow provenance; embedded bundle and notices verified |
 | Real R2/S3, Cloudflare deployment, or fleet failover | Not performed | The backing store in the recovery test is celld's local dev object store |
 | Physical Pixel / GrapheneOS or iOS | Not performed | Native networking, keyboard/layout, file sharing, and WebView enforcement require device execution |
 | User host or real provider account | Not performed | Both runtime modes use controlled local inference and public fixture tokens |
@@ -31,13 +33,26 @@ at 07:50:43.694 UTC. [DURABLE-BACKEND-RESULTS.md](DURABLE-BACKEND-RESULTS.md) ex
 the process kill, retained backing store, alarm-only recovery proof, and test
 boundaries. The raw reports live in `verification/durable-runtime/results`.
 
-The initial standalone APK completed at 07:01:07 UTC. It is 47,641,794 bytes, with SHA-256
-`458b7dbe3cc2fc1f962ec279137367a79aeb7aa6bb37b25915dc2610a3bb5d37`.
-All 79 application source/configuration/asset inputs stayed at commit
-`3ab26d43c247be855710b207343b19e4b44796b0` throughout the accepted build.
-That warm build took 63 seconds; that is not a cold CI timing estimate.
+The final local standalone APK completed at 08:00:04.690 UTC. It is 47,736,890 bytes,
+with SHA-256
+`4389a727cde3d69cc8581d7736ff3933bfefea88d459ca5e722980eb47b59bc3`.
+Its application source, native configuration and assets match published commit
+`44bc088014567ce16db4399b741dac9a06e97652`. The packaging gate verified the
+clean source tree and the exact embedded bundle and notice bytes. That warm
+build took 81 seconds, with 875 Gradle tasks: 26 executed and 849 up to date.
+This is a local cache-reuse timing, not a cold CI estimate.
 Only the standalone 0.5 APK was built. The development APK remains the earlier
 0.4 build.
+
+The canonical delivery is now the **GitHub-built APK**, published in
+[v0.5.0](https://github.com/phibkro/perch/releases/tag/v0.5.0). It is 47,736,738
+bytes, with SHA-256
+`2f43af6ab3788e4387e71a9293124ec8492218fb513d1cd64829b3ff1bfe235e`.
+The first [hosted workflow](https://github.com/phibkro/perch/actions/runs/37590202398)
+took 14 minutes 32 seconds overall; its native build step took 12 minutes
+15 seconds. The APK was downloaded again and its complete bytes matched the
+published checksum. It shares the local build's exact application bundle and
+dependency notice bytes. These are separately built APKs with separate hashes.
 
 ### Bun migration
 
@@ -75,8 +90,8 @@ their portable parent licenses. The standalone preview contains the exact
 1,069,848-byte notice asset, whose SHA-256 is
 `685cc1f116afc3c4a0875c2d29555f51f34aa801f4c5941a0fed22c906aa2f54`.
 
-The release workflow passed actionlint 1.7.12, 15 Node release-guard tests and
-six Python artifact-handoff tests. A Bun invocation fixture confirmed that
+The release workflow passed actionlint 1.7.12, 15 Node release-guard tests,
+two runtime-readiness tests and six Python artifact-handoff tests. A Bun invocation fixture confirmed that
 explicit Node scripts retain Node 24.19.0. Version-only release-helper changes
 leave `bun.lock` unchanged and pass a frozen install. See
 [GITHUB-RELEASES.md](GITHUB-RELEASES.md) for the release and Obtainium workflow.

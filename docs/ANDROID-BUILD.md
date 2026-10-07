@@ -1,4 +1,20 @@
-# Android build verification — Perch 0.4
+# Android build verification
+
+The current standalone build is **Perch 0.5.0 / code 5**, built with Bun from the
+published source. Its [0.5 build record](#perch-05-standalone-release--2026-10-07)
+includes the verified bundle, complete notices and preserved signer. The 0.4
+records below remain historical evidence; the development APK is still 0.4.
+
+The final distributed binary is the successful
+[GitHub-built v0.5.0 APK](https://github.com/phibkro/perch/releases/tag/v0.5.0):
+47,736,738 bytes, SHA-256
+`2f43af6ab3788e4387e71a9293124ec8492218fb513d1cd64829b3ff1bfe235e`.
+Its release metadata records all binary gates. The local 0.5 build below is a
+separately verified binary; both contain identical application bundle and notice
+bytes. [GITHUB-RELEASES.md](GITHUB-RELEASES.md#first-hosted-release-verified) records
+the first hosted run, published assets and independent download checks.
+
+## Historical Perch 0.4
 
 Both variants were built and inspected on **2026-10-07** from application source frozen at **`56842963ac6c04386ed882b5edfd1a053770dfb4`**. Both build records captured that revision. The standalone build regenerated and embedded its application bundle. The development APK loads application JavaScript from Metro.
 
@@ -141,19 +157,20 @@ See [VERIFICATION.md](VERIFICATION.md) for application/protocol/DOM evidence and
 
 ## Perch 0.5 standalone release — 2026-10-07
 
-The standalone APK was built from application source matching **`3ab26d43c247be855710b207343b19e4b44796b0`**. SHA-256 records for 79 code, configuration and asset files matched that commit and remained unchanged through the final build. The captured files exclude Markdown documentation. The later documentation and release-automation work does not change the embedded application.
+The final standalone APK was built from published source **`44bc088014567ce16db4399b741dac9a06e97652`**, tree **`fa034e3a59e97271ba81954c1b607926ff9144a6`**. The tracked checkout was clean at build start and through the successful distribution packaging check. The 141 code, configuration and asset files hashed before the build remained unchanged afterward and match the committed bytes. Four more tracked files (`global.css`, `uniwind-types.d.ts`, `.bun-version`, and `.gitattributes`) were added to the manifest during the build and also match that commit. All 145 records were checked after the build; the captured files exclude Markdown documentation. This build includes the Bun migration and the packaged third-party license notices.
 
 | Check | Verified standalone result |
 | --- | --- |
 | Delivery file | `perch-prototype-arm64.apk` |
 | Native output | `android/app/build/outputs/apk/release/app-release.apk` |
-| Bytes | 47,641,794 |
+| Bytes | 47,736,890 |
 | Package | `dev.perch.assistant` |
 | Version / code | `0.5.0` / `5` |
 | Minimum / target / compile SDK | 24 / 36 / 36 |
 | ABI | `arm64-v8a` only |
 | Debuggable | No |
-| Embedded application bundle | `assets/index.android.bundle`, 6,402,640 bytes |
+| Embedded application bundle | `assets/index.android.bundle`, 6,402,088 bytes |
+| Packaged license notices | `assets/third-party-notices.txt`, 1,069,848 bytes; exact committed source bytes |
 | Signature | v2 verified; original prototype signer |
 | ZIP alignment | `zipalign -c -P 16 4` passed |
 | Native ELF alignment | Every LOAD segment in all 21 packaged libraries has alignment of at least 16,384 bytes |
@@ -161,22 +178,30 @@ The standalone APK was built from application source matching **`3ab26d43c247be8
 APK SHA-256:
 
 ```text
-458b7dbe3cc2fc1f962ec279137367a79aeb7aa6bb37b25915dc2610a3bb5d37
+4389a727cde3d69cc8581d7736ff3933bfefea88d459ca5e722980eb47b59bc3
 ```
 
 Embedded application bundle SHA-256:
 
 ```text
-1b40b00a568d69662c4a4b1846fa177e146b275611f74e17d114eaf0cab8cbbf
+e4aebc27f56814ff55e5202e32f769b517fcc138c87773383c2c678ae5bc8472
 ```
 
-The inspected APK's bundle matches `android/app/build/generated/assets/react/release/index.android.bundle` byte for byte. The bundle was generated during the cold build and reused by the successful final invocation after the source hashes were checked again. The copied delivery APK was rehashed and matches its native build output. ZIP inspection found no duplicate entries. The original keystore hash and signer certificate recorded earlier in this document remain unchanged.
+Packaged third-party notices SHA-256:
+
+```text
+685cc1f116afc3c4a0875c2d29555f51f34aa801f4c5941a0fed22c906aa2f54
+```
+
+The inspected APK's bundle matches `android/app/build/generated/assets/react/release/index.android.bundle` byte for byte. Metro and Hermes regenerated it during this final Bun-driven build. The packaged notices match both the working asset and the exact bytes retrieved from the published source commit. The copied delivery APK was rehashed and matches its native build output. ZIP inspection found no duplicate entries. The original keystore hash and signer certificate recorded earlier in this document remain unchanged.
+
+The positive `scripts/ci-android-package.py package` check also passed locally with tag `v0.5.0`. It produced the APK, `release-metadata.json`, and `SHA256SUMS`, validating identity, signature, ARM64 ABI, embedded bundle and notices, duplicate entries, and ZIP/ELF alignment. Metadata records the exact source commit and `sourceTreeClean: true`. This local run has no hosted workflow URL; its result does not claim that a GitHub runner executed the build.
 
 ### Successful command and retained build gates
 
-`npm run apk` completed with **BUILD SUCCESSFUL in 1m 3s**, with **875 actionable tasks: 57 executed and 818 up-to-date**. The measured complete command ran from `2026-10-07T07:00:03.368Z` to `2026-10-07T07:01:07.283Z`. It used the existing ARM64 release task with a production bundle and final binary identity guard.
+`bun run apk` completed with **BUILD SUCCESSFUL in 1m 21s**, with **875 actionable tasks: 26 executed and 849 up-to-date**. The measured complete command ran from `2026-10-07T07:58:42.593Z` to `2026-10-07T08:00:04.690Z`. Bun 1.4.2 launched the existing Node 24 build helper; Expo and Gradle retained their Node runtime. It used the existing ARM64 release task with a production bundle and final binary identity guard. No cache cleanup or source correction was needed for this final build.
 
-The previously failing SVG and WebView `lintVitalAnalyzeRelease` tasks and the application's lint analysis executed successfully in this final invocation. No lint finding was suppressed. Reanimated and Worklets lint tasks retain their upstream disabled configuration. The standard build helper now invokes the Unix Gradle wrapper through `sh`, so an extracted source archive can build even if its executable permission was lost. Windows behavior is unchanged.
+The application's `lintVitalAnalyzeRelease` task executed successfully in this final invocation. SVG and WebView lint outputs, which had passed during the earlier warm recovery, were up-to-date. No lint finding was suppressed. Reanimated and Worklets lint tasks retain their upstream disabled configuration. The standard build helper now invokes the Unix Gradle wrapper through `sh`, so an extracted source archive can build even if its executable permission was lost. Windows behavior is unchanged.
 
 ### Cold build recovery and bounded memory
 
@@ -187,7 +212,8 @@ The earlier SDK/JDK, Gradle and native build caches had been pruned. The toolcha
 | First complete release attempt | Failed after 5m 14s while Plugin Portal returned HTTP 403 for five public dependency POM HEAD requests. | Each original Maven Central POM returned HTTP 200, matched its cached bytes and published checksum. A workstation Gradle init script placed official Maven Central before Plugin Portal for plugin resolution. No dependency coordinate or access control changed. |
 | Cold native build after repository correction | Native compilation and bundling progressed, then SVG/WebView lint failed; cleanup emitted repeated `java.lang.OutOfMemoryError: Metaspace`. | The failed process was interrupted after preserving its outputs and logs. Gradle kept its 2 GB heap while its workstation metaspace allowance rose from 512 MB to 1 GB. Kotlin's separate daemon was bounded to 1.5 GB heap / 768 MB metaspace. The 8 GB cgroup limit was unchanged. |
 | First warm resume | Failed in 35s during asset merging because a zero-byte Hermes temporary file, `index.android.bundle.hbc.c61aaf`, remained and was reported as a duplicate resource. | Moved that temporary file and only the generated asset-merge/compression state aside. The real bundle and native objects were retained. |
-| Final warm resume | Passed all enabled release tasks and the binary identity guard. | Performed signature, SDK/ABI, bundle, ZIP and ELF alignment checks on the resulting APK; rehashed the delivery copy. |
+| Initial verified warm candidate, before Bun and notices | Passed in 1m 3s, with 875 tasks: 57 executed / 818 up-to-date. | Verified the candidate and preserved it while publication tooling and the Bun migration were completed. |
+| Final Bun and notice build | Passed in 1m 21s, with 875 tasks: 26 executed / 849 up-to-date. | Regenerated the application bundle, packaged notices, passed enabled lint and binary checks, and passed the local distribution package gate. Replaced the delivery APK only after verification. |
 
 Parallel project execution was disabled for recovery. Gradle remained capped at two workers. Workstation CMake arguments set a one-slot compile pool and a one-slot link pool; the generated app/Worklets CMake cache and Ninja rules confirmed those limits. This avoided unbounded native compiler fan-out. These are build-resource settings; they do not change app logic or raise the workspace's memory cap.
 
@@ -195,4 +221,4 @@ The repository-order correction follows [Gradle's guidance about Maven Central d
 
 ### Scope of this release check
 
-Only the standalone 0.5 APK was built in this run. No physical device or emulator execution was performed. These checks establish successful compilation/packaging, the committed embedded application, expected identity and signing continuity, ARM64 ABI, and 16 KB alignment. Installation/upgrade behavior, native startup, touch/keyboard geometry, Android WebView enforcement and GrapheneOS live-host networking remain device checks.
+Only the standalone 0.5 APK was built in this run. No physical device or emulator execution was performed. These checks establish successful compilation/packaging, the committed embedded application and license notices, expected identity and signing continuity, ARM64 ABI, and 16 KB alignment. Installation/upgrade behavior, native startup, touch/keyboard geometry, Android WebView enforcement and GrapheneOS live-host networking remain device checks.

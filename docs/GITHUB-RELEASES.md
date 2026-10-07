@@ -93,7 +93,7 @@ The native runner is `ubuntu-24.04`, with **Bun 1.4.2**, Node 24, Temurin JDK 21
 
 Bun installs packages with `bun ci` or `bun install --frozen-lockfile` and runs package scripts with `bun run`. The existing Expo, React Native, Node test-runner and backend scripts retain their Node runtime. Bun normally honors Node shebangs, and the workflow does not force `--bun`. The license-notice generator explicitly uses Bun's JSONC parser for `bun.lock`. See the official [frozen installation guidance](https://bun.com/docs/pm/cli/install) and [script runtime behavior](https://bun.com/docs/runtime).
 
-Runner Gradle user-home properties keep the Gradle heap at 2 GB with 1 GB metaspace, and the separate Kotlin daemon at 1.5 GB heap with 768 MB metaspace. Gradle allows two workers with project parallelism off. A user-home init script adds CMake compile/link pools of one job each to application and library modules, covering direct Ninja invocations too. This follows the native pool settings and final JVM allowances from the successful local build; it does not claim a full cold GitHub runner build has already been observed. See [ANDROID-BUILD.md](ANDROID-BUILD.md).
+Runner Gradle user-home properties keep the Gradle heap at 2 GB with 1 GB metaspace, and the separate Kotlin daemon at 1.5 GB heap with 768 MB metaspace. Gradle allows two workers with project parallelism off. A user-home init script adds CMake compile/link pools of one job each to application and library modules, covering direct Ninja invocations too. These settings passed both the local build and the first hosted Android build recorded below. See [ANDROID-BUILD.md](ANDROID-BUILD.md).
 
 `gradle/actions/setup-gradle` is pinned to v6.4.0's immutable commit and explicitly selects **`cache-provider: basic`**. Default-branch builds can write the shared Gradle cache; tags, other branches and PRs only read it. This lets tags reuse default-branch cache entries. `setup-java` does not add a second Gradle cache. See the official [Gradle caching guide](https://github.com/gradle/actions/blob/v6.4.0/docs/setup-gradle.md).
 
@@ -140,4 +140,48 @@ The workflow YAML was parsed and its triggers, immutable action pins, permission
 
 After the Bun migration, all 15 Node guards and six Python artifact tests passed again without npm-lock assumptions. An actual Bun 1.4.2 command fixture verified that `bun run --cwd` uses the requested directory and dispatches an explicit `node` package script under Node 24.19.0. The app and native backend runtime have not been switched to Bun by changing the package manager.
 
-The pre-notice APK was also inspected with the real Android tools: its identity, signer, SDK, ABI, embedded bundle and ELF checks passed, and the newly required notice gate correctly rejected it before writing distribution files. The final APK must pass the same packaging command after embedding the notices. Local checks do not substitute for observing the first hosted workflow run.
+The pre-notice APK was also inspected with the real Android tools: its identity, signer, SDK, ABI, embedded bundle and ELF checks passed, and the newly required notice gate correctly rejected it before writing distribution files. The final local Bun APK subsequently passed the same packaging command with the exact committed notices and a clean source tree at `44bc088014567ce16db4399b741dac9a06e97652`. Its 47,736,890 bytes have SHA-256 `4389a727cde3d69cc8581d7736ff3933bfefea88d459ca5e722980eb47b59bc3`.
+
+## First hosted release: verified
+
+[Run 37590202398](https://github.com/phibkro/perch/actions/runs/37590202398)
+passed on its first attempt on 7 October 2026, from
+[`44bc088014567ce16db4399b741dac9a06e97652`](https://github.com/phibkro/perch/commit/44bc088014567ce16db4399b741dac9a06e97652).
+The first runner had no existing repository Bun/Gradle cache. Source checks,
+the native build, final APK verification, artifact upload, cache saving, and the
+isolated publisher all completed successfully. No workflow correction or rerun
+was needed.
+
+| Observed stage | Duration |
+| --- | --- |
+| Complete workflow, 07:53:52–08:08:24 UTC | 14 minutes 32 seconds |
+| App, protocol, and backend job | 42 seconds |
+| Android job, including setup and cache save | 13 minutes 26 seconds |
+| Lint-enabled native build step | 12 minutes 15 seconds |
+| Verified release publication job | 14 seconds |
+
+Gradle itself reported 12 minutes 14 seconds and 875 tasks: 745 executed and
+130 from its build cache. This cache reuse within the first build does not imply
+a pre-existing repository Actions cache. The workflow now has saved Bun and
+Gradle caches for later runs; no future duration is guaranteed.
+
+The publisher created `v0.5.0` at the exact built commit and published the
+[Perch 0.5.0 prerelease](https://github.com/phibkro/perch/releases/tag/v0.5.0)
+at 08:08:21 UTC. It is a public prerelease, not a draft.
+
+| Published asset | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `perch-prototype-arm64.apk` | 47,736,738 | `2f43af6ab3788e4387e71a9293124ec8492218fb513d1cd64829b3ff1bfe235e` |
+| `release-metadata.json` | 3,927 | `f080857336204e2eac495095ae1f4a5062a38b70740403930f1d62f58849850f` |
+| `SHA256SUMS` | 180 | `7e313ff3d8e7c9f30a53d7a3d857fc7da80760996ff5e9574ab5822f70a6f8fb` |
+
+The published APK is the GitHub-built binary. The separately verified local
+binary above has its own checksum; it is not described as byte-identical to the
+hosted build. Obtainium downloads the published asset. Device installation and
+upgrade behavior have not been exercised on a Pixel in this workspace.
+
+All three public assets were downloaded independently after publication. Their
+complete bytes match the GitHub asset digests, and `SHA256SUMS` matches the APK
+and metadata. The metadata identifies the clean built commit, Bun 1.4.2 and this
+workflow run. The downloaded APK's embedded application bundle and full notice
+asset also match the verified local build exactly.

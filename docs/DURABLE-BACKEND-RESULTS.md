@@ -111,23 +111,36 @@ dependency notices are embedded in an inert HTML template; a DOM parse confirmed
 the exact notice text, one complete inline application payload, and no external
 scripts or stylesheets.
 
-The initial standalone Android build passed with lint enabled. Its binary is
+The final local standalone Android build passed through Bun with lint enabled. Its binary is
 `dev.perch.assistant`, version `0.5.0`, version code `5`, and contains only
-`arm64-v8a` native libraries. The 47,641,794-byte APK preserves the prototype
+`arm64-v8a` native libraries. The 47,736,890-byte APK preserves the prototype
 signer; ZIP alignment and every LOAD segment in all 21 native libraries passed
 the 16 KB checks. Its embedded JavaScript bundle matches the generated bundle
-byte for byte, and all 79 source inputs match application commit
-`3ab26d43c247be855710b207343b19e4b44796b0`.
+byte for byte. Its 1,069,848-byte dependency notice asset also matches the
+committed bytes exactly. Application source, configuration and assets match
+published commit `44bc088014567ce16db4399b741dac9a06e97652`.
 
-That warm build took 63 seconds after restoring the toolchain and correcting
-workstation dependency resolution, bounded metaspace, and an interrupted-build
-temporary asset. That timing is not a cold CI benchmark. See
+That warm build took 81 seconds, with 26 Gradle tasks executed and 849 up to date.
+The positive CI packaging command also verified the clean source tree, final
+notice asset and complete binary. That timing is not a cold CI benchmark. See
 [ANDROID-BUILD.md](ANDROID-BUILD.md) for the complete build and checksum record.
 No device execution is implied by these binary checks.
 
-The final Bun build adds the complete dependency notice asset. Its binary and
-embedded-notice verification are a separate release gate; the initial APK above
-is not the final distribution artifact.
+The initial pre-notice APK was replaced after these checks. The verified local
+APK has SHA-256
+`4389a727cde3d69cc8581d7736ff3933bfefea88d459ca5e722980eb47b59bc3`.
+
+The final distributed APK comes from the successful first
+[GitHub workflow](https://github.com/phibkro/perch/actions/runs/37590202398),
+which built the same commit and published
+[v0.5.0](https://github.com/phibkro/perch/releases/tag/v0.5.0). The 47,736,738-byte
+published APK has SHA-256
+`2f43af6ab3788e4387e71a9293124ec8492218fb513d1cd64829b3ff1bfe235e`.
+All three release assets were downloaded and matched their published digests;
+the checksum file and metadata agree on the APK and its source. The application
+bundle and notices also match the verified local build exactly. Hosted native
+compilation took 12 minutes 15 seconds; the complete workflow took 14 minutes
+32 seconds. The APK supplied alongside this guide is that published binary.
 
 ## Corrections made before delivery
 
