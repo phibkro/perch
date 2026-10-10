@@ -10,6 +10,8 @@ local generations = {}
 local serial = 0
 local running = false
 local scheduled = nil
+local Requests = require("./requests")
+local requests = Requests.new()
 
 local function generation(pane)
 	if generations[pane] == nil then
@@ -22,6 +24,7 @@ end
 local function invalidate(pane)
 	serial += 1
 	generations[pane] = tostring(serial)
+	requests:forget(pane)
 end
 
 local function clip(value, maximum)
@@ -37,7 +40,7 @@ end
 
 local function surfaceState(cx, pane)
 	local ok, surface = pcall(function()
-		return cx.session:surface(pane, { nodes = 500, depth = 16, max_chars = 64_000 })
+		return cx.session:surface(pane, { root = "dock", nodes = 500, depth = 16, max_chars = 64_000 })
 	end)
 	if not ok or type(surface) ~= "table" or type(surface.surface) ~= "table" then
 		return false, false
@@ -56,13 +59,17 @@ local function surfaceState(cx, pane)
 	end
 	-- An overlay may also contain a sendable editor. Only the live omp.session
 	-- dock is the conversation composer; never answer an arbitrary modal editor.
-	return native, native and ready(surface.dock, false)
+	return native, native and (ready(surface.dock, false) or ready(surface.main, false) or ready(surface.layer, false))
 end
 
 local function capture(cx)
 	local entries = array(cx.agents:list())
 	local tabs = {}
 	local workspaces = {}
+	local hosts = {}
+	for _, host in ipairs(array(cx.hosts:list())) do
+		for _, pane in ipairs(host.panes or {}) do hosts[pane] = clip(host.name, 512) end
+	end
 	for _, session in ipairs(array(cx.session:sessions())) do
 		for _, tab in ipairs(session.tabs or {}) do workspaces[tab] = clip(session.name, 512) end
 	end
@@ -85,7 +92,7 @@ local function capture(cx)
 				harness = harness,
 				model = type(entry.model) == "string" and clip(entry.model, 512) or nil,
 				deliveryError = type(entry.delivery_error) == "string" and clip(entry.delivery_error, 2048) or nil,
-				location = { workspace = workspaces[pane.tab], tab = tabs[pane.tab], pane = tostring(entry.pane) },
+				location = { host = hosts[entry.pane], workspace = workspaces[pane.tab], tab = tabs[pane.tab], pane = tostring(entry.pane) },
 			})
 			if entry.pane == inspectPane then
 				local source = array(cx.agents:transcript(entry.pane, { last = 64 }))
@@ -110,12 +117,14 @@ local function capture(cx)
 					table.insert(messages, 1, { role = row.role, text = text, tools = tools })
 				end
 				local notices = tern.json.array()
+				local question, modal = requests:read(cx, entry.pane, currentGeneration)
+				if question or modal then canPrompt = false end
 				if truncated then table.insert(notices, "This is a bounded transcript preview. Older rows or long text may be omitted.") end
 				if not native then table.insert(notices, "The native OMP session surface is unavailable. Return to the chat view in Tern for prompt controls.") end
 				if native and not canPrompt then table.insert(notices, "The host composer is not ready. Perch does not queue a prompt in Tern.") end
 				detail = { pane = entry.pane, generation = currentGeneration, messages = messages,
 					canPrompt = canPrompt and entry.state ~= "exited", canInterrupt = native and entry.state ~= "exited",
-					truncated = truncated, notices = notices }
+					truncated = truncated, notices = notices, pendingQuestion = question }
 			end
 		end
 	end
@@ -146,6 +155,7 @@ local function request(path, value, callback)
 end
 
 local function dispatch(cx, command)
+	local event = nil
 	local ok, result = pcall(function()
 		if type(command) ~= "table" or type(command.id) ~= "string" or
 			type(command.pane) ~= "number" or generations[command.pane] ~= command.generation then
@@ -159,10 +169,13 @@ local function dispatch(cx, command)
 		local native, canPrompt = surfaceState(cx, command.pane)
 		if not native then error("The native OMP conversation is unavailable.") end
 		if command.type == "prompt" then
-			if not canPrompt then error("The host composer is not ready; this prompt was not queued.") end
+			local question, modal = requests:read(cx, command.pane, command.generation)
+			if not canPrompt or question or modal then error("The host composer is not ready; this prompt was not queued.") end
 			if type(command.text) ~= "string" or #command.text > 400_000 or not command.text:match("%S") then
 				error("Invalid prompt.")
 			end
+		elseif command.type == "answer" then
+			event = requests:prepare(cx, command.pane, command.generation, command)
 		elseif command.type ~= "interrupt" then error("Unsupported remote command.") end
 	end)
 	if not ok then
@@ -172,6 +185,7 @@ local function dispatch(cx, command)
 	-- queue. Once invocation begins an error cannot prove there was no effect.
 	local invoked, failure = pcall(function()
 		if command.type == "prompt" then cx.agents:ask(command.pane, command.text)
+		elseif command.type == "answer" then cx.session:event(command.pane, event)
 		else cx.agents:interrupt(command.pane) end
 	end)
 	return { id = command.id, status = invoked and "forwarded" or "unknown",
@@ -236,4 +250,4 @@ end)
 
 tern.on("command_started", function(ev, _cx) invalidate(ev.pane) end)
 tern.on("command_finished", function(ev, _cx) invalidate(ev.pane) end)
-tern.on("pane_closed", function(ev, _cx) generations[ev.pane] = nil end)
+tern.on("pane_closed", function(ev, _cx) generations[ev.pane] = nil; requests:forget(ev.pane) end)

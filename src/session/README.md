@@ -174,12 +174,22 @@ receipt remains visible; sending the same unresolved text is blocked until its
 receipt is resolved. `forwarded` acknowledges dispatch to the existing host
 interface, not a completed model turn. These receipt IDs remain in phone memory.
 
-The first version polls full bounded snapshots every 750 ms while working and
+The adapter polls full bounded snapshots every 750 ms while working or awaiting input and
 every three seconds while idle. It does not claim a lossless event stream or
 complete history. The host reports truncation, available controls, and model
 metadata. The existing native assistant-ui projection and derived artifact
-readers consume that state. Shared dialogs, native TSP surfaces, terminal byte
-streams, stored file references, and process crash recovery are separate work.
+readers consume that state. Native TSP surfaces, terminal byte streams, stored
+file references, and process crash recovery are separate work.
+
+The Tern connection can project a supported owner request as `pendingQuestion`.
+Its identity includes the host/session scope and the request's content revision.
+Native `answerQuestion` rejects stale sheets, disabled choices, incomplete views,
+and unsupported/read-only access. A sent answer remains locked until the host
+replaces or dismisses that request. `answerState` distinguishes sending,
+forwarded, and unknown delivery. Reconnect only reads receipts and snapshots.
+The standalone OMP extension does not advertise this capability. See
+[remote approvals and plan review](../../docs/REMOTE-REQUESTS.md) for the exact
+Tern/OMP support and remaining upstream concurrency limit.
 
 Run `bun test verification/remote` for real loopback HTTP tests through the public
 store/driver boundary. No model call or user host is involved. See the

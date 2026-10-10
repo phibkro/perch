@@ -56,6 +56,13 @@ snapshot limitations are explicit. A Tern window-backed bridge is not yet a
 daemon-only client or a full TSP/terminal renderer. Implementation evidence is
 tracked in [the remote results](REMOTE-WORKSPACE-RESULTS.md).
 
+The [owner-request follow-up](REMOTE-REQUESTS.md) adds supported OMP approval and
+plan-review controls through the Tern connection. The phone presents the host's
+request and full bounded plan, then sends an explicit choice to its existing
+TSP component. The direct OMP extension and Collab retain their own capability
+limits. Tern hosts already attached to that window are visible through the
+bridge; a native Add remote host/SSH flow remains separate work.
+
 ## One setup per workspace
 
 `src/workspace` owns pairing, workspace discovery, and saved connection access.

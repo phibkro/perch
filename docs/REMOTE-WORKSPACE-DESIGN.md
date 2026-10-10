@@ -7,6 +7,11 @@ conversation and outputs; the original harness continues to run on the host.
 defines the first slice separately from later TSP and terminal work. See the
 verification record at the end for what has actually run.
 
+The [0.8 owner-request follow-up](REMOTE-REQUESTS.md) extends this first slice
+with supported Tern/OMP approvals and plan review. This document retains the
+0.7 milestone boundaries; later request support does not imply a native Add
+remote host transport or a window-independent daemon client.
+
 ## The experience
 
 Pair with a workspace once. Open its remote connection, see the sessions already

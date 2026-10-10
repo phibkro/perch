@@ -11,6 +11,8 @@ Perch is a native chat client. It does not run a model or an agent harness on th
 | pi | One long-lived process owned by our self-hosted bridge | Perch v1 snapshots over authenticated WebSocket; pi JSONL RPC behind it | Streaming, tools, choice/confirm/input/editor questions, interruption, reconnect, server-configured model selection |
 | Pi Durable | Per-workspace catalog and per-chat PiHarness cell | Authenticated HTTPS snapshots and immutable downloads | Remote history/create/select, idempotent prompt, abort, configured model choice, durable artifact references |
 | OpenCode | Your headless OpenCode server | Authenticated HTTPS via the included host gateway; SSE notifications and authoritative reads | Remote history/create/select, host models, messages/tools, supported permission/questions, abort, reconnect |
+| Remote OMP | The original OMP process with its extension loaded | Authenticated Perch remote snapshots | Explicit attachment, history, prompt/interrupt, host models; owner dialogs stay unsupported |
+| Remote Tern | Existing OMP panes in a connected Tern window | Authenticated Perch remote snapshots and private window plugin | Explicit attachment, prompt/interrupt, supported owner approvals and plan choices, bounded plan reader, remote-host location |
 
 The OMP transport and cryptography remain in `src/vendor/omp`; the presentation components do not receive the Collab room key. Pi, OpenCode, and Pi Durable keep connection secrets inside their drivers. No connector begins networking before an explicit connection submission. Calling `useDemo` or disposing the store invalidates callbacks from an older connection.
 
@@ -21,6 +23,7 @@ sessionStore.connectCollab(inviteLink, displayName);
 sessionStore.connectPi({ url: 'wss://your-host/session', token }, displayName);
 sessionStore.connectDurable({ url: 'https://your-durable-host', token });
 sessionStore.connectOpenCode({ url: 'https://your-gateway', username: 'perch', password });
+sessionStore.connectRemote({ url: 'https://your-workspace/harness/tern', token });
 await sessionStore.createSession(); // Host identity, or a new demo identity.
 sessionStore.selectSession(sessionId); // Only when the adapter supports it.
 sessionStore.sendPrompt(text);
@@ -61,4 +64,7 @@ No connector automatically resends a prompt, answer, or model change after recon
 - `CELLD_BIN=/path/to/celld node verification/durable-runtime/verify.mjs`: actual PiHarness/celld backend, phone driver, artifact binding, and crash/cache recovery.
 - `npm --prefix experiments/pi-durable test`: real process kill/reopen for durable core recovery; separate from the phone adapters.
 
-See [the pi bridge](../../server/pi-bridge/README.md) for setup and scope. There is no Tern terminal/TSP renderer in this layer. Tern can host the OMP process; the phone connects through OMP's structured protocol.
+See [the pi bridge](../../server/pi-bridge/README.md) for setup and scope. The
+[Tern request adapter](../../docs/REMOTE-REQUESTS.md) maps supported host controls;
+it is not a general terminal or TSP renderer. Choose that connection for native
+owner approvals and plan review; OMP Collab retains its existing guest scope.

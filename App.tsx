@@ -11,6 +11,7 @@ import { NativeAction, NativeAppearanceSwitch } from './src/ui/NativeAction';
 import { ModelPicker } from './src/ui/ModelPicker';
 import { WorkspaceSetup, WorkspaceConnections } from './src/ui/WorkspaceSetup';
 import { RemoteSessionAttachment, RemoteSessionBrowser } from './src/ui/RemoteSessions';
+import { QuestionContent, questionProgress } from './src/ui/QuestionContent';
 import { workspaceManager } from './src/workspace';
 import { darkTheme, lightTheme, type Theme } from './src/ui/theme';
 
@@ -80,7 +81,7 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
       {state.mode === 'demo' && <Pressable accessibilityRole="button" onPress={() => { sessionStore.simulateDisconnect(); openChat(); }} style={[s.settingRow, s.topLine]}><WifiOff size={20} color={t.primary} /><Text style={[s.noteTitle, s.flex]}>Simulate a connection drop</Text><ChevronRight size={18} color={t.subtle} /></Pressable>}
       {state.mode !== 'demo' && !online(state) && <Pressable accessibilityRole="button" onPress={sessionStore.reconnect} style={[s.settingRow, s.topLine]}><RefreshCw size={20} color={t.primary} /><Text style={s.noteTitle}>Reconnect</Text></Pressable>}
     </View>
-    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.7 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
+    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.8 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
   </ScrollView>;
 }
 function Detail({ label, value }: { label: string; value: string }) { const { s } = useUI(); return <View style={s.detail}><Text style={s.smallMuted}>{label}</Text><Text selectable style={[s.body, { flex: 1, textAlign: 'right' }]}>{value}</Text></View>; }
@@ -96,20 +97,22 @@ function Sheet({ visible, title, onClose, children, scroll = true }: { visible: 
 }
 
 function QuestionSheet({ question, visible, onClose, state }: { question: PendingQuestion | null; visible: boolean; onClose: () => void; state: SessionSnapshot }) {
-  const { t, s } = useUI(); const [answer, setAnswer] = useState('');
-  useEffect(() => setAnswer(question?.initialValue || ''), [question?.id, question?.kind]);
+  const { t } = useUI();
+  const [draft, setDraft] = useState<{ id: string; kind: PendingQuestion['kind']; value: string } | null>(null);
+  useEffect(() => setDraft(null), [question?.id, question?.kind]);
   if (!question) return null;
-  const disabled = state.readOnly || !!state.sessionAction || !online(state) || !state.capabilities.questions;
-  const submit = () => {
-    if (disabled || question.answering || !answer.trim() || sessionStore.getSnapshot().pendingQuestion?.id !== question.id) return;
+  // Closing the sheet keeps this draft. A different scoped request or kind cannot inherit it.
+  // Choice defaults supplied by a host must never become a phone approval.
+  const answer = draft?.id === question.id && draft.kind === question.kind ? draft.value : question.kind === 'editor' ? question.initialValue ?? '' : '';
+  const submit = (answer: string) => {
+    const current = sessionStore.getSnapshot();
+    if (current.readOnly || current.sessionAction || !online(current) || !current.capabilities.questions || current.pendingQuestion?.id !== question.id || current.pendingQuestion.kind !== question.kind || current.pendingQuestion.answering || current.pendingQuestion.answerState || current.pendingQuestion.disabledReason || !answer.trim()) return;
+    if (question.kind === 'choice' && !current.pendingQuestion.options?.some(option => option.id === answer && !option.disabled)) return;
     sessionStore.answerQuestion(answer, question.id);
     if (sessionStore.getSnapshot().mode === 'demo') onClose();
   };
-  return <Sheet visible={visible} title={question.title} onClose={onClose}>
-    <Text style={[s.eyebrow, { color: t.amber, marginBottom: 14 }]}>YOUR ASSISTANT NEEDS A DECISION</Text><Text style={[s.body, { marginBottom: 22 }]}>{question.prompt}</Text>
-    {question.kind === 'editor' ? <TextInput accessibilityLabel="Answer to agent" value={answer} onChangeText={setAnswer} multiline style={[s.input, { minHeight: 150, textAlignVertical: 'top' }]} placeholder="Write your answer…" placeholderTextColor={t.subtle} /> : <View style={{ gap: 10 }}>{question.options?.map(option => <Pressable key={option.id} accessibilityRole="radio" aria-checked={answer === option.id} accessibilityState={{ checked: answer === option.id }} accessibilityLabel={option.label} onPress={() => setAnswer(option.id)} style={[s.option, answer === option.id && { borderColor: t.primary, backgroundColor: t.primarySoft }]}><View style={[s.radio, answer === option.id && { borderColor: t.primary }]}>{answer === option.id && <View style={[s.dot, { backgroundColor: t.primary, width: 10, height: 10 }]} />}</View><View style={s.flex}><Text style={s.noteTitle}>{option.label}</Text>{option.description && <Text style={s.body}>{option.description}</Text>}</View></Pressable>)}</View>}
-    {disabled && <Text style={[s.body, { color: t.amber, marginTop: 14 }]}>{state.readOnly ? 'This session is view only. Answer on the host or join with a write-enabled link.' : 'Reconnect before sending an answer.'}</Text>}
-    <View style={{ marginTop: 22, alignItems: 'flex-end' }}><NativeAction theme={t} label={question.answering ? 'Waiting for host…' : 'Send answer'} onPress={submit} disabled={disabled || question.answering || !answer.trim()} testID="send-answer" /></View><Text style={[s.smallMuted, { marginTop: 12, textAlign: 'right' }]}>You can close this and answer later.</Text>
+  return <Sheet visible={visible} title={question.title} onClose={onClose} scroll={false}>
+    <QuestionContent key={`${question.id}:${question.kind}`} question={question} state={state} theme={t} answer={answer} onAnswerChange={value => setDraft({ id: question.id, kind: question.kind, value })} onSubmit={submit} />
   </Sheet>;
 }
 
@@ -130,7 +133,7 @@ function AdvancedConnectSheet({ state, visible, onClose, onConnected }: { state:
   const urlLabels = { durable: 'Durable server URL', remote: 'Remote host URL', omp: 'Collab link', pi: 'Bridge WebSocket URL', opencode: 'OpenCode server URL' };
   const descriptions = {
     durable: 'Keep chats and generated files on your server. Reopen them when your phone reconnects, and choose from the models configured on that host.',
-    remote: 'Connect to a Perch remote adapter on your host. Browse its running OMP or Tern sessions, then explicitly attach to the one you want. Provider credentials stay on the host.',
+    remote: 'Connect to the Perch bridge on your host, then attach to a running OMP session or a pane in a connected Tern window. Tern hosts are added in Tern; this phone connects through the bridge.',
     omp: 'Start /collab inside your OMP session and paste its complete link. OMP can run inside a Tern pane.',
     pi: 'Run the included pi bridge on your hardware or a cloud server. Paste its WebSocket URL and access token. The bridge owns one pi session.',
     opencode: 'Run OpenCode with the included Perch gateway to open past chats and create new ones. Use the gateway’s HTTPS address and password. It keeps provider configuration on your host.',
@@ -230,7 +233,7 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
         {state.sessionAction && <View accessibilityLiveRegion="polite" style={s.banner}><RefreshCw size={18} color={t.primary} /><Text style={[s.body, s.flex]}>{state.sessionAction === 'creating' ? 'Creating your chat…' : 'Opening your chat…'} Your current conversation stays here until it is ready.</Text></View>}
         {online(state) && state.connection.error && !state.sessionAction && <View style={s.banner}><Text accessibilityRole="alert" style={[s.body, { color: t.amber }]}>{state.connection.error}</Text></View>}
         {!online(state) && <View style={s.banner}><WifiOff size={18} color={t.amber} /><Text style={[s.body, s.flex, { color: t.amber }]}>{state.connection.label}. Your draft stays here.</Text><TextAction label="Retry" onPress={sessionStore.reconnect} /></View>}
-        {state.pendingQuestion && <Pressable accessibilityRole="button" accessibilityLabel="Answer agent question" onPress={() => setSheet('question')} style={s.banner}><CircleHelp size={21} color={t.amber} /><View style={s.flex}><Text style={[s.eyebrow, { color: t.amber }]}>YOUR INPUT</Text><Text style={[s.body, { color: t.amber }]}>{state.pendingQuestion.answering ? 'Answer sent · waiting for host' : state.pendingQuestion.title}</Text></View><ChevronRight size={20} color={t.amber} /></Pressable>}
+        {state.pendingQuestion && <Pressable accessibilityRole="button" accessibilityLabel="Answer agent question" onPress={() => setSheet('question')} style={s.banner}><CircleHelp size={21} color={t.amber} /><View style={s.flex}><Text style={[s.eyebrow, { color: t.amber }]}>{state.pendingQuestion.category === 'approval' ? 'APPROVAL REQUEST' : state.pendingQuestion.category === 'plan' ? 'PLAN REVIEW' : 'YOUR INPUT'}</Text><Text style={[s.body, { color: t.amber }]}>{questionProgress(state.pendingQuestion) || state.pendingQuestion.title}</Text></View><ChevronRight size={20} color={t.amber} /></Pressable>}
         {state.mode === 'demo' && state.messages.length > 0 && !state.isWorking && !state.pendingQuestion && online(state) && <View style={s.demoActions}><TextAction label="Try a demo turn" icon={Sparkles} onPress={() => sessionStore.sendPrompt('Explore this workspace and ask me how to proceed.')} /></View>}
         {state.mode === 'remote' && !state.remote?.attached ? <RemoteSessionBrowser state={state} theme={t} onAttach={openChat} onRefresh={sessionStore.reconnect} /> : <>
           {state.mode === 'remote' && <RemoteSessionAttachment key={namespace} state={state} theme={t} onDetach={browseHost} />}

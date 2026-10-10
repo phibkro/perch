@@ -1,0 +1,3312 @@
+{
+  "result": {
+    "verified": true,
+    "ompVersion": "18.8.7",
+    "agentSessionsCreated": 1,
+    "sameConversation": true,
+    "modelCalls": 4,
+    "paidProviderCalls": 0,
+    "inertToolExecutions": 1,
+    "checks": [
+      "A TSP activate reaches the stock tool approval selector and Deny prevents the inert tool from executing.",
+      "A new identical approval has a different component ID; an old event cannot approve it, while its own Approve executes the inert tool once.",
+      "The actual fallback selector accepts its fully qualified list/item IDs and rejects a disabled option.",
+      "A TSP plan choice resolves the stock InteractiveMode plan handler; Refine plan dismisses review, keeps plan mode, and makes no new provider call.",
+      "The native plan matches the known source sections; it omits the source title from the body, so the displayed projection is not an exact plan file export.",
+      "The stock rich editor advertises sendable:false and ignores atomic send; it must remain unsupported by this first remote request slice.",
+      "The stock simple input also advertises sendable:false and ignores atomic send; it remains unsupported."
+    ],
+    "planProjection": {
+      "sourceCharacters": 103,
+      "displayedCharacters": 87,
+      "sourceSha256": "c57541ba781753ba345bfe913759c05902019bd3f0882e01155c54440d5a3c8c",
+      "displayedSha256": "90e03b892786ba1a23aabc5fe702110cfe7109d9a7f9b7dffde558a5541d148d",
+      "byteIdenticalToFile": false
+    },
+    "limitations": [
+      "Protocol terminal recorder, not a Tern binary or physical phone.",
+      "TSP activate has no expected-document revision; fresh host inspection is not an atomic cross-process compare-and-resolve.",
+      "Refine plan leaves feedback to the next explicit prompt; section annotation editing is separate.",
+      "Both extension rich editors and simple inputs lack atomic native send in this pinned OMP build."
+    ]
+  },
+  "fixtures": {
+    "approvalPicker": {
+      "id": "s:1",
+      "k": "col",
+      "c": [
+        {
+          "id": "main",
+          "k": "col",
+          "c": [
+            {
+              "id": "l",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "1",
+              "k": "card",
+              "p": {
+                "role": "omp.welcome"
+              },
+              "c": [
+                {
+                  "id": "1.lockup",
+                  "k": "row",
+                  "p": {
+                    "align": "center",
+                    "gap": "md",
+                    "role": "omp.welcome.lockup"
+                  },
+                  "c": [
+                    {
+                      "id": "1.lockup/logo",
+                      "k": "image",
+                      "p": {
+                        "builtin": "omp",
+                        "alt": "omp",
+                        "w": 128,
+                        "role": "omp.welcome.logo"
+                      }
+                    },
+                    {
+                      "id": "1.lockup/mark",
+                      "k": "col",
+                      "p": {
+                        "role": "omp.welcome.mark"
+                      },
+                      "c": [
+                        {
+                          "id": "1.lockup/mark/omp.welcome.wordmark",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.wordmark",
+                            "spans": [
+                              {
+                                "t": "omp",
+                                "s": "strong"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "1.lockup/mark/omp.welcome.version",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.version",
+                            "spans": [
+                              {
+                                "t": "v18.8.7",
+                                "s": "dim mono"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "1.tip",
+                  "k": "row",
+                  "p": {
+                    "gap": "sm",
+                    "align": "start",
+                    "role": "omp.welcome.tip"
+                  },
+                  "c": [
+                    {
+                      "id": "1.tip/0",
+                      "k": "icon",
+                      "p": {
+                        "name": "lightbulb",
+                        "role": "omp.welcome.tip-icon"
+                      }
+                    },
+                    {
+                      "id": "1.tip/1",
+                      "k": "text",
+                      "p": {
+                        "wrap": "word",
+                        "role": "omp.welcome.tip-text",
+                        "text": "You can /btw to ask a side question"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "m",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "p",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "p.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "p.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:38 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "p.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "p.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "p.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the inert approval fixture."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "q",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "r",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-1",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "running",
+                "age": 11,
+                "frame": "card",
+                "collapsible": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "dock",
+          "k": "col",
+          "c": [
+            {
+              "id": "3",
+              "k": "row",
+              "p": {
+                "role": "omp.hud",
+                "justify": "end",
+                "gap": "sm",
+                "hidden": true
+              }
+            },
+            {
+              "id": "4",
+              "k": "col"
+            },
+            {
+              "id": "5",
+              "k": "col"
+            },
+            {
+              "id": "6",
+              "k": "col"
+            },
+            {
+              "id": "7",
+              "k": "col"
+            },
+            {
+              "id": "8",
+              "k": "col"
+            },
+            {
+              "id": "9",
+              "k": "col"
+            },
+            {
+              "id": "a",
+              "k": "col",
+              "c": [
+                {
+                  "id": "g",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.judge"
+                  }
+                },
+                {
+                  "id": "h",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.downloads"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b",
+              "k": "row",
+              "p": {
+                "role": "omp.hud.activity",
+                "align": "center",
+                "gap": "sm"
+              },
+              "c": [
+                {
+                  "id": "b.status",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.status"
+                  },
+                  "c": [
+                    {
+                      "id": "o",
+                      "k": "row",
+                      "p": {
+                        "role": "omp.working",
+                        "align": "center",
+                        "gap": "sm"
+                      },
+                      "c": [
+                        {
+                          "id": "o.spinner",
+                          "k": "spinner",
+                          "p": {
+                            "style": "starburst",
+                            "tone": "accent"
+                          }
+                        },
+                        {
+                          "id": "o.elapsed",
+                          "k": "elapsed",
+                          "p": {
+                            "age": 8,
+                            "format": "short"
+                          }
+                        },
+                        {
+                          "id": "o.sep",
+                          "k": "text",
+                          "p": {
+                            "text": "·",
+                            "role": "omp.working.sep"
+                          }
+                        },
+                        {
+                          "id": "o.label",
+                          "k": "shimmer",
+                          "p": {
+                            "spans": [
+                              {
+                                "t": "Working…",
+                                "s": "muted"
+                              }
+                            ],
+                            "mode": "classic",
+                            "palette": {
+                              "low": "dim",
+                              "mid": "muted",
+                              "high": "accent"
+                            },
+                            "role": "omp.working.label"
+                          }
+                        },
+                        {
+                          "id": "o.fill",
+                          "k": "row",
+                          "p": {
+                            "grow": 1
+                          }
+                        },
+                        {
+                          "id": "o.stop",
+                          "k": "row",
+                          "p": {
+                            "role": "omp.working.stop",
+                            "gap": "xs",
+                            "align": "center",
+                            "title": "Stop  esc",
+                            "actions": {
+                              "click": "interrupt"
+                            }
+                          },
+                          "c": [
+                            {
+                              "id": "o.stop/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "escape"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "o.stop/1",
+                              "k": "text",
+                              "p": {
+                                "text": "Stop"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "c",
+              "k": "col"
+            },
+            {
+              "id": "d",
+              "k": "col",
+              "c": [
+                {
+                  "id": "n",
+                  "k": "col"
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "k": "col",
+              "c": [
+                {
+                  "id": "s",
+                  "k": "col"
+                }
+              ]
+            },
+            {
+              "id": "f",
+              "k": "col"
+            }
+          ]
+        },
+        {
+          "id": "layer",
+          "k": "col",
+          "c": [
+            {
+              "id": "s.^picker",
+              "k": "picker",
+              "p": {
+                "title": "Allow tool: perch_fixture",
+                "subtitle": "Reason: User must approve this exact inert fixture.",
+                "noun": "options",
+                "size": "md",
+                "layout": "rows",
+                "preview": "none",
+                "items": [
+                  {
+                    "id": "0",
+                    "label": "Approve"
+                  },
+                  {
+                    "id": "1",
+                    "label": "Deny"
+                  }
+                ],
+                "selected": "0",
+                "total": 2,
+                "empty": "No matching options",
+                "actions": [
+                  {
+                    "id": "confirm",
+                    "label": "Select",
+                    "keys": [
+                      "enter"
+                    ],
+                    "primary": true
+                  },
+                  {
+                    "id": "close",
+                    "label": "Close",
+                    "keys": [
+                      "esc"
+                    ],
+                    "end": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "approvalFallback": {
+      "id": "s:1",
+      "k": "col",
+      "c": [
+        {
+          "id": "main",
+          "k": "col",
+          "c": [
+            {
+              "id": "l",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "1",
+              "k": "card",
+              "p": {
+                "role": "omp.welcome"
+              },
+              "c": [
+                {
+                  "id": "1.lockup",
+                  "k": "row",
+                  "p": {
+                    "align": "center",
+                    "gap": "md",
+                    "role": "omp.welcome.lockup"
+                  },
+                  "c": [
+                    {
+                      "id": "1.lockup/logo",
+                      "k": "image",
+                      "p": {
+                        "builtin": "omp",
+                        "alt": "omp",
+                        "w": 128,
+                        "role": "omp.welcome.logo"
+                      }
+                    },
+                    {
+                      "id": "1.lockup/mark",
+                      "k": "col",
+                      "p": {
+                        "role": "omp.welcome.mark"
+                      },
+                      "c": [
+                        {
+                          "id": "1.lockup/mark/omp.welcome.wordmark",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.wordmark",
+                            "spans": [
+                              {
+                                "t": "omp",
+                                "s": "strong"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "1.lockup/mark/omp.welcome.version",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.version",
+                            "spans": [
+                              {
+                                "t": "v18.8.7",
+                                "s": "dim mono"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "1.tip",
+                  "k": "row",
+                  "p": {
+                    "gap": "sm",
+                    "align": "start",
+                    "role": "omp.welcome.tip"
+                  },
+                  "c": [
+                    {
+                      "id": "1.tip/0",
+                      "k": "icon",
+                      "p": {
+                        "name": "lightbulb",
+                        "role": "omp.welcome.tip-icon"
+                      }
+                    },
+                    {
+                      "id": "1.tip/1",
+                      "k": "text",
+                      "p": {
+                        "wrap": "word",
+                        "role": "omp.welcome.tip-text",
+                        "text": "You can /btw to ask a side question"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "m",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "p",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "p.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "p.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:38 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "p.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "p.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "p.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the inert approval fixture."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "q",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "r",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-1",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "error",
+                "frame": "card",
+                "collapsible": true,
+                "took": 21,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                },
+                "tone": "error"
+              },
+              "c": [
+                {
+                  "id": "r.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "Tool call denied by user: perch_fixture"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "t.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The fixture decision was received."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "w",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "w.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "w.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:39 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "w.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "w.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "w.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the same inert approval fixture again."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "x",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "y",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-2",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "done",
+                "frame": "card",
+                "collapsible": true,
+                "took": 1221,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                }
+              },
+              "c": [
+                {
+                  "id": "y.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "No side effect."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "10",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "10.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The second fixture decision was received."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "dock",
+          "k": "col",
+          "c": [
+            {
+              "id": "3",
+              "k": "row",
+              "p": {
+                "role": "omp.hud",
+                "justify": "end",
+                "gap": "sm",
+                "hidden": true
+              }
+            },
+            {
+              "id": "4",
+              "k": "col"
+            },
+            {
+              "id": "5",
+              "k": "col"
+            },
+            {
+              "id": "6",
+              "k": "col"
+            },
+            {
+              "id": "7",
+              "k": "col"
+            },
+            {
+              "id": "8",
+              "k": "col"
+            },
+            {
+              "id": "9",
+              "k": "col"
+            },
+            {
+              "id": "a",
+              "k": "col",
+              "c": [
+                {
+                  "id": "g",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.judge"
+                  }
+                },
+                {
+                  "id": "h",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.downloads"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b",
+              "k": "col"
+            },
+            {
+              "id": "c",
+              "k": "col"
+            },
+            {
+              "id": "d",
+              "k": "col",
+              "c": [
+                {
+                  "id": "11",
+                  "k": "col"
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "k": "col",
+              "c": [
+                {
+                  "id": "12",
+                  "k": "card",
+                  "p": {
+                    "role": "omp.overlay.hook-select",
+                    "head": "Allow tool: perch_fixture"
+                  },
+                  "c": [
+                    {
+                      "id": "12.detail",
+                      "k": "text",
+                      "p": {
+                        "spans": [
+                          {
+                            "t": "Reason: disabled choice fixture",
+                            "s": "accent"
+                          }
+                        ],
+                        "wrap": "word"
+                      }
+                    },
+                    {
+                      "id": "12.slider-caption",
+                      "k": "text",
+                      "p": {
+                        "spans": [
+                          {
+                            "t": "Fixture tier",
+                            "s": "dim"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "12.slider",
+                      "k": "tabs",
+                      "p": {
+                        "items": [
+                          {
+                            "id": "0",
+                            "label": "default"
+                          }
+                        ],
+                        "active": "0"
+                      }
+                    },
+                    {
+                      "id": "12.slider-detail",
+                      "k": "text",
+                      "p": {
+                        "spans": [
+                          {
+                            "t": "↳ ",
+                            "s": "dim"
+                          },
+                          {
+                            "t": "Inert local fixture",
+                            "s": "muted"
+                          }
+                        ],
+                        "wrap": "word"
+                      }
+                    },
+                    {
+                      "id": "12.list",
+                      "k": "list",
+                      "p": {
+                        "selected": "12.list/1",
+                        "empty": "No matching options",
+                        "max": {
+                          "lines": 15
+                        }
+                      },
+                      "c": [
+                        {
+                          "id": "12.list/0",
+                          "k": "item",
+                          "p": {
+                            "label": [
+                              {
+                                "t": "Approve"
+                              }
+                            ],
+                            "disabled": true
+                          }
+                        },
+                        {
+                          "id": "12.list/1",
+                          "k": "item",
+                          "p": {
+                            "label": [
+                              {
+                                "t": "Deny"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "12.hints",
+                      "k": "row",
+                      "p": {
+                        "gap": "md",
+                        "wrap": true,
+                        "role": "omp.overlay.hints"
+                      },
+                      "c": [
+                        {
+                          "id": "12.hints/0",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "12.hints/0/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "up"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "12.hints/0/1",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "down"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "12.hints/0/2",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "navigate",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "12.hints/1",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "12.hints/1/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "enter"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "12.hints/1/1",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "select",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "12.hints/2",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "12.hints/2/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "escape"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "12.hints/2/1",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "cancel",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "f",
+              "k": "col"
+            }
+          ]
+        },
+        {
+          "id": "layer",
+          "k": "col"
+        }
+      ]
+    },
+    "planReview": {
+      "id": "s:1",
+      "k": "col",
+      "c": [
+        {
+          "id": "main",
+          "k": "col",
+          "c": [
+            {
+              "id": "l",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "1",
+              "k": "card",
+              "p": {
+                "role": "omp.welcome"
+              },
+              "c": [
+                {
+                  "id": "1.lockup",
+                  "k": "row",
+                  "p": {
+                    "align": "center",
+                    "gap": "md",
+                    "role": "omp.welcome.lockup"
+                  },
+                  "c": [
+                    {
+                      "id": "1.lockup/logo",
+                      "k": "image",
+                      "p": {
+                        "builtin": "omp",
+                        "alt": "omp",
+                        "w": 128,
+                        "role": "omp.welcome.logo"
+                      }
+                    },
+                    {
+                      "id": "1.lockup/mark",
+                      "k": "col",
+                      "p": {
+                        "role": "omp.welcome.mark"
+                      },
+                      "c": [
+                        {
+                          "id": "1.lockup/mark/omp.welcome.wordmark",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.wordmark",
+                            "spans": [
+                              {
+                                "t": "omp",
+                                "s": "strong"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "1.lockup/mark/omp.welcome.version",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.version",
+                            "spans": [
+                              {
+                                "t": "v18.8.7",
+                                "s": "dim mono"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "1.tip",
+                  "k": "row",
+                  "p": {
+                    "gap": "sm",
+                    "align": "start",
+                    "role": "omp.welcome.tip"
+                  },
+                  "c": [
+                    {
+                      "id": "1.tip/0",
+                      "k": "icon",
+                      "p": {
+                        "name": "lightbulb",
+                        "role": "omp.welcome.tip-icon"
+                      }
+                    },
+                    {
+                      "id": "1.tip/1",
+                      "k": "text",
+                      "p": {
+                        "wrap": "word",
+                        "role": "omp.welcome.tip-text",
+                        "text": "You can /btw to ask a side question"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "m",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "p",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "p.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "p.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:38 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "p.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "p.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "p.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the inert approval fixture."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "q",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "r",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-1",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "error",
+                "frame": "card",
+                "collapsible": true,
+                "took": 21,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                },
+                "tone": "error"
+              },
+              "c": [
+                {
+                  "id": "r.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "Tool call denied by user: perch_fixture"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "t.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The fixture decision was received."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "w",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "w.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "w.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:39 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "w.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "w.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "w.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the same inert approval fixture again."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "x",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "y",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-2",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "done",
+                "frame": "card",
+                "collapsible": true,
+                "took": 1221,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                }
+              },
+              "c": [
+                {
+                  "id": "y.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "No side effect."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "10",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "10.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The second fixture decision was received."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "dock",
+          "k": "col",
+          "c": [
+            {
+              "id": "3",
+              "k": "row",
+              "p": {
+                "role": "omp.hud",
+                "justify": "end",
+                "gap": "sm",
+                "hidden": true
+              }
+            },
+            {
+              "id": "4",
+              "k": "col"
+            },
+            {
+              "id": "5",
+              "k": "col"
+            },
+            {
+              "id": "6",
+              "k": "col"
+            },
+            {
+              "id": "7",
+              "k": "col"
+            },
+            {
+              "id": "8",
+              "k": "col"
+            },
+            {
+              "id": "9",
+              "k": "col"
+            },
+            {
+              "id": "a",
+              "k": "col",
+              "c": [
+                {
+                  "id": "g",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.judge"
+                  }
+                },
+                {
+                  "id": "h",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.downloads"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b",
+              "k": "col"
+            },
+            {
+              "id": "c",
+              "k": "col"
+            },
+            {
+              "id": "d",
+              "k": "col",
+              "c": [
+                {
+                  "id": "11",
+                  "k": "col"
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "k": "col",
+              "c": [
+                {
+                  "id": "j",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.editor"
+                  },
+                  "c": [
+                    {
+                      "id": "j.context",
+                      "k": "meter",
+                      "p": {
+                        "role": "omp.composer.context",
+                        "value": 0.015328125,
+                        "style": "bar",
+                        "thresholds": {
+                          "warn": 0.5,
+                          "bad": 0.9
+                        },
+                        "label": "2%",
+                        "total": "128K",
+                        "title": "Context 2% used\n2K of 128K tokens",
+                        "actions": {
+                          "click": "status.context"
+                        }
+                      }
+                    },
+                    {
+                      "id": "k",
+                      "k": "row",
+                      "p": {
+                        "gap": "sm",
+                        "wrap": true,
+                        "role": "omp.composer.chips",
+                        "hidden": true
+                      }
+                    },
+                    {
+                      "id": "j.line",
+                      "k": "row",
+                      "p": {
+                        "role": "omp.composer.line",
+                        "align": "start",
+                        "gap": "sm"
+                      },
+                      "c": [
+                        {
+                          "id": "j.line/input",
+                          "k": "editor",
+                          "p": {
+                            "text": "",
+                            "cursor": 0,
+                            "sendable": true,
+                            "placeholder": "What are we cooking?",
+                            "maxLines": 18
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "j.bar",
+                      "k": "row",
+                      "p": {
+                        "role": "omp.composer.bar",
+                        "gap": "sm",
+                        "align": "center"
+                      },
+                      "c": [
+                        {
+                          "id": "j.bar/model",
+                          "k": "row",
+                          "p": {
+                            "role": "omp.composer.model",
+                            "gap": "xs",
+                            "align": "center",
+                            "title": "Switch model  Alt+P",
+                            "actions": {
+                              "click": "status.model"
+                            }
+                          },
+                          "c": [
+                            {
+                              "id": "j.bar/model/icon",
+                              "k": "icon",
+                              "p": {
+                                "name": "model"
+                              }
+                            },
+                            {
+                              "id": "j.bar/model/name",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "GPT-4o mini",
+                                    "s": "statusLineModel"
+                                  }
+                                ],
+                                "wrap": "none"
+                              }
+                            },
+                            {
+                              "id": "j.bar/model/chev",
+                              "k": "icon",
+                              "p": {
+                                "name": "chev"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "j.bar/extras",
+                          "k": "status",
+                          "p": {
+                            "role": "omp.composer.extras",
+                            "transparent": true,
+                            "grow": 1
+                          }
+                        },
+                        {
+                          "id": "j.bar/usage",
+                          "k": "text",
+                          "p": {
+                            "role": "omp.composer.usage",
+                            "text": "",
+                            "wrap": "none",
+                            "actions": {
+                              "click": "status.cost"
+                            }
+                          }
+                        },
+                        {
+                          "id": "j.bar/send",
+                          "k": "kbd",
+                          "p": {
+                            "role": "omp.composer.send",
+                            "keys": [
+                              "enter"
+                            ],
+                            "title": "Send  ⏎",
+                            "actions": {
+                              "click": "submit"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "f",
+              "k": "col"
+            }
+          ]
+        },
+        {
+          "id": "layer",
+          "k": "col",
+          "c": [
+            {
+              "id": "layer.ov-13",
+              "k": "overlay",
+              "p": {
+                "anchor": "center",
+                "size": "lg",
+                "modal": true,
+                "role": "omp.overlay.planReview",
+                "head": "Owner controls"
+              },
+              "c": [
+                {
+                  "id": "13",
+                  "k": "col",
+                  "p": {
+                    "gap": "md"
+                  },
+                  "c": [
+                    {
+                      "id": "13.tools",
+                      "k": "row",
+                      "p": {
+                        "role": "omp.plan.tools",
+                        "gap": "sm",
+                        "align": "center",
+                        "justify": "end"
+                      },
+                      "c": [
+                        {
+                          "id": "13.tools/copyPlan",
+                          "k": "row",
+                          "p": {
+                            "role": "omp.btn",
+                            "gap": "xs",
+                            "align": "center",
+                            "actions": {
+                              "click": "copyPlan"
+                            },
+                            "title": "Copy plan  c"
+                          },
+                          "c": [
+                            {
+                              "id": "13.tools/copyPlan/0",
+                              "k": "text",
+                              "p": {
+                                "text": "Copy"
+                              }
+                            },
+                            {
+                              "id": "13.tools/copyPlan/1",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "c"
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13.tools/externalEditor",
+                          "k": "row",
+                          "p": {
+                            "role": "omp.btn",
+                            "gap": "xs",
+                            "align": "center",
+                            "actions": {
+                              "click": "externalEditor"
+                            },
+                            "title": "Edit in $EDITOR  Ctrl+G"
+                          },
+                          "c": [
+                            {
+                              "id": "13.tools/externalEditor/0",
+                              "k": "text",
+                              "p": {
+                                "text": "Edit in $EDITOR"
+                              }
+                            },
+                            {
+                              "id": "13.tools/externalEditor/1",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "ctrl",
+                                  "g"
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13.tools/cancel",
+                          "k": "row",
+                          "p": {
+                            "role": "omp.btn",
+                            "gap": "xs",
+                            "align": "center",
+                            "actions": {
+                              "click": "cancel"
+                            },
+                            "title": "Cancel  esc"
+                          },
+                          "c": [
+                            {
+                              "id": "13.tools/cancel/0",
+                              "k": "text",
+                              "p": {
+                                "text": "Cancel"
+                              }
+                            },
+                            {
+                              "id": "13.tools/cancel/1",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "escape"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "13.split",
+                      "k": "row",
+                      "p": {
+                        "gap": "lg",
+                        "align": "start"
+                      },
+                      "c": [
+                        {
+                          "id": "13.split/sidebar",
+                          "k": "col",
+                          "p": {
+                            "max": {
+                              "w": "32ch"
+                            },
+                            "shrink": 0
+                          },
+                          "c": [
+                            {
+                              "id": "13.split/sidebar/toc",
+                              "k": "list",
+                              "p": {
+                                "selected": "13.split/sidebar/toc/h1",
+                                "role": "omp.plan.toc",
+                                "actions": {
+                                  "click": "select",
+                                  "dblclick": "activate"
+                                }
+                              },
+                              "c": [
+                                {
+                                  "id": "13.split/sidebar/toc/h1",
+                                  "k": "item",
+                                  "p": {
+                                    "label": "Goal",
+                                    "role": "omp.plan.toc.depth0"
+                                  }
+                                },
+                                {
+                                  "id": "13.split/sidebar/toc/h2",
+                                  "k": "item",
+                                  "p": {
+                                    "label": "Next step",
+                                    "role": "omp.plan.toc.depth0"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13.split/body",
+                          "k": "col",
+                          "p": {
+                            "role": "omp.plan.body",
+                            "grow": 1,
+                            "gap": "md"
+                          },
+                          "c": [
+                            {
+                              "id": "13.split/body/s1",
+                              "k": "md",
+                              "p": {
+                                "text": "## Goal\n\nReview this plan from the phone.\n\n"
+                              }
+                            },
+                            {
+                              "id": "13.split/body/s2",
+                              "k": "md",
+                              "p": {
+                                "text": "## Next step\n\nKeep the same host process.\n"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "13.prompt",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.plan.prompt",
+                        "spans": [
+                          {
+                            "t": "Plan mode - next step",
+                            "s": "muted"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "13.options",
+                      "k": "list",
+                      "p": {
+                        "selected": "13.options/o0",
+                        "role": "omp.plan.options",
+                        "tone": "accent",
+                        "actions": {
+                          "click": "select",
+                          "dblclick": "activate"
+                        }
+                      },
+                      "c": [
+                        {
+                          "id": "13.options/o0",
+                          "k": "item",
+                          "p": {
+                            "label": "Approve and execute",
+                            "hint": [
+                              "enter"
+                            ]
+                          }
+                        },
+                        {
+                          "id": "13.options/o1",
+                          "k": "item",
+                          "p": {
+                            "label": "Approve and compact context"
+                          }
+                        },
+                        {
+                          "id": "13.options/o2",
+                          "k": "item",
+                          "p": {
+                            "label": "Approve and keep context (~2k / 128k)"
+                          }
+                        },
+                        {
+                          "id": "13.options/o3",
+                          "k": "item",
+                          "p": {
+                            "label": "Refine plan"
+                          }
+                        },
+                        {
+                          "id": "13.options/o4",
+                          "k": "item",
+                          "p": {
+                            "label": "Save and quit"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "13.hints",
+                      "k": "row",
+                      "p": {
+                        "gap": "md",
+                        "wrap": true,
+                        "role": "omp.overlay.hints"
+                      },
+                      "c": [
+                        {
+                          "id": "13.hints/0",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "13.hints/0/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "left"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "13.hints/0/1",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "right"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "13.hints/0/2",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "select",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13.hints/1",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "13.hints/1/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "enter"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "13.hints/1/1",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "confirm",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13.hints/2",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "13.hints/2/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "tab"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "13.hints/2/1",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "regions",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13.hints/3",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "13.hints/3/0",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "󱊷",
+                                    "s": "muted icon"
+                                  },
+                                  {
+                                    "t": "cancel",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "editor": {
+      "id": "s:1",
+      "k": "col",
+      "c": [
+        {
+          "id": "main",
+          "k": "col",
+          "c": [
+            {
+              "id": "l",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "1",
+              "k": "card",
+              "p": {
+                "role": "omp.welcome"
+              },
+              "c": [
+                {
+                  "id": "1.lockup",
+                  "k": "row",
+                  "p": {
+                    "align": "center",
+                    "gap": "md",
+                    "role": "omp.welcome.lockup"
+                  },
+                  "c": [
+                    {
+                      "id": "1.lockup/logo",
+                      "k": "image",
+                      "p": {
+                        "builtin": "omp",
+                        "alt": "omp",
+                        "w": 128,
+                        "role": "omp.welcome.logo"
+                      }
+                    },
+                    {
+                      "id": "1.lockup/mark",
+                      "k": "col",
+                      "p": {
+                        "role": "omp.welcome.mark"
+                      },
+                      "c": [
+                        {
+                          "id": "1.lockup/mark/omp.welcome.wordmark",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.wordmark",
+                            "spans": [
+                              {
+                                "t": "omp",
+                                "s": "strong"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "1.lockup/mark/omp.welcome.version",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.version",
+                            "spans": [
+                              {
+                                "t": "v18.8.7",
+                                "s": "dim mono"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "1.tip",
+                  "k": "row",
+                  "p": {
+                    "gap": "sm",
+                    "align": "start",
+                    "role": "omp.welcome.tip"
+                  },
+                  "c": [
+                    {
+                      "id": "1.tip/0",
+                      "k": "icon",
+                      "p": {
+                        "name": "lightbulb",
+                        "role": "omp.welcome.tip-icon"
+                      }
+                    },
+                    {
+                      "id": "1.tip/1",
+                      "k": "text",
+                      "p": {
+                        "wrap": "word",
+                        "role": "omp.welcome.tip-text",
+                        "text": "You can /btw to ask a side question"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "m",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "p",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "p.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "p.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:38 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "p.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "p.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "p.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the inert approval fixture."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "q",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "r",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-1",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "error",
+                "frame": "card",
+                "collapsible": true,
+                "took": 21,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                },
+                "tone": "error"
+              },
+              "c": [
+                {
+                  "id": "r.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "Tool call denied by user: perch_fixture"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "t.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The fixture decision was received."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "w",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "w.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "w.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:39 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "w.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "w.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "w.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the same inert approval fixture again."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "x",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "y",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-2",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "done",
+                "frame": "card",
+                "collapsible": true,
+                "took": 1221,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                }
+              },
+              "c": [
+                {
+                  "id": "y.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "No side effect."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "10",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "10.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The second fixture decision was received."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "14",
+              "k": "toast",
+              "p": {
+                "text": "Refine plan: enter a follow-up prompt.",
+                "ttl": 2400,
+                "role": "omp.toast.status"
+              }
+            }
+          ]
+        },
+        {
+          "id": "dock",
+          "k": "col",
+          "c": [
+            {
+              "id": "3",
+              "k": "row",
+              "p": {
+                "role": "omp.hud",
+                "justify": "end",
+                "gap": "sm",
+                "hidden": true
+              }
+            },
+            {
+              "id": "4",
+              "k": "col"
+            },
+            {
+              "id": "5",
+              "k": "col"
+            },
+            {
+              "id": "6",
+              "k": "col"
+            },
+            {
+              "id": "7",
+              "k": "col"
+            },
+            {
+              "id": "8",
+              "k": "col"
+            },
+            {
+              "id": "9",
+              "k": "col"
+            },
+            {
+              "id": "a",
+              "k": "col",
+              "c": [
+                {
+                  "id": "g",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.judge"
+                  }
+                },
+                {
+                  "id": "h",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.downloads"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b",
+              "k": "col"
+            },
+            {
+              "id": "c",
+              "k": "col"
+            },
+            {
+              "id": "d",
+              "k": "col",
+              "c": [
+                {
+                  "id": "11",
+                  "k": "col"
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "k": "col",
+              "c": [
+                {
+                  "id": "15",
+                  "k": "card",
+                  "p": {
+                    "role": "omp.overlay.hook-editor",
+                    "head": "Plan follow-up fixture"
+                  },
+                  "c": [
+                    {
+                      "id": "16",
+                      "k": "col",
+                      "p": {
+                        "role": "omp.field"
+                      },
+                      "c": [
+                        {
+                          "id": "16.input",
+                          "k": "editor",
+                          "p": {
+                            "text": "Existing text",
+                            "cursor": 13,
+                            "sendable": false,
+                            "maxLines": 36
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "15.hints",
+                      "k": "row",
+                      "p": {
+                        "gap": "md",
+                        "wrap": true,
+                        "role": "omp.overlay.hints"
+                      },
+                      "c": [
+                        {
+                          "id": "15.hints/0",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "15.hints/0/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "ctrl",
+                                  "q"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "15.hints/0/1",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "ctrl",
+                                  "enter"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "15.hints/0/2",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "submit",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "15.hints/1",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "15.hints/1/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "escape"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "15.hints/1/1",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "cancel",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "15.hints/2",
+                          "k": "row",
+                          "p": {
+                            "gap": "xs",
+                            "align": "center"
+                          },
+                          "c": [
+                            {
+                              "id": "15.hints/2/0",
+                              "k": "kbd",
+                              "p": {
+                                "keys": [
+                                  "ctrl",
+                                  "g"
+                                ]
+                              }
+                            },
+                            {
+                              "id": "15.hints/2/1",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "external editor",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "f",
+              "k": "col"
+            }
+          ]
+        },
+        {
+          "id": "layer",
+          "k": "col"
+        }
+      ]
+    },
+    "input": {
+      "id": "s:1",
+      "k": "col",
+      "c": [
+        {
+          "id": "main",
+          "k": "col",
+          "c": [
+            {
+              "id": "l",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "1",
+              "k": "card",
+              "p": {
+                "role": "omp.welcome"
+              },
+              "c": [
+                {
+                  "id": "1.lockup",
+                  "k": "row",
+                  "p": {
+                    "align": "center",
+                    "gap": "md",
+                    "role": "omp.welcome.lockup"
+                  },
+                  "c": [
+                    {
+                      "id": "1.lockup/logo",
+                      "k": "image",
+                      "p": {
+                        "builtin": "omp",
+                        "alt": "omp",
+                        "w": 128,
+                        "role": "omp.welcome.logo"
+                      }
+                    },
+                    {
+                      "id": "1.lockup/mark",
+                      "k": "col",
+                      "p": {
+                        "role": "omp.welcome.mark"
+                      },
+                      "c": [
+                        {
+                          "id": "1.lockup/mark/omp.welcome.wordmark",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.wordmark",
+                            "spans": [
+                              {
+                                "t": "omp",
+                                "s": "strong"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "1.lockup/mark/omp.welcome.version",
+                          "k": "text",
+                          "p": {
+                            "wrap": "none",
+                            "role": "omp.welcome.version",
+                            "spans": [
+                              {
+                                "t": "v18.8.7",
+                                "s": "dim mono"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "1.tip",
+                  "k": "row",
+                  "p": {
+                    "gap": "sm",
+                    "align": "start",
+                    "role": "omp.welcome.tip"
+                  },
+                  "c": [
+                    {
+                      "id": "1.tip/0",
+                      "k": "icon",
+                      "p": {
+                        "name": "lightbulb",
+                        "role": "omp.welcome.tip-icon"
+                      }
+                    },
+                    {
+                      "id": "1.tip/1",
+                      "k": "text",
+                      "p": {
+                        "wrap": "word",
+                        "role": "omp.welcome.tip-text",
+                        "text": "You can /btw to ask a side question"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "m",
+              "k": "spacer",
+              "p": {
+                "size": "sm"
+              }
+            },
+            {
+              "id": "p",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "p.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "p.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:38 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "p.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "p.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "p.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the inert approval fixture."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "q",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "r",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-1",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "error",
+                "frame": "card",
+                "collapsible": true,
+                "took": 21,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                },
+                "tone": "error"
+              },
+              "c": [
+                {
+                  "id": "r.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "Tool call denied by user: perch_fixture"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "t",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "t.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The fixture decision was received."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "w",
+              "k": "card",
+              "p": {
+                "role": "omp.user",
+                "tone": "user"
+              },
+              "c": [
+                {
+                  "id": "w.tools",
+                  "k": "row",
+                  "p": {
+                    "gap": "xs",
+                    "role": "omp.user.tools"
+                  },
+                  "c": [
+                    {
+                      "id": "w.tools/0",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.time",
+                        "title": "10/10/2026, 6:57:39 AM",
+                        "spans": [
+                          {
+                            "t": "06:57 AM",
+                            "s": "dim mono"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "w.tools/1",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "copy-message"
+                        },
+                        "title": "Copy message",
+                        "key": "copy",
+                        "text": "Copy"
+                      }
+                    },
+                    {
+                      "id": "w.tools/2",
+                      "k": "text",
+                      "p": {
+                        "role": "omp.user.tool",
+                        "actions": {
+                          "click": "rewind"
+                        },
+                        "title": "Rewind the conversation to an earlier message",
+                        "key": "rewind",
+                        "text": "Rewind"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "w.1",
+                  "k": "md",
+                  "p": {
+                    "text": "Request the same inert approval fixture again."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "x",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              }
+            },
+            {
+              "id": "y",
+              "k": "tool",
+              "p": {
+                "role": "omp.tool.perch_fixture",
+                "key": "mock-tc-2",
+                "name": "perch_fixture",
+                "title": "Perch fixture",
+                "target": "note=\"User must approve this …\"",
+                "targetKind": "text",
+                "status": "done",
+                "frame": "card",
+                "collapsible": true,
+                "took": 1221,
+                "collapsed": true,
+                "preview": {
+                  "lines": 10
+                }
+              },
+              "c": [
+                {
+                  "id": "y.0",
+                  "k": "ansi",
+                  "p": {
+                    "text": "No side effect."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "10",
+              "k": "col",
+              "p": {
+                "role": "omp.assistant"
+              },
+              "c": [
+                {
+                  "id": "10.t0",
+                  "k": "md",
+                  "p": {
+                    "text": "The second fixture decision was received."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "14",
+              "k": "toast",
+              "p": {
+                "text": "Refine plan: enter a follow-up prompt.",
+                "ttl": 2400,
+                "role": "omp.toast.status"
+              }
+            }
+          ]
+        },
+        {
+          "id": "dock",
+          "k": "col",
+          "c": [
+            {
+              "id": "3",
+              "k": "row",
+              "p": {
+                "role": "omp.hud",
+                "justify": "end",
+                "gap": "sm",
+                "hidden": true
+              }
+            },
+            {
+              "id": "4",
+              "k": "col"
+            },
+            {
+              "id": "5",
+              "k": "col"
+            },
+            {
+              "id": "6",
+              "k": "col"
+            },
+            {
+              "id": "7",
+              "k": "col"
+            },
+            {
+              "id": "8",
+              "k": "col"
+            },
+            {
+              "id": "9",
+              "k": "col"
+            },
+            {
+              "id": "a",
+              "k": "col",
+              "c": [
+                {
+                  "id": "g",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.judge"
+                  }
+                },
+                {
+                  "id": "h",
+                  "k": "col",
+                  "p": {
+                    "role": "omp.hud.downloads"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b",
+              "k": "col"
+            },
+            {
+              "id": "c",
+              "k": "col"
+            },
+            {
+              "id": "d",
+              "k": "col",
+              "c": [
+                {
+                  "id": "11",
+                  "k": "col"
+                }
+              ]
+            },
+            {
+              "id": "e",
+              "k": "col",
+              "c": [
+                {
+                  "id": "17",
+                  "k": "card",
+                  "p": {
+                    "role": "omp.overlay.hook-input",
+                    "head": "Simple request fixture"
+                  },
+                  "c": [
+                    {
+                      "id": "18",
+                      "k": "col",
+                      "p": {
+                        "gap": "md",
+                        "role": "omp.form"
+                      },
+                      "c": [
+                        {
+                          "id": "19",
+                          "k": "col",
+                          "p": {
+                            "gap": "sm",
+                            "role": "omp.form.field"
+                          },
+                          "c": [
+                            {
+                              "id": "1a",
+                              "k": "input",
+                              "p": {
+                                "text": "",
+                                "cursor": 0,
+                                "sendable": false,
+                                "prompt": "> "
+                              }
+                            },
+                            {
+                              "id": "1b",
+                              "k": "text",
+                              "p": {
+                                "text": "",
+                                "hidden": true
+                              }
+                            },
+                            {
+                              "id": "1c",
+                              "k": "text",
+                              "p": {
+                                "spans": [
+                                  {
+                                    "t": "󰌑",
+                                    "s": "muted icon"
+                                  },
+                                  {
+                                    "t": "submit ",
+                                    "s": "muted"
+                                  },
+                                  {
+                                    "t": "󱊷",
+                                    "s": "muted icon"
+                                  },
+                                  {
+                                    "t": "cancel",
+                                    "s": "muted"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "f",
+              "k": "col"
+            }
+          ]
+        },
+        {
+          "id": "layer",
+          "k": "col"
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,43 @@
 # Perch review
 
+## Perch 0.8: remote owner requests
+
+Two independent reviews inspected the change from
+`3aa5c71bb81aaa64f7ed8017a08b75f50e05d920`, including new files. The requirements
+were the user's request for self-hosted Tern connections and native approval and
+plan responses, grounded in [REMOTE-REQUESTS.md](REMOTE-REQUESTS.md).
+
+### Standards
+
+The review found no hard-rule violations or actionable design findings. It
+checked the documented external-store ownership, native assistant-ui version,
+bounded protocol projection, native Markdown rendering, and existing module
+boundaries. A documentation clarification records that the plan Source view is
+OMP's displayed Markdown, not a byte-exact copy of the original plan file.
+
+### Spec
+
+Three concrete findings were corrected:
+
+- An uncertain answer now stays reserved by session and mounted request ID
+  across content revisions. The sheet still uses the revision to retire stale
+  selections. The HTTP regression checks a changed revision, retained unknown
+  state, and no second answer POST.
+- The plan prompt includes OMP's resolved execution model as well as its strategy
+  label. The displayed model detail participates in the request fingerprint.
+- An open annotation chooser now makes the plan non-actionable, just like its
+  feedback editor. The changed projection invalidates an older phone choice.
+
+The reviewer confirmed all three source corrections. The test and runtime
+record is in [VERIFICATION.md](VERIFICATION.md); a review is not a substitute
+for upstream execution or a physical device check.
+
+Direct Android **Add remote host**, bare-daemon attachment, arbitrary editors,
+and annotation editing remain explicitly deferred. The existing connection
+uses the workspace gateway and the open Tern window's local or already attached
+remote panes. The standalone OMP extension rejects owner-answer commands rather
+than advertising a resolver it does not have.
+
 ## Perch 0.5
 
 Independent source review examined the connected durable backend, driver,

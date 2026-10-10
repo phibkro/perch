@@ -8,6 +8,22 @@ export const MAX_REMOTE_COMMAND_BYTES = 128 * 1024;
 export const MAX_REMOTE_PROMPT_LENGTH = 100_000;
 export const MAX_REMOTE_SESSIONS = 256;
 export const MAX_REMOTE_MODELS = 10_000;
+export const MAX_REMOTE_ANSWER_LENGTH = 100_000;
+
+/** A projection of a live host dialog, never an instruction to run a tool locally. */
+export interface RemoteQuestion {
+  id: string;
+  revision: string;
+  kind: 'choice' | 'editor';
+  category: 'question' | 'approval' | 'plan';
+  actionable: boolean;
+  title: string;
+  prompt: string;
+  options?: { id: string; label: string; description?: string; disabled?: boolean }[];
+  initialValue?: string;
+  document?: { title: string; content: string; format: 'markdown' | 'text' };
+  notice?: string;
+}
 
 export interface RemoteHealth {
   protocol: typeof REMOTE_PROTOCOL;
@@ -31,7 +47,7 @@ export interface RemoteSessionSummary {
   harness: 'omp' | 'tern';
   pid?: number;
   model?: ModelMetadata;
-  location?: { workspace?: string; tab?: string; pane?: string };
+  location?: { host?: string; workspace?: string; tab?: string; pane?: string };
 }
 
 export interface RemoteCatalog {
@@ -46,6 +62,8 @@ export interface RemoteCapabilities {
   prompt: boolean;
   interrupt: boolean;
   modelSelection: boolean;
+  /** Optional for adapters predating native owner dialogs. */
+  questions?: boolean;
 }
 
 export interface RemoteSnapshot {
@@ -61,6 +79,7 @@ export interface RemoteSnapshot {
   availableModels: ModelMetadata[];
   truncated: boolean;
   notices: string[];
+  pendingQuestion?: RemoteQuestion | null;
 }
 
 interface RemoteCommandIdentity {
@@ -73,6 +92,7 @@ export type RemoteCommand = RemoteCommandIdentity & (
   | { type: 'prompt'; text: string }
   | { type: 'interrupt' }
   | { type: 'set-model'; provider: string; modelId: string }
+  | { type: 'answer'; requestId: string; requestRevision: string; answer: string }
 );
 
 export interface RemoteReceipt extends RemoteCommandIdentity {
@@ -124,7 +144,7 @@ function summary(value: unknown): RemoteSessionSummary {
   if (value.location !== undefined) {
     if (!object(value.location)) invalid('session location');
     const location: NonNullable<RemoteSessionSummary['location']> = {};
-    for (const key of ['workspace', 'tab', 'pane'] as const) {
+    for (const key of ['host', 'workspace', 'tab', 'pane'] as const) {
       const field = value.location[key];
       if (field !== undefined) {
         if (!string(field, 512)) invalid('session location');
@@ -187,19 +207,50 @@ function tool(value: unknown): ToolActivity {
   return result;
 }
 
+/** Reject incomplete/malformed request metadata instead of guessing host choices. */
+export function parseRemoteQuestion(input: unknown): RemoteQuestion {
+  if (!object(input) || !opaque(input.id) || !opaque(input.revision)
+      || !['choice', 'editor'].includes(String(input.kind)) || !['question', 'approval', 'plan'].includes(String(input.category))
+      || typeof input.actionable !== 'boolean' || !opaque(input.title, 1024) || !string(input.prompt, 100_000)
+      || (input.initialValue !== undefined && !string(input.initialValue, MAX_REMOTE_ANSWER_LENGTH))
+      || (input.notice !== undefined && !string(input.notice, 2000))) invalid('host request');
+  const result: RemoteQuestion = { id: input.id, revision: input.revision, kind: input.kind as RemoteQuestion['kind'],
+    category: input.category as RemoteQuestion['category'], actionable: input.actionable, title: input.title, prompt: input.prompt };
+  if (input.kind === 'choice' || input.options !== undefined) {
+    if (!Array.isArray(input.options) || input.options.length > 64 || !input.options.every(option => object(option)
+        && opaque(option.id) && opaque(option.label, 1024) && (option.description === undefined || string(option.description, 4096))
+        && (option.disabled === undefined || typeof option.disabled === 'boolean'))) invalid('host request choices');
+    result.options = unique(input.options.map(option => ({ id: option.id as string, label: option.label as string,
+      ...(option.description === undefined ? {} : { description: option.description as string }),
+      ...(option.disabled === undefined ? {} : { disabled: option.disabled as boolean }) })), 'request choice');
+    if (input.actionable && input.kind === 'choice' && !result.options.some(option => !option.disabled)) invalid('actionable host request');
+  }
+  if (input.initialValue !== undefined) result.initialValue = input.initialValue as string;
+  if (input.notice !== undefined) result.notice = input.notice as string;
+  if (input.document !== undefined) {
+    const document = input.document;
+    if (!object(document) || !opaque(document.title, 512) || !string(document.content, 200_000)
+        || !['markdown', 'text'].includes(String(document.format))) invalid('host request document');
+    result.document = { title: document.title, content: document.content, format: document.format as 'markdown' | 'text' };
+  }
+  return result;
+}
+
 export function parseRemoteSnapshot(input: unknown): RemoteSnapshot {
   const value = envelope(input);
   if (!safeRevision(value.revision) || !object(value.capabilities) || typeof value.readOnly !== 'boolean'
       || typeof value.truncated !== 'boolean') invalid('session snapshot');
   const capabilities = value.capabilities;
   for (const key of ['prompt', 'interrupt', 'modelSelection']) if (typeof capabilities[key] !== 'boolean') invalid('session capabilities');
+  if (capabilities.questions !== undefined && typeof capabilities.questions !== 'boolean') invalid('session request capability');
   if (!Array.isArray(value.messages) || value.messages.length > 4000 || !Array.isArray(value.tools) || value.tools.length > 4000
       || !Array.isArray(value.availableModels) || value.availableModels.length > MAX_REMOTE_MODELS) invalid('snapshot collections');
   return { protocol: REMOTE_PROTOCOL, version: REMOTE_VERSION, epoch: value.epoch as string, revision: value.revision,
     session: summary(value.session), capabilities: { prompt: capabilities.prompt as boolean, interrupt: capabilities.interrupt as boolean,
-      modelSelection: capabilities.modelSelection as boolean }, readOnly: value.readOnly,
+      modelSelection: capabilities.modelSelection as boolean, questions: capabilities.questions === true }, readOnly: value.readOnly,
     messages: unique(value.messages.map(message), 'message'), tools: unique(value.tools.map(tool), 'tool'),
-    availableModels: value.availableModels.map(model), truncated: value.truncated, notices: descriptions(value.notices, 'snapshot notices') };
+    availableModels: value.availableModels.map(model), truncated: value.truncated, notices: descriptions(value.notices, 'snapshot notices'),
+    pendingQuestion: value.pendingQuestion === undefined || value.pendingQuestion === null ? null : parseRemoteQuestion(value.pendingQuestion) };
 }
 
 /** Public commands accept only their declared fields; no raw terminal or plugin payload. */
@@ -213,6 +264,8 @@ export function parseRemoteCommand(input: unknown): RemoteCommand {
   if (input.type === 'prompt' && only(['text']) && string(input.text, MAX_REMOTE_PROMPT_LENGTH) && input.text.trim()) return { ...base, type: 'prompt', text: input.text };
   if (input.type === 'interrupt' && only([])) return { ...base, type: 'interrupt' };
   if (input.type === 'set-model' && only(['provider', 'modelId']) && opaque(input.provider, 256) && opaque(input.modelId, 1024)) return { ...base, type: 'set-model', provider: input.provider, modelId: input.modelId };
+  if (input.type === 'answer' && only(['requestId', 'requestRevision', 'answer']) && opaque(input.requestId) && opaque(input.requestRevision)
+      && string(input.answer, MAX_REMOTE_ANSWER_LENGTH) && input.answer.trim()) return { ...base, type: 'answer', requestId: input.requestId, requestRevision: input.requestRevision, answer: input.answer };
   throw new Error('This remote command is unsupported or invalid.');
 }
 

@@ -283,6 +283,10 @@ async function input(el, value) {
       console.log(JSON.stringify({ result: 'PASS (focused connection DOM check only; no network)', checks, errors, cssLimitations, logs, blocked }, null, 2));
       return;
     }
+    if (process.argv.includes('--remote-only')) {
+      await showSidebar(); await press(byLabel('Connection'));
+      await waitFor(() => doc.querySelector('[data-testid="open-connect"]'), 'focused remote check opens the workspace connection screen');
+    } else {
     assert.equal(byLabel('Message to assistant').value, '');
     assert.ok(text().includes('What would you like to do?'));
     assert.equal(doc.querySelector('[role="tab"]'), null);
@@ -642,6 +646,7 @@ async function input(el, value) {
     await waitFor(() => !byLabel('Connect Synthetic durable workspace'), 'forget removes the saved device connection');
     await press(byLabel('Close sheet'));
     checks.push('saved workspace reopen and removal do not create chats, replay prompts, or expose credentials');
+    }
 
     // Remote sessions use the real exported store, driver, native components,
     // workspace pairing and assistant-ui runtime with in-memory HTTP responses.
@@ -693,10 +698,116 @@ async function input(el, value) {
     assert.ok(!text().includes('Remote controlled reply.')); assert.ok(text().includes('PID 4862'));
     assert.equal(remoteCommands().length, 1);
     checks.push('runtime replacement does not inherit the previous generation’s draft, transcript, or pending input');
+
+    const answerCommands = () => remoteCommands().filter(call => call.body.type === 'answer');
+    const sendDecision = () => doc.querySelector('[data-testid="send-answer"]');
+    const choiceEnabled = label => { const choice = byLabel(label); return choice && choice.getAttribute('aria-disabled') !== 'true'; };
+    const approval = { id: 'fixture-approval', revision: 'approval-revision-one', kind: 'choice', category: 'approval', actionable: true,
+      title: 'Review command approval', prompt: 'The synthetic host requests permission to run: printf "fixture only". No command will run in this DOM fixture.', initialValue: 'allow-once',
+      options: [{ id: 'allow-once', label: 'Allow this command', description: 'Allow exactly this synthetic action once.' }, { id: 'deny', label: 'Deny this command' }, { id: 'persistent', label: 'Always allow', disabled: true }] };
+    remote.showRequest('remote_two', approval);
+    await waitFor(() => byLabel('Answer agent question') && text().includes('This request can be answered here.'), 'an actionable host approval is offered on the phone');
+    await press(byLabel('Answer agent question'));
+    await waitFor(() => byLabel('Allow this command'), 'approval opens with the exact host choices');
+    assert.equal(byLabel('Allow this command').getAttribute('aria-checked'), 'false');
+    assert.equal(sendDecision().disabled, true);
+    assert.equal(byLabel('Always allow').getAttribute('aria-disabled'), 'true');
+    await press(byLabel('Always allow')); assert.equal(sendDecision().disabled, true);
+    assert.ok(text().includes(approval.prompt));
+    assert.equal(answerCommands().length, 0);
+    checks.push('host defaults do not preselect an approval and disabled options cannot enable Send answer');
+    await press(byLabel('Allow this command')); assert.equal(sendDecision().disabled, false);
+
+    remote.showRequest('remote_two', { ...approval, revision: 'approval-revision-two', prompt: `${approval.prompt}\nThe host revised this request.` });
+    await waitFor(() => text().includes('The host revised this request.') && byLabel('Allow this command')?.getAttribute('aria-checked') === 'false', 'revising the same host request clears the previous selected answer');
+    assert.equal(sendDecision().disabled, true);
+    await press(byLabel('Allow this command'));
+    remote.setReadOnly('remote_two', true);
+    await waitFor(() => byLabel('Allow this command')?.getAttribute('aria-disabled') === 'true' && text().includes('This session is view only.'), 'read-only access disables every approval response control');
+    assert.equal(sendDecision().disabled, true); await press(byLabel('Deny this command'));
+    assert.equal(byLabel('Allow this command').getAttribute('aria-checked'), 'true'); assert.equal(answerCommands().length, 0);
+    remote.setReadOnly('remote_two', false);
+    await waitFor(() => choiceEnabled('Allow this command'), 'write access restores the current request controls');
+    remote.setQuestionCapability('remote_two', false);
+    await waitFor(() => byLabel('Allow this command')?.getAttribute('aria-disabled') === 'true' && text().includes('This dialog is not available for phone answers.'), 'a host without answer capability never advertises an actionable phone request');
+    assert.equal(sendDecision().disabled, true);
+    remote.setQuestionCapability('remote_two', true);
+    await waitFor(() => choiceEnabled('Allow this command'), 'the live answer capability is restored');
+
+    remote.showRequest('remote_two', { ...approval, revision: 'approval-revision-three', actionable: false, notice: 'This host dialog has no remote submission control.' });
+    await waitFor(() => text().includes('This host dialog has no remote submission control.') && byLabel('Allow this command')?.getAttribute('aria-disabled') === 'true', 'a visible unsupported dialog explains why its phone answers are disabled');
+    assert.equal(sendDecision().disabled, true);
+    remote.showRequest('remote_two', { ...approval, revision: 'approval-revision-four' });
+    await waitFor(() => choiceEnabled('Allow this command'), 'a new actionable revision opens with unlocked choices');
+    assert.equal(sendDecision().disabled, true); await press(byLabel('Allow this command'));
+    remote.setOffline(true);
+    await waitFor(() => byText('Retry') && byLabel('Allow this command')?.getAttribute('aria-disabled') === 'true', 'losing the host connection disables approval choices and Send answer');
+    assert.equal(sendDecision().disabled, true); await press(byLabel('Deny this command'));
+    assert.equal(byLabel('Allow this command').getAttribute('aria-checked'), 'true'); assert.equal(answerCommands().length, 0);
+    remote.setOffline(false); await press(byLabel('Close sheet')); await press(byText('Retry'));
+    await waitFor(() => !byText('Retry') && byLabel('Answer agent question'), 'reconnect restores the pending host request without submitting it');
+    await press(byLabel('Answer agent question'));
+    await waitFor(() => choiceEnabled('Allow this command'), 'the same approval can be reviewed after reconnect');
+    assert.equal(byLabel('Allow this command').getAttribute('aria-checked'), 'true');
+    const releaseAnswer = remote.holdNextAnswer();
+    await press(sendDecision());
+    await waitFor(() => answerCommands().length === 1 && text().includes('Sending your answer…'), 'an in-flight answer locks the request while its receipt is pending');
+    assert.equal(byLabel('Deny this command').getAttribute('aria-disabled'), 'true'); assert.equal(sendDecision().disabled, true);
+    await press(byLabel('Deny this command')); await press(sendDecision()); assert.equal(answerCommands().length, 1);
+    releaseAnswer();
+    await waitFor(() => text().includes('Answer forwarded. Waiting for the host to close this request.'), 'a forwarded receipt does not dismiss or re-enable the host approval');
+    assert.deepEqual({ requestId: answerCommands()[0].body.requestId, requestRevision: answerCommands()[0].body.requestRevision, answer: answerCommands()[0].body.answer, generation: answerCommands()[0].body.generation }, { requestId: approval.id, requestRevision: 'approval-revision-four', answer: 'allow-once', generation: 'generation-two' });
+    assert.equal(sendDecision().disabled, true);
+    remote.clearRequest('remote_two');
+    await waitFor(() => !byLabel('Answer agent question') && !byLabel('Allow this command'), 'the host dismisses the answered request');
+
+    const planSource = '# Synthetic migration plan\n\n## Intended changes\n\n1. Keep this fixture entirely in memory.\n2. Preserve the host request revision.\n\n```sh\nprintf "no command is run"\n```\n\n<script>globalThis.requestDocumentExecuted = true;</script>\n\nLast line — complete plan source.\n';
+    const plan = { id: 'fixture-plan-review', revision: 'plan-revision-one', kind: 'choice', category: 'plan', actionable: true, title: 'Review implementation plan', prompt: 'Review this complete synthetic plan and choose how the host should continue.',
+      document: { title: 'Synthetic migration plan', content: planSource, format: 'markdown' }, options: [{ id: 'accept-plan', label: 'Accept this plan' }, { id: 'revise-plan', label: 'Request plan changes' }] };
+    remote.showRequest('remote_two', plan);
+    await waitFor(() => byLabel('Answer agent question') && text().includes('PLAN REVIEW'), 'a plan review appears as its own request category');
+    await press(byLabel('Answer agent question'));
+    await waitFor(() => doc.querySelector('[data-testid="question-document"]') && text().includes('Intended changes'), 'plan review opens the existing native Markdown reader before its choices');
+    assert.equal(byLabel('Accept this plan'), null); assert.equal(doc.querySelector('[data-testid="question-document"] iframe'), null);
+    assert.equal(dom.window.requestDocumentExecuted, undefined);
+    await press(byLabel('Request document source'));
+    await waitFor(() => byLabel('Document source'), 'the supplied plan source is available as selectable native text');
+    assert.equal(byLabel('Document source').textContent, planSource);
+    assert.equal(byLabel('Request document source').getAttribute('aria-selected'), 'true');
+    await press(byText('Review choices'));
+    await waitFor(() => byLabel('Accept this plan') && byLabel('Read plan'), 'the plan document returns to the host’s decision choices');
+    assert.equal(sendDecision().disabled, true); assert.equal(byLabel('Accept this plan').getAttribute('aria-checked'), 'false');
+    await press(byLabel('Request plan changes')); await press(sendDecision());
+    await waitFor(() => answerCommands().length === 2 && text().includes('Answer forwarded. Waiting for the host to close this request.'), 'the plan choice is sent once with the exact host request identity');
+    assert.equal(answerCommands()[1].body.answer, 'revise-plan'); assert.equal(answerCommands()[1].body.requestRevision, 'plan-revision-one');
+    remote.showRequest('remote_two', { id: 'fixture-plan-feedback', revision: 'feedback-one', kind: 'editor', category: 'plan', actionable: true, title: 'Describe the plan changes', prompt: 'What should change in the synthetic plan?' });
+    await waitFor(() => byLabel('Answer to agent') && !byLabel('Request plan changes'), 'a follow-up editor cannot inherit the preceding choice ID');
+    assert.equal(byLabel('Answer to agent').value, ''); assert.equal(sendDecision().disabled, true);
+    const feedback = 'Keep the host running.\nPreserve the exact plan revision — please.';
+    await input(byLabel('Answer to agent'), feedback);
+    remote.setReadOnly('remote_two', true);
+    await waitFor(() => byLabel('Answer to agent')?.readOnly === true, 'a read-only host disables the request text editor as well as Send answer');
+    assert.equal(sendDecision().disabled, true);
+    remote.setReadOnly('remote_two', false);
+    await waitFor(() => byLabel('Answer to agent')?.readOnly === false && sendDecision()?.disabled === false, 'write access restores the exact unsent editor draft');
+    assert.equal(byLabel('Answer to agent').value, feedback);
+    remote.loseNextAnswerReply(); await press(sendDecision());
+    await waitFor(() => text().includes('Answer outcome is unconfirmed') && byText('Unconfirmed answer'), 'a lost answer reply is shown as unconfirmed rather than acknowledged');
+    assert.equal(byLabel('Answer to agent').readOnly, true); assert.equal(sendDecision().disabled, true);
+    assert.equal(answerCommands().length, 3); assert.equal(answerCommands()[2].body.answer, feedback);
+    const unconfirmedID = answerCommands()[2].body.id;
+    assert.ok(remote.calls.some(call => call.method === 'GET' && call.path.endsWith(`/operations/${unconfirmedID}`)));
+    await press(sendDecision()); await pause(1100); assert.equal(answerCommands().length, 3);
+    checks.push('an unconfirmed answer locks text and submission while receipt checks never replay the decision');
+    remote.showRequest('remote_two', { ...approval, revision: 'approval-after-feedback' });
+    await waitFor(() => byLabel('Allow this command') && !byLabel('Answer to agent'), 'a later host request clears the old unconfirmed editor state');
+    assert.equal(byLabel('Allow this command').getAttribute('aria-checked'), 'false'); assert.equal(sendDecision().disabled, true);
+    remote.clearRequest('remote_two');
+    await waitFor(() => !byLabel('Answer agent question') && !byLabel('Allow this command'), 'the host can independently dismiss its current dialog');
     assert.ok(!text().includes(remote.token));
 
     assert.deepEqual(errors, []); assert.deepEqual(logs.filter(entry => entry[0] === 'error'), []); assert.deepEqual(blocked, []);
-    console.log(JSON.stringify({ result: 'PASS (DOM emulation only; synthetic OpenCode, Pi Durable and remote session protocols, no real host or model)', checks, fixtureRequests: openCode.calls.length + secondOpenCode.calls.length, durableFixtureRequests: durable.calls.length, durableArtifactRequests: durable.artifactCalls().length, remoteFixtureRequests: remote.calls.length, errors, cssLimitations, logs, blocked }, null, 2));
+    console.log(JSON.stringify({ result: process.argv.includes('--remote-only') ? 'PASS (focused remote session DOM check; synthetic host, no model)' : 'PASS (DOM emulation only; synthetic OpenCode, Pi Durable and remote session protocols, no real host or model)', checks, fixtureRequests: openCode.calls.length + secondOpenCode.calls.length, durableFixtureRequests: durable.calls.length, durableArtifactRequests: durable.artifactCalls().length, remoteFixtureRequests: remote.calls.length, errors, cssLimitations, logs, blocked }, null, 2));
   } catch (e) {
     console.log(JSON.stringify({ failure: String(e), checks, renderedText: text().slice(0, 5000), controls: [...doc.querySelectorAll('button,[role=button],[role=radio]')].map(x => ({ label: x.getAttribute('aria-label'), text: x.textContent.slice(0, 100) })), errors, cssLimitations, logs, blocked }, null, 2));
     process.exitCode = 1;

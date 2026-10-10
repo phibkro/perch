@@ -60,6 +60,7 @@ export interface QuestionOption {
   id: string;
   label: string;
   description?: string;
+  disabled?: boolean;
 }
 
 export interface PendingQuestion {
@@ -71,6 +72,10 @@ export interface PendingQuestion {
   initialValue?: string;
   /** Real answers remain visible until the host dismisses the request. */
   answering?: boolean;
+  category?: 'question' | 'approval' | 'plan';
+  document?: { title: string; content: string; format: 'markdown' | 'text' };
+  disabledReason?: string;
+  answerState?: 'sending' | 'forwarded' | 'unknown';
 }
 
 export interface AgentSummary {

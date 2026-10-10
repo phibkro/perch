@@ -71,7 +71,7 @@ export async function setupTernRemote({ configPath = join(homedir(), '.config/pe
   const directoryStat = await lstat(pluginDirectory);
   if (!directoryStat.isDirectory() || directoryStat.isSymbolicLink() || !owned(directoryStat)) throw new Error('The plugin directory must be a real directory owned by this user.');
   await chmod(pluginDirectory, 0o700);
-  for (const name of ['plugin.toml', 'window.luau']) {
+  for (const name of ['plugin.toml', 'window.luau', 'requests.luau']) {
     const target = join(pluginDirectory, name);
     try {
       const stat = await lstat(target);

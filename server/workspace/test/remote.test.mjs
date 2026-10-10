@@ -113,3 +113,20 @@ test('a transport drop after forwarding is reconciled through a read, with exact
   await handle.request('/harness/remote/perch/health'); await handle.request('/harness/remote/perch/sessions/existing-omp');
   expect(upstream.writes).toBe(1);
 });
+
+test('owner answers pass only the request identity and chosen value through the paired gateway', async () => {
+  const upstream = await fixture(); const handle = keep(gateway([upstream.connection]));
+  const answer = { id: 'phone-decision', epoch: command.epoch, generation: command.generation, conversationId: command.conversationId,
+    type: 'answer', requestId: 'mounted-owner-request', requestRevision: 'content-revision', answer: 'deny-option' };
+  const route = '/harness/remote/perch/sessions/existing-omp/commands';
+  const accepted = await handle.request(route, post(answer));
+  expect(accepted.status).toBe(200);
+  expect(parseRemoteReceipt(await accepted.json()).status).toBe('forwarded');
+  expect(upstream.requests.find(request => request.method === 'POST').body).toEqual(answer);
+  for (const invalid of [
+    { ...answer, id: 'missing-revision', requestRevision: '' },
+    { ...answer, id: 'raw-event', event: { ev: 'activate', sf: 'a-surface', id: 'arbitrary-node' } },
+    { ...answer, id: 'oversized-answer', answer: 'x'.repeat(100_001) },
+  ]) expect((await handle.request(route, post(invalid))).status).toBe(400);
+  expect(upstream.writes).toBe(1);
+});

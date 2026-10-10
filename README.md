@@ -1,4 +1,4 @@
-# Perch 0.7
+# Perch 0.8
 
 **A native AI workspace with replaceable models, harnesses, and hosting.**
 
@@ -114,7 +114,9 @@ readers, and never launches another agent to imitate your current session.
   model selection through the public extension API.
 - [Tern plugin and bridge](server/tern-remote/README.md): discovers supported
   agent panes through an attached Tern window and exposes bounded native
-  transcripts and targeted agent controls. It does not need Tern's web assets.
+  transcripts and targeted agent controls. Perch 0.8 adds supported OMP approval
+  answers, plan review with native Markdown/Source, and host choice controls.
+  It does not need Tern's web assets.
 
 Configure the adapter on your host, add it through `bun run setup:host` (choices
 5 or 6), and pair the workspace once. Open the remote connection on the phone,
@@ -122,8 +124,15 @@ then choose a running session. **Detach** leaves the host running. Reconnect
 reads the latest snapshot and any forwarding receipts without resending work.
 New host generations require another explicit attachment.
 
-This first slice uses periodic snapshots. Full TSP widgets, a VT terminal view,
-shared host dialogs and daemon-only Tern access are subsequent milestones.
+Hosts already added to the connected Tern window can supply the panes shown in
+Perch. Their names appear beside the session and request. Add the machine in
+Tern first; Perch does not yet implement Tern's Add remote host transport or
+connect directly to a bare daemon. Choose the **Tern remote** connection for
+owner approvals and plan choices; these are not added to OMP Collab or the
+standalone OMP extension. [Connection and request details](docs/REMOTE-REQUESTS.md)
+
+The adapter uses periodic snapshots. Full TSP widgets, a VT terminal view,
+arbitrary host dialogs and daemon-only Tern access are subsequent milestones.
 [The grounding design](docs/REMOTE-WORKSPACE-DESIGN.md) separates those phases;
 [the verification record](docs/REMOTE-WORKSPACE-RESULTS.md) states the runtime
 evidence and remaining device checks.
@@ -163,7 +172,7 @@ The included Pi version has an OpenCode Go provider. [Configure your subscriptio
 
 [Pi Durable](docs/PI-DURABLE.md) is the basis for Perch's own persistent assistant: the same durable core can use Node SQLite at home or PiHarness in Cloudflare Durable Objects. The isolated experiment kills real processes and verifies safe-tool replay, unsafe-tool interruption, and model recovery. Perch supplies the mobile backend through `server/pi-durable`, and 0.6 adds its Cloudflare setup runner. [Cloudflare hosting](docs/CLOUDFLARE.md) discusses additional Linux/Sandbox capabilities, which that runner does not provision. No live Cloudflare deployment has been performed during development.
 
-[OpenClaw and Hermes](docs/ASSISTANT-INTEGRATIONS.md) are researched future assistant backends. The proposed adapters use their native client APIs to preserve sessions, decisions, memory, and artifacts. OpenClaw has an experimental Cloudflare Containers template; Hermes would need a custom Linux deployment. Their recovery guarantees depend on the selected transport and preserved state. Neither adapter is included in 0.7.
+[OpenClaw and Hermes](docs/ASSISTANT-INTEGRATIONS.md) are researched future assistant backends. The proposed adapters use their native client APIs to preserve sessions, decisions, memory, and artifacts. OpenClaw has an experimental Cloudflare Containers template; Hermes would need a custom Linux deployment. Their recovery guarantees depend on the selected transport and preserved state. Neither adapter is included in 0.8.
 
 [Pi Durable on celld with R2](docs/PI-CELLD.md) explores a self-hosted persistent-agent route: celld owns cell storage, ownership, and wake-up; Pi owns continuation and tool replay. The existing PiHarness adapter now passes [real celld recovery checks](docs/PI-CELLD-RESULTS.md), including alarm-driven continuation after removing all local runtime data while work is unfinished. The [durable backend](docs/DURABLE-BACKEND.md) adds the mobile protocol and stored artifact downloads. R2 and multi-node failover remain separate deployment checks. The earlier [runnable experiment](experiments/pi-celld/README.md) preserves the recovery evidence that led to this composition.
 
@@ -175,6 +184,7 @@ The included Pi version has an OpenCode Go provider. [Configure your subscriptio
 | Harness boundary | Separate harness/model metadata, capabilities, and transport adapters |
 | Workspace setup | Self-hosted/Cloud choices, one authenticated discovery endpoint, saved native access, harness switching, Advanced fallback |
 | Remote sessions | Host catalog, explicit attach/detach, same-process OMP extension and Tern plugin bridge, prompt/interrupt, receipts, identity-aware reconnect, OMP model choice |
+| Tern owner requests | Supported OMP approvals, plan documents and choices, exact enabled host options, revision guards, and non-replayed answers |
 | OMP Collab | Encrypted Collab, prompt, interrupt, supported host questions, synchronized reconnect |
 | Pi Durable | Authenticated workspace, persistent history/create/select, idempotent submissions, model choice, abort, authoritative reconnect, stored artifact downloads |
 | Pi | Authenticated bridge, real RPC process, prompt, interrupt, supported extension questions, model selection, reconnect |

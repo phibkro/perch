@@ -1,5 +1,62 @@
 # Perch verification
 
+## Perch 0.8: native owner approvals and plan review
+
+Perch 0.8.0 / Android code 9 adds native responses to supported OMP owner dialogs
+through the Tern window plugin. The [design and setup scope](REMOTE-REQUESTS.md)
+distinguishes this workspace connection from Tern's own **Add remote host**
+transport. The phone can use panes on hosts already attached to its connected
+Tern window; it does not yet add those hosts itself.
+
+The following checks ran against this source on 10 October 2026:
+
+| Check | Result | What it establishes |
+| --- | --- | --- |
+| Native remote driver and request protocol | Passed, 13 tests / 121 assertions | Exact request and revision, disabled choices, host permissions, revised plans, uncertain receipt retention across revisions and reconnect, and no answer replay |
+| Tern HTTP bridge | Passed, 20 tests / 167 assertions | Private event mapping, current request validation, consumed-request reservation, disabled/incomplete decisions, independent device/plugin credentials, identity, and existing prompt controls |
+| Standalone OMP bridge | Passed, 17 tests / 127 assertions | Existing host observation and command behavior, plus explicit rejection of unsupported owner-answer commands without changing model state |
+| Workspace gateway/setup | Passed, 17 tests / 184 assertions | Exact request forwarding, strict answer fields and bounds, existing pairing, credential translation, and upstream routes |
+| Workspace driver/integration | Passed, 14 tests / 116 assertions | Saved host identity, discovery, connection scope, transport compatibility, and existing no-replay behavior |
+| Full rendered application | Passed, 141 DOM checks | Existing chat/artifact/setup flows, native approval choices, displayed plan reader and Source tab, stale selections, disabled controls, and uncertain answer state |
+| Actual upstream OMP request recorder | Passed, seven checks | Stock selectors, inert tool approval, plan callback, exact displayed plan sections, and unsupported atomic text-editor/input answers |
+| Actual Tern request mapper | Passed, ten checks / nine protocol-valid examples | Exact activation targets, replacement dialogs, model detail in the revision, blocked annotation editing, clipped views, covering modals, and unsupported selectors |
+| Actual Tern with actual OMP | Passed, seven flow checks | Production plugin/bridge, Deny, replacement Approve, plan Refine, explicit Unicode feedback, reopened plan approval, and receipt reads in the same process and conversation |
+| Actual Tern prompt and oversized-plan fixture | Passed, 11 checks | Existing prompt/transcript/reconnect/interrupt controls, plus a real SDK-capped 65 KB plan that stays read-only and produces no activation event |
+| App types, session/artifact, OpenCode, and Durable client gates | Passed | Existing adapters and artifact boundaries remain valid |
+| Native keyboard regression | Passed, five cases | Existing Android/iOS layout contract and input-sheet keyboard avoidance remain valid |
+| Durable backend and production bundle | Passed, 29 tests and build | Existing server, provider, provisioning, and runtime contracts still compile and pass |
+| Release/version/package guards | Passed | 17 Node tests, six Python tests, consistent 0.8.0/code 9, preserved prototype signer, and all 581 packaged dependency notices |
+| Fresh standalone Expo export | Passed | 8,656,937 bytes with all eight current JavaScript chunks inlined |
+
+The full DOM run used 76 controlled OpenCode requests, 29 Durable requests,
+five artifact downloads, and 67 remote-session requests. It reported no
+JavaScript errors, console warnings/errors, or outside network attempts. Its
+known jsdom CSS parser limitation remains separate from the interaction result.
+
+The actual-runtime checks used the supplied **Tern 0.6.0 (`0e39682`)** and
+**OMP 18.8.7**. The combined flow made six in-memory mock-provider calls and
+executed an inert fixture tool once; no paid provider was called. These checks
+use an actual Tern PTY and native TSP interface in a software-rendered fixture
+window. The detailed [Tern verification record](../server/tern-remote/VERIFICATION.md)
+records runtime setup, callback-budget observations, and repeatable commands.
+The strengthened combined run compared every normalized plan-body line and
+the nonempty canonical session ID on every recorded owner event. Final runs
+bounded Mesa's software renderer to one worker; Tern's production 50 ms plugin
+deadline was left unchanged. Earlier unbounded-renderer runs intermittently
+exceeded that deadline and are retained in the detailed record.
+
+Two independent source reviews found no standards violations and three concrete
+spec issues. All three were fixed and rechecked; see [REVIEW.md](REVIEW.md).
+The plan Source view preserves OMP's displayed Markdown sections rather than
+the original plan file's bytes. General extension editors, annotations, and
+arbitrary TSP widgets remain host actions. TSP events have no atomic upstream
+expected-document-revision guard, so a forwarding receipt is not a durable
+execution acknowledgment.
+
+Physical Pixel/GrapheneOS operation, a real external SSH host, and restoration
+of a user's desktop window were not tested. Android release evidence is
+recorded separately in [ANDROID-BUILD.md](ANDROID-BUILD.md).
+
 ## Perch 0.7: native remote sessions
 
 Perch 0.7.0 / Android code 8 adds a native host-session browser, explicit

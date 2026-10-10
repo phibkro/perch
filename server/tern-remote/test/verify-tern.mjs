@@ -11,6 +11,8 @@ import { DEVICE_TOKEN, PLUGIN_TOKEN, listen, requestJSON } from './helpers.mjs';
 
 const tern = process.env.TERN_BIN;
 if (!tern) { console.error('Set TERN_BIN to your installed Tern executable. The beta is not bundled.'); process.exit(1); }
+const loopback = process.argv.includes('--loopback');
+const oversized = process.argv.includes('--oversized');
 const here = dirname(fileURLToPath(import.meta.url));
 const directory = await mkdtemp(join(tmpdir(), 'perch-tern-runtime-'));
 const crate = join(directory, 'crates', 'tern');
@@ -40,12 +42,13 @@ try {
   const origin = await listen(server);
   await mkdir(join(crate, 'goldens'), { recursive: true });
   await mkdir(plugin, { recursive: true, mode: 0o700 });
-  for (const name of ['plugin.toml', 'window.luau']) await copyFile(join(here, '..', 'plugin', name), join(plugin, name));
+  for (const name of ['plugin.toml', 'window.luau', 'requests.luau']) await copyFile(join(here, '..', 'plugin', name), join(plugin, name));
   await writeFile(join(plugin, 'connection.json'), JSON.stringify({ url: origin, token: PLUGIN_TOKEN }), { mode: 0o600 });
   const fakeOmp = join(directory, 'omp');
   const program = String.raw`#!/usr/bin/env python3
 import json,os,re,signal,sys,termios,time,tty
 LOG = sys.argv[1]
+OVERSIZED = ${oversized ? 'True' : 'False'}
 SF = "fixture-omp-session"
 sequence = 1
 def record(value):
@@ -88,11 +91,24 @@ while True:
               ["add","m4","main",None,{"id":"m4","k":"col","p":{"role":"omp.assistant"},"c":[{"id":"m4text","k":"md","p":{"text":"Synthetic fixture accepted this atomic send."}}]}],
               ["set","composer",{"sendable":False}]
             ]})
+            if OVERSIZED:
+                sequence += 1
+                write("f", {"sf":SF,"s":sequence,"ops":[["add","plan","layer",None,
+                  {"id":"plan","k":"overlay","p":{"role":"omp.overlay.planReview","head":"Oversized plan","modal":True},"c":[
+                    {"id":"plan.body","k":"col","p":{"role":"omp.plan.body"},"c":[
+                      {"id":"plan.md","k":"md","p":{"text":"Full plan context: " + "x"*65000 + " End of plan."}}]},
+                    {"id":"plan.options","k":"list","p":{"role":"omp.plan.options"},"c":[
+                      {"id":"plan.options/o0","k":"item","p":{"label":"Approve and execute"}},
+                      {"id":"plan.options/o1","k":"item","p":{"label":"Refine plan"}}]}
+                  ]}]]})
+        elif event.get("ev") == "activate":
+            record({"type":"activate","id":event.get("id"),"item":event.get("item")})
 `;
   await writeFile(fakeOmp, program, { mode: 0o700 });
   child = spawn(tern, ['serve', '--control', '0', '--out', join(directory, 'shots')], {
     cwd: directory, env: { ...process.env, STENCIL_FIXTURE_ROOT: crate,
       TERN_CONFIG_DIR: join(directory, 'config'), STENCIL_LOG_DIR: join(directory, 'logs'),
+      LP_NUM_THREADS: process.env.LP_NUM_THREADS || '1',
       STENCIL_LOG: 'warn,tern::plugin=debug', NO_PROXY: '127.0.0.1,localhost,::1', no_proxy: '127.0.0.1,localhost,::1' }, stdio: ['ignore', 'pipe', 'pipe'],
   });
   child.stderr.on('data', b => { logs += b; });
@@ -112,6 +128,7 @@ while True:
     return result;
   };
   await ctl('plugins', 'fixtures');
+  if (loopback) await ctl('remote', 'loopback', 'fixture@perch-fixture-remote');
   await ctl('run', JSON.stringify(`${fakeOmp} ${log}`));
   // Headless Tern dispatches owner-thread fetch/timer callbacks when a scenario
   // advances it. Keep advancing while an HTTP snapshot waits for that callback.
@@ -137,6 +154,7 @@ while True:
   const catalog = await until(async () => parseRemoteCatalog((await requestJSON(origin, '/perch/sessions')).value),
     value => value.sessions.length > 0, 'Plugin agent catalog');
   const session = catalog.sessions[0];
+  if (loopback) assert.equal(session.location?.host, 'perch-fixture-remote');
   const sessionPath = `/perch/sessions/${session.id}`;
   // Reading a pane requests an on-demand transcript from the next plugin poll.
   const pendingSnapshot = requestJSON(origin, sessionPath);
@@ -167,6 +185,14 @@ while True:
   const after = parseRemoteSnapshot((await requestJSON(origin, sessionPath)).value);
   assert.equal(after.session.generation, snapshot.session.generation);
   assert.equal(after.capabilities.prompt, false);
+  if (oversized) {
+    assert.equal(after.pendingQuestion?.category, 'plan', JSON.stringify(after));
+    assert.equal(after.pendingQuestion.actionable, false, 'A plan clipped by the actual Tern surface read must not be answerable.');
+    assert.ok(after.pendingQuestion.document.content.length <= 60_000);
+    const attempted = { id: 'cannot-answer-clipped-plan', epoch: health.epoch, generation: session.generation, type: 'answer',
+      requestId: after.pendingQuestion.id, requestRevision: after.pendingQuestion.revision, answer: '1' };
+    assert.equal((await requestJSON(origin, `${sessionPath}/commands`, { method: 'POST', value: attempted })).value.status, 'rejected');
+  }
   assert.equal((await requestJSON(origin, `${sessionPath}/commands`, { method: 'POST', value: command })).value.status, 'forwarded');
   assert.equal((await requestJSON(origin, `${sessionPath}/commands`, { method: 'POST',
     value: { ...command, id: 'not-queued' } })).value.status, 'rejected');
@@ -179,10 +205,13 @@ while True:
   const finalEvents = (await readFile(log, 'utf8')).trim().split('\n').map(line => JSON.parse(line));
   assert.equal(finalEvents.filter(event => event.type === 'send').length, 1);
   assert.equal(finalEvents.filter(event => event.type === 'interrupt').length, 1);
+  assert.equal(finalEvents.filter(event => event.type === 'activate').length, 0);
   assert.ok(finalEvents.every(event => event.pid === events[0].pid));
-  console.log(JSON.stringify({ version, proof: 'actual Tern + our Luau plugin + local synthetic TSP program',
+  console.log(JSON.stringify({ version, proof: `actual Tern + our Luau plugin + ${loopback ? 'a real loopback remote daemon + ' : ''}local synthetic TSP program`,
     checks: ['session catalog', 'native protocol parsing', 'two existing messages', 'atomic Unicode send',
-      'four updated messages', 'same child PID', 'reconnect without replay', 'non-ready send rejected', 'interrupt without process exit'],
+      'four updated messages', 'same child PID', 'reconnect without replay', 'non-ready send rejected', 'interrupt without process exit',
+      ...(oversized ? ['actual Tern-capped plan stays read-only', 'no approval event for incomplete plan'] : []),
+      ...(loopback ? ['already-attached remote host membership', 'prompt and interrupt through remote daemon'] : [])],
     limitations: ['No real OMP/model call', 'Headless fixture window; no restored user desktop', 'No physical Android device'] }, null, 2));
 } catch (error) {
   console.error(error.stack ?? error);

@@ -109,6 +109,18 @@ test('subagents cannot replace the main projection; approval notifications never
   expect(handle.bridge.snapshot().session.status).toBe('idle');
 });
 
+test('the direct OMP extension rejects owner answers without changing its model or blocking later prompts', async () => {
+  const handle = await keep();
+  const command = handle.command('unsupported_answer', 'answer', { requestId: 'owner-choice', requestRevision: 'one', answer: '0' });
+  const response = await handle.request(`${sessionPath}/commands`, post(command));
+  expect(response.status).toBe(409);
+  expect(parseRemoteReceipt(await response.json()).message).toContain('Tern remote connection');
+  expect(handle.state.models).toHaveLength(0);
+  expect(parseRemoteSnapshot(handle.bridge.snapshot()).capabilities.questions).toBe(false);
+  expect((await handle.bridge.dispatch(handle.command('valid_after_rejection'))).status).toBe('forwarded');
+  expect(handle.state.prompts).toEqual(['Hello']);
+});
+
 test('separate assistant messages with the same timestamp do not reuse a streaming identity', async () => {
   const handle = await keep();
   const first = { role: 'assistant', timestamp: 99, content: [{ type: 'text', text: 'First answer' }] };

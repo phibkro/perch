@@ -3,9 +3,9 @@
   "runtime": "Bun 1.4.2",
   "bridgeTests": {
     "command": "bun test server/tern-remote/test/bridge.test.mjs",
-    "passed": 16,
+    "passed": 20,
     "failed": 0,
-    "assertions": 133
+    "assertions": 167
   },
   "tern": {
     "version": "tern 0.6.0 (0e39682)",
@@ -38,13 +38,134 @@
   },
   "ompSourceReview": {
     "revision": "b07a1c146d0d12cfc855a2c65d52f892ef319040",
-    "runtimeTestOfOmp": false,
-    "finding": "The sendable editor must be below the normal omp.editor wrapper in the omp.session dock."
+    "runtimeTestOfOmp": true,
+    "finding": "The normal composer requires omp.editor + sendable. Actual installed OMP 18.8.7 owner approval and plan handlers were separately executed through a protocol recorder and through actual Tern."
   },
   "notes": [
     "The production Luau plugin was copied unchanged into the isolated headless fixture.",
     "The synthetic child speaks TSP over Tern's real PTY; no provider credentials were supplied.",
     "Different-user config validation was tested with a mocked current UID because this environment rejects chown.",
-    "Tern exposes no canonical OMP conversation or entry IDs; bounded view reconciliation remains conservative."
-  ]
+    "Tern exposes no canonical OMP conversation or entry IDs; bounded view reconciliation remains conservative.",
+    "The strengthened real-owner flow used an unchanged production plugin and bridge, one stock OMP session, the stock mock provider, and an inert extension tool.",
+    "The test-only child enables public setTerminalHeadless(false) and PI_TUI_NATIVE=1 so PI_TEST_RUNTIME isolation does not suppress actual TSP negotiation.",
+    "Some initial default-worker software-rendered attempts exceeded Tern's 50 ms load/fetch budget. The strengthened final chain passed with Mesa LP_NUM_THREADS=1; this does not establish reliability under every CPU scheduling condition.",
+    "TSP activate has no upstream expected-document-revision guard or acknowledged answer transaction; Perch fresh-read validation is not a cross-process compare-and-resolve.",
+    "Existing remote-host membership follows the generated SDK and documented window boundary; the daemon test was blocked before attachment, so no remote SSH/tunnel success is claimed."
+  ],
+  "requestMapper": {
+    "command": "TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-request-mapper.mjs",
+    "verified": true,
+    "version": "tern 0.6.0 (0e39682)",
+    "checks": [
+      "Exact stock approval picker becomes a complete request and emits the Deny item",
+      "An identical replacement component receives a new request identity",
+      "Plan document and disabled choices retain owner state; revised plans reject old answers",
+      "Oversized and omitted plan content cannot authorize a response",
+      "Unrelated modal, filtered selection, and checkbox requests stay on the host",
+      "Both stock extension editors remain visible but cannot be answered atomically",
+      "Fallback selectors with a strategy slider are read-only",
+      "Long approval titles remain complete in the body rather than silently clipped",
+      "The selected execution model detail is complete and changes the plan revision",
+      "A mounted annotation chooser blocks plan answers and invalidates the visible revision"
+    ],
+    "validProtocolExamples": 9,
+    "limitations": [
+      "Pure mapper in the real Luau VM, using captured stock OMP trees; separate tests cover live Tern reads/event delivery."
+    ]
+  },
+  "ompOwnerCallbacks": {
+    "command": "bun server/tern-remote/test/verify-omp-owner-requests.mjs",
+    "verified": true,
+    "ompVersion": "18.8.7",
+    "agentSessionsCreated": 1,
+    "sameConversation": true,
+    "modelCalls": 4,
+    "paidProviderCalls": 0,
+    "inertToolExecutions": 1,
+    "checks": [
+      "A TSP activate reaches the stock tool approval selector and Deny prevents the inert tool from executing.",
+      "A new identical approval has a different component ID; an old event cannot approve it, while its own Approve executes the inert tool once.",
+      "The actual fallback selector accepts its fully qualified list/item IDs and rejects a disabled option.",
+      "A TSP plan choice resolves the stock InteractiveMode plan handler; Refine plan dismisses review, keeps plan mode, and makes no new provider call.",
+      "The native plan matches the known source sections; it omits the source title from the body, so the displayed projection is not an exact plan file export.",
+      "The stock rich editor advertises sendable:false and ignores atomic send; it must remain unsupported by this first remote request slice.",
+      "The stock simple input also advertises sendable:false and ignores atomic send; it remains unsupported."
+    ],
+    "planProjection": {
+      "sourceCharacters": 103,
+      "displayedCharacters": 87,
+      "sourceSha256": "c57541ba781753ba345bfe913759c05902019bd3f0882e01155c54440d5a3c8c",
+      "displayedSha256": "90e03b892786ba1a23aabc5fe702110cfe7109d9a7f9b7dffde558a5541d148d",
+      "byteIdenticalToFile": false
+    },
+    "limitations": [
+      "Protocol terminal recorder, not a Tern binary or physical phone.",
+      "TSP activate has no expected-document revision; fresh host inspection is not an atomic cross-process compare-and-resolve.",
+      "Refine plan leaves feedback to the next explicit prompt; section annotation editing is separate.",
+      "Both extension rich editors and simple inputs lack atomic native send in this pinned OMP build."
+    ]
+  },
+  "actualOwnerCheck": {
+    "command": "TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-tern-omp-owner.mjs",
+    "verified": true,
+    "ternVersion": "tern 0.6.0 (0e39682)",
+    "ompVersion": "18.8.7",
+    "agentSessionsCreated": 1,
+    "samePid": true,
+    "sameConversation": true,
+    "modelCalls": 6,
+    "paidProviderCalls": 0,
+    "inertToolExecutions": 1,
+    "checks": [
+      "Production plugin and bridge discover an actual OMP process in an actual Tern PTY.",
+      "HTTP Deny resolves the native tool approval with no tool execution.",
+      "A stale identical request answer is rejected; current Approve executes the inert tool once.",
+      "The exact plan heading and all body text are exposed; Refine returns to the real composer.",
+      "A separate explicit Unicode feedback prompt enters the original planning conversation.",
+      "Approve and keep context continues the original session through the upstream mock provider.",
+      "Duplicate receipt lookup and reconnect reads do not repeat effects."
+    ],
+    "limitations": [
+      "Headless fixture Tern window, not a restored user desktop or physical Android device.",
+      "TSP events have no upstream expected-document-revision guard. Forwarded means event dispatch, not persisted external effects."
+    ],
+    "fixtureEnvironment": {
+      "LP_NUM_THREADS": "1"
+    },
+    "identityAssertions": "Nonempty canonical OMP session id is equal on every owner event; every event has the original PID.",
+    "planAssertions": "Exact sole top-level title and every body line match the plan file after normalizing only blank-line separation; reopened plan document matches the first projection."
+  },
+  "remoteDaemonCheck": {
+    "command": "TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-tern.mjs --loopback",
+    "status": "blocked",
+    "reason": "The execution environment rejects the Unix socket used by the actual Tern loopback daemon (Operation not permitted).",
+    "remoteNetworkVerified": false
+  },
+  "actualOversizedPlanCheck": {
+    "command": "TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-tern.mjs --oversized",
+    "exitCode": 0,
+    "version": "tern 0.6.0 (0e39682)",
+    "proof": "actual Tern + our Luau plugin + local synthetic TSP program",
+    "checks": [
+      "session catalog",
+      "native protocol parsing",
+      "two existing messages",
+      "atomic Unicode send",
+      "four updated messages",
+      "same child PID",
+      "reconnect without replay",
+      "non-ready send rejected",
+      "interrupt without process exit",
+      "actual Tern-capped plan stays read-only",
+      "no approval event for incomplete plan"
+    ],
+    "limitations": [
+      "No real OMP/model call",
+      "Headless fixture window; no restored user desktop",
+      "No physical Android device"
+    ],
+    "fixtureEnvironment": {
+      "LP_NUM_THREADS": "1"
+    }
+  }
 }

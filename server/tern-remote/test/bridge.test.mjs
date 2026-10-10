@@ -38,7 +38,7 @@ describe('Tern remote HTTP boundary', () => {
     expect(snapshot.messages[1].text).toContain('Existing artifact');
     expect(snapshot.tools[0].status).toBe('done');
     expect(snapshot.availableModels).toEqual([]);
-    expect(snapshot.capabilities).toEqual({ prompt: true, interrupt: true, modelSelection: false });
+    expect(snapshot.capabilities).toEqual({ prompt: true, interrupt: true, modelSelection: false, questions: true });
     const response = await exchange(f.origin, f.bridgeId, 2);
     expect(response.value.inspectPane).toBe(2);
     expect(response.value.commands).toEqual([]);
@@ -218,6 +218,86 @@ describe('Tern remote HTTP boundary', () => {
     expect((await f.command('over-capacity')).status).toBe(503);
     f.advance(3_600_001);
     expect((await f.receipt('retained-0')).value.status).toBe('rejected');
+  });
+
+  test('publishes owner approvals and forwards one exact explicit answer without raw TSP fields', async () => {
+    const f = await fixture();
+    const question = { id: 'request-1', revision: '1', kind: 'choice', category: 'approval', title: 'Approve bash?',
+      prompt: 'Command: printf hello', actionable: true, options: [{ id: '1', label: 'Approve' }, { id: '2', label: 'Deny' }] };
+    const requestDetail = { ...detail, pendingQuestion: question };
+    await exchange(f.origin, f.bridgeId, 2, { detail: requestDetail });
+    const snapshot = parseRemoteSnapshot((await requestJSON(f.origin, `/perch/sessions/${f.session.id}`)).value);
+    expect(snapshot.pendingQuestion).toEqual(question);
+    expect(snapshot.capabilities.prompt).toBe(false);
+    expect(snapshot.capabilities.questions).toBe(true);
+    const answer = { type: 'answer', text: undefined, requestId: question.id, requestRevision: question.revision, answer: '2' };
+    expect((await f.command('answer-once', answer)).value.status).toBe('pending');
+    const forwarded = await exchange(f.origin, f.bridgeId, 3, { detail: requestDetail });
+    expect(forwarded.value.commands).toHaveLength(1);
+    expect(forwarded.value.commands[0].answer).toBe('2');
+    expect(forwarded.value.commands[0].requestId).toBe(question.id);
+    expect(forwarded.value.commands[0].event).toBeUndefined();
+    await exchange(f.origin, f.bridgeId, 4, { detail: requestDetail, receipts: [{ id: 'answer-once', status: 'forwarded' }] });
+    expect((await f.command('answer-once', answer)).value.status).toBe('forwarded');
+    expect((await f.command('fresh-id-replay', answer)).value.status).toBe('rejected');
+    expect((await f.command('answer-once', { ...answer, answer: '1' })).status).toBe(409);
+    expect((await f.command('injected-event', { ...answer, event: { ev: 'action', act: 'approve' } })).status).toBe(400);
+    expect((await exchange(f.origin, f.bridgeId, 5, { detail: requestDetail })).value.commands).toEqual([]);
+  });
+
+  test('stale, disabled, clipped, read-only, and dismissed requests reject answers', async () => {
+    const f = await fixture();
+    const question = { id: 'plan-1', revision: '3', kind: 'choice', category: 'plan', title: 'Review plan',
+      prompt: 'Choose how to proceed.', actionable: true,
+      document: { title: 'Plan', content: '# Plan\n\n1. Inspect logs.\n2. Fix the bug.', format: 'markdown' },
+      options: [{ id: 'execute', label: 'Approve and execute', disabled: true }, { id: 'refine', label: 'Refine plan' }] };
+    const answer = { type: 'answer', text: undefined, requestId: question.id, requestRevision: question.revision, answer: 'refine' };
+    await exchange(f.origin, f.bridgeId, 2, { detail: { ...detail, pendingQuestion: question } });
+    expect((await f.command('stale-request', { ...answer, requestId: 'old' })).value.status).toBe('rejected');
+    expect((await f.command('stale-revision', { ...answer, requestRevision: '2' })).value.status).toBe('rejected');
+    expect((await f.command('disabled-choice', { ...answer, answer: 'execute' })).value.status).toBe('rejected');
+    expect((await f.command('unknown-choice', { ...answer, answer: '3' })).value.status).toBe('rejected');
+    expect((await f.command('valid-choice', answer)).value.status).toBe('pending');
+    // The next plugin frame changed before the queue was fetched: reject it
+    // without asking the window plugin to process an outdated decision.
+    expect((await exchange(f.origin, f.bridgeId, 3, { detail: { ...detail, pendingQuestion: { ...question, revision: '4' } } })).value.commands).toEqual([]);
+    expect((await f.receipt('valid-choice')).value.status).toBe('rejected');
+    await exchange(f.origin, f.bridgeId, 4, { detail: { ...detail, pendingQuestion: { ...question, actionable: false, notice: 'Plan preview incomplete.' } } });
+    expect((await f.command('clipped-preview', answer)).value.status).toBe('rejected');
+    await exchange(f.origin, f.bridgeId, 5);
+    expect((await f.command('dismissed-request', answer)).value.status).toBe('rejected');
+    const ro = await fixture({ readOnly: true });
+    await exchange(ro.origin, ro.bridgeId, 2, { detail: { ...detail, pendingQuestion: question } });
+    const snapshot = parseRemoteSnapshot((await requestJSON(ro.origin, `/perch/sessions/${ro.session.id}`)).value);
+    expect(snapshot.pendingQuestion.document.content).toBe(question.document.content);
+    expect(snapshot.capabilities.questions).toBe(false);
+    expect((await ro.command('readonly-answer', answer)).value.status).toBe('rejected');
+  });
+
+  test('unknown answer outcomes cannot be retried under a different command id or revision', async () => {
+    const f = await fixture();
+    const question = { id: 'approval-unknown', revision: '1', kind: 'choice', category: 'approval', title: 'Approve tool?',
+      prompt: 'Read fixture only.', actionable: true, options: [{ id: 'approve', label: 'Approve' }, { id: 'deny', label: 'Deny' }] };
+    const answer = { type: 'answer', text: undefined, requestId: question.id, requestRevision: '1', answer: 'approve' };
+    await exchange(f.origin, f.bridgeId, 2, { detail: { ...detail, pendingQuestion: question } });
+    await f.command('unknown-answer', answer);
+    expect((await exchange(f.origin, f.bridgeId, 3, { detail: { ...detail, pendingQuestion: question } })).value.commands).toHaveLength(1);
+    f.advance(5_001);
+    expect((await f.receipt('unknown-answer')).value.status).toBe('unknown');
+    await exchange(f.origin, f.bridgeId, 4, { detail: { ...detail, pendingQuestion: { ...question, revision: '2' } } });
+    expect((await f.command('different-answer-id', { ...answer, requestRevision: '2' })).value.status).toBe('rejected');
+    expect((await f.command('unknown-answer', answer)).value.status).toBe('unknown');
+    expect((await exchange(f.origin, f.bridgeId, 5, { detail: { ...detail, pendingQuestion: question } })).value.commands).toEqual([]);
+  });
+
+  test('rejects malformed private requests instead of advertising guessed controls', async () => {
+    const f = await fixture();
+    const base = { id: 'request', revision: '1', kind: 'choice', category: 'approval', title: 'Approve?', prompt: '', actionable: true,
+      options: [{ id: 'a', label: 'Approve' }] };
+    for (const question of [{ ...base, options: [] }, { ...base, options: [{ id: 'a', label: 'Approve', disabled: true }] },
+      { ...base, options: [{ id: 'a', label: 'Approve' }, { id: 'a', label: 'Deny' }] }, { ...base, kind: 'editor' }]) {
+      expect((await exchange(f.origin, f.bridgeId, 2, { detail: { ...detail, pendingQuestion: question } })).status).toBe(400);
+    }
   });
 });
 

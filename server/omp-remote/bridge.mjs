@@ -194,6 +194,7 @@ export class OmpRemoteBridge {
     const entry = { hash, receipt: this.#receipt(command, 'pending') };
     this.#receipts.set(command.id, entry); // Reserve before any effect, including async model lookup.
     const rejected = message => { entry.receipt = this.#receipt(command, 'rejected', message); return { ...entry.receipt }; };
+    if (command.type === 'answer') return rejected('Native owner dialogs require the Tern remote connection. This OMP extension cannot answer them.');
     if (command.type !== 'interrupt' && (this.#mutationPending || this.#admissionPending || !this.#context.isIdle()
         || this.#context.hasPendingMessages() || this.#approvals.size > 0)) return rejected('Wait for OMP to finish its current work or pending decision before sending a prompt or changing models.');
     try {
@@ -204,7 +205,7 @@ export class OmpRemoteBridge {
       } else if (command.type === 'interrupt') {
         this.#context.abort();
         entry.receipt = this.#receipt(command, 'forwarded', 'Interrupt forwarded. The existing OMP process remains running.');
-      } else {
+      } else if (command.type === 'set-model') {
         this.#mutationPending = true;
         this.#refreshModels();
         const model = this.#models.find(item => item.provider === command.provider && item.id === command.modelId);

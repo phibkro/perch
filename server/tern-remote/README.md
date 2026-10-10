@@ -1,22 +1,27 @@
 # Tern remote sessions
 
 This adapter lets Perch discover and attach to an **existing OMP pane in Tern**.
-It reads Tern's structured conversation view and sends a prompt through the
-native composer. The phone uses the same process as the desktop window.
+It reads Tern's structured conversation view, sends a prompt through the
+native composer, and answers supported owner approval and plan requests. The
+phone uses the same process as the desktop window.
 
 The implementation uses a Tern window plugin and a small loopback bridge. It
 does not require `tern web serve` or its missing web distribution. It does not
 expose Tern's general `ctl` endpoint to the phone.
 
-## What the first slice provides
+## Supported controls
 
 | Action | Behavior |
 | --- | --- |
 | Browse | Lists up to 32 agent panes in each of up to eight Tern windows |
 | Attach | Reads a bounded structured transcript from the selected pane |
 | Send | Calls `cx.agents:ask` once while the native OMP composer is ready |
+| Tool approval | Shows the current owner request and sends its explicit Approve or Deny choice |
+| Plan review | Shows the plan, selected execution strategy/model, and the owner's enabled choices |
+| Refine plan | Chooses the owner's Refine action; a separate ordinary chat message supplies feedback |
 | Interrupt | Calls `cx.agents:interrupt`, leaving the program alive |
 | Reconnect | Reads current host state; never resubmits a command |
+| Host location | Names the local or already attached remote host that owns each pane |
 | Artifact reading | Existing Perch readers derive documents/code from the supplied conversation text |
 
 The plugin currently inspects one pane per window at a time. Multiple windows
@@ -25,12 +30,29 @@ and read targets. Selecting a pane on the phone does not focus or rearrange it o
 the desktop. The catalog contains agent panes, not every file, terminal, browser,
 or database block Tern supports.
 
+### Self-hosted and remote hosts
+
+Perch pairs with the workspace gateway on the machine running this bridge. It
+does not yet implement Tern's **Add remote host** transport or accept an SSH
+destination directly. If that Tern window already has a remote host attached,
+its window SDK can expose the remote agent panes through the same plugin.
+The catalog uses `cx.hosts:list()` membership to name their host. This SDK
+boundary is documented by Tern; the optional remote-daemon runtime test could
+not run in this environment because Unix socket creation was denied.
+
+A future Add host control can use Tern's `cx.hosts:add(address)` and separate
+fingerprint trust flow. It is not part of these owner controls. See the
+[remote-host research](../../docs/TERN-REMOTE-CONTROLS-RESEARCH.md) for the exact
+available APIs and the distinction between a window plugin and a native daemon
+client.
+
 ## Host setup
 
 Requirements: Bun 1.4.2 or newer, a desktop Tern build with the documented
-`cx.agents` API, and OMP using its native TSP surface. The user's supplied
+`cx.agents`, `cx.hosts`, and `cx.session:surface/event` APIs, and OMP using its
+native TSP surface. The user's supplied
 **Tern 0.6.0 (`0e39682`)** exposes the required methods. We do not redistribute
-the closed beta binary.
+the closed beta binary. Owner controls were qualified with OMP **18.8.7**.
 
 Run these commands from the Perch checkout on the machine showing the Tern window:
 
@@ -47,6 +69,7 @@ Setup retains existing credentials when run again. It creates:
 | `~/.config/perch/tern-remote.json` | Private bridge configuration and two separate credentials |
 | `~/.config/perch/tern-plugin/plugin.toml` | Our Tern plugin manifest |
 | `~/.config/perch/tern-plugin/window.luau` | Our plugin implementation |
+| `~/.config/perch/tern-plugin/requests.luau` | Bounded semantic owner-request mapper |
 | `~/.config/perch/tern-plugin/connection.json` | Private loopback URL and plugin credential |
 
 The bridge binds only `127.0.0.1:4782`. The existing Perch workspace gateway
@@ -58,7 +81,8 @@ credentials remain in the existing OMP process.
 
 Keep the configured Tern window open. Link or reload the plugin, then start OMP
 in any ordinary Tern shell pane, or use an existing compatible OMP pane. Return
-to its conversation view if a modal screen hides the native composer.
+to its conversation view for ordinary chat input. Supported approval and plan
+sheets appear as requests in Perch while they are open on the host.
 
 Custom locations are supported:
 
@@ -73,7 +97,7 @@ paths inside the Perch checkout, including through linked directories. The
 bridge rejects HTTP requests carrying a browser `Origin`; browser clients use
 the authenticated workspace gateway. If the machine uses an HTTP proxy,
 its `NO_PROXY` setting must include `127.0.0.1` because Tern honors proxy settings.
-`readOnly: true` in the bridge config disables both mutations.
+`readOnly: true` in the bridge config disables prompts, answers, and interrupts.
 
 ## Ownership and recovery
 
@@ -127,6 +151,37 @@ that check fails, Perch rejects the prompt. It
 does not use Tern's waiting queue. Tern still performs its own native-protocol
 validation, including the OMP program's support for atomic `send`.
 
+### Approval and plan guards
+
+Perch reads the live `omp.session` interaction regions and recognizes the stock
+OMP approval picker, the plain fallback Approve/Deny list, and the plan review
+sheet. It retains the full bounded approval context, plan body, disabled
+choices, and selected execution strategy and model detail. Simple single-choice
+extension pickers also work. Filtering, checkboxes, countdowns, multi-part
+selectors, annotation editors/choosers, and unknown overlays stay under the
+host's control. Stock extension `ui.input` and `ui.editor` fields report
+`sendable:false`; Perch shows them as unsupported and does not simulate keys.
+
+The phone sends only an opaque request id, revision, and choice id. The plugin
+re-reads the current owner surface, compares the exact component and displayed
+decision, validates that choice, and reserves the request before calling
+`cx.session:event` in the same synchronous callback. A pending, forwarded, or
+unknown answer remains locked for that request even if its visible revision
+changes. No public endpoint accepts arbitrary TSP events or node ids.
+
+Incomplete context cannot authorize an answer. Interaction reads use at most
+2,000 nodes and 64,000 characters per region; the mapper accepts less than
+60,000 combined text bytes and at most 64 options. A capped tree, oversized
+title/body/option, or unsupported owner state makes the request read-only.
+Long titles that fit the overall budget move into the complete prompt body.
+
+The fresh read and event dispatch are atomic within the **Tern window callback**.
+They are not an atomic transaction with the OMP process. Upstream TSP
+`activate` has no expected-document-revision field or acknowledged-answer
+transaction. A host edit can race the event's arrival; `forwarded` confirms API
+dispatch, not completed or durable external effects. These limits also apply
+when reconnecting. See [the request protocol](../../docs/REMOTE-REQUESTS.md).
+
 ## Snapshot and identity limits
 
 `cx.agents:transcript` supplies rendered user/assistant text and tool summaries.
@@ -150,9 +205,9 @@ still require reopening an artifact.
 
 An unavailable composer or an incomplete capped surface disables sending. This
 is a conservative readiness check, not a complete renderer or a guarantee that
-every OMP screen is supported. Native approval sheets, model selection, session
-branching, tool-input artifacts, file fetches, arbitrary TSP widgets, and a real
-terminal view remain separate work. Host transcripts can be much larger than
+every OMP screen is supported. Plan strategy editing, annotations, model
+selection, session branching, tool-input artifacts, file fetches, arbitrary TSP
+widgets, and a real terminal view remain separate work. Host transcripts can be much larger than
 the preview and are not edited by this adapter.
 
 ## Verification
@@ -163,11 +218,13 @@ The ordinary HTTP tests require no Tern install, provider credentials, or model:
 bun test server/tern-remote/test/bridge.test.mjs
 ```
 
-The recorded run passed **16 tests and 133 assertions**. They use the actual
+The recorded run passed **20 tests and 167 assertions**. They use the actual
 shared native protocol parsers and check authentication, browser-origin
 rejection, same-ID receipts, lost replies, uncertain invocation, stale
 generations, multiple windows, artifact identity continuity, read-only access,
-readiness, input bounds, ledger exhaustion, and private setup files.
+readiness, input bounds, ledger exhaustion, private setup files, exact current
+request answers, disabled/incomplete requests, changed queued requests, and
+fresh-id replay rejection after uncertain delivery.
 
 The optional real-binary check uses Tern's **documented deterministic headless
 fixture mode**, our unchanged plugin, and a small synthetic program speaking
@@ -185,11 +242,39 @@ exiting the child. See [VERIFICATION.md](VERIFICATION.md) for the exact scope an
 binary fingerprints, and [verification-results.json](verification-results.json)
 for the recorded machine-readable result.
 
-The check creates temporary state, uses software rendering, and never opens the user's
-saved Tern workspace or invokes a model. Its control endpoint is restricted to
-this local test. This qualifies the installed beta's Luau callbacks and TSP
-interaction; it is not evidence of a restored desktop, a real OMP model turn,
-or a physical Android run.
+Additional opt-in checks exercise the real Luau mapper and installed OMP:
+
+```sh
+TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-request-mapper.mjs
+bun server/tern-remote/test/verify-omp-owner-requests.mjs
+TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-tern-omp-owner.mjs
+TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-tern.mjs --oversized
+```
+
+The mapper passed **10 cases** with **9 protocol-valid request examples**. The
+stock OMP owner verifier passed **7 checks** using its real InteractiveMode and
+native backend. The complete Tern + OMP chain passed **7 checks** through the
+production plugin and HTTP bridge: Deny, Approve once, full plan review, Refine,
+explicit Unicode feedback, and approval to continue in the same process and
+canonical OMP session. The chain made six local mock-provider calls and zero
+paid-provider calls. The two OMP checks require the separately installed
+[pinned OMP runtime](../omp-remote/README.md#verification), or `PERCH_OMP_RUNTIME`
+pointing to an equivalent isolated installation.
+
+The oversized variant passed **11 checks**, including a 65 KB plan sent through
+the actual Tern surface-read path. Perch kept that plan read-only, rejected an
+answer attempt, and sent no approval event to the PTY. The existing prompt,
+transcript, reconnect, and interrupt regression checks also passed in that run.
+
+These checks create temporary state and never open the user's saved Tern
+workspace. Tern uses software rendering in headless fixture mode. The test
+launchers default to one Mesa llvmpipe render worker to avoid oversubscribing a
+small container; this does not change Tern's 50 ms plugin deadline. The final
+owner and oversized runs passed with this setting. Earlier default-worker
+attempts hit the deadline, as recorded in the verification notes. The test
+control endpoint is local to the test and unused by the production plugin.
+They do not establish a restored desktop, remote SSH/tunnel behavior, a real
+paid-provider turn, or physical Android keyboard/lifecycle behavior.
 
 ## Sources checked
 

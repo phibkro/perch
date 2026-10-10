@@ -45,6 +45,11 @@ export async function remoteFixture() {
         const snapshot = snapshots.get(commandMatch[1]); const command = parseRemoteCommand(body);
         if (!snapshot || command.epoch !== health.epoch || command.generation !== snapshot.session.generation || command.conversationId !== snapshot.session.conversationId) return json(response, {}, 409);
         if (snapshot.readOnly) return json(response, {}, 403);
+        if (command.type === 'answer') {
+          const question = snapshot.pendingQuestion;
+          if (!snapshot.capabilities.questions || !question?.actionable || question.id !== command.requestId || question.revision !== command.requestRevision
+              || question.kind === 'choice' && !question.options?.some(option => option.id === command.answer && !option.disabled)) return json(response, {}, 409);
+        }
         if (commandMode === 'unrecorded-drop') { response.destroy(); return; }
         if (operations.has(command.id)) return json(response, operations.get(command.id));
         const next: RemoteReceipt = { protocol: health.protocol, version: 1, id: command.id, epoch: command.epoch, generation: command.generation, conversationId: command.conversationId, sessionId: snapshot.session.id,

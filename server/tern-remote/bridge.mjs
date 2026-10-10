@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
-import { MAX_REMOTE_COMMAND_BYTES, parseRemoteCommand } from '../../src/harness/remote.ts';
+import { MAX_REMOTE_COMMAND_BYTES, parseRemoteCommand, parseRemoteQuestion } from '../../src/harness/remote.ts';
 
 const PROTOCOL = { protocol: 'perch-remote', version: 1 };
 const PRIVATE_PROTOCOL = 'perch-tern-plugin';
@@ -82,6 +82,14 @@ function reply(response, status, value) {
   response.end(JSON.stringify(value));
 }
 
+function answerRejection(question, command) {
+  if (!question || question.id !== command.requestId || question.revision !== command.requestRevision) {
+    return 'This host request changed or was already dismissed. Refresh before answering.';
+  }
+  if (!question.actionable) return question.notice || 'This request must be answered in Tern.';
+  if (!question.options.some(option => option.id === command.answer && !option.disabled)) return 'That choice is not available for the current host request.';
+}
+
 function validateFrame(value) {
   if (!record(value) || value.protocol !== PRIVATE_PROTOCOL || value.version !== 1 ||
       !id(value.bridgeId) || !Number.isSafeInteger(value.sequence) || value.sequence < 1 ||
@@ -95,7 +103,7 @@ function validateFrame(value) {
         (agent.model !== undefined && !string(agent.model, 512)) ||
         (agent.deliveryError !== undefined && !string(agent.deliveryError, 2048)) ||
         (agent.location !== undefined && (!record(agent.location) ||
-          !['workspace', 'tab', 'pane'].every(key => agent.location[key] === undefined || string(agent.location[key], 512))))) {
+          !['host', 'workspace', 'tab', 'pane'].every(key => agent.location[key] === undefined || string(agent.location[key], 512))))) {
       throw new HttpError(400, 'Invalid plugin agent.');
     }
     panes.add(agent.pane);
@@ -113,6 +121,11 @@ function validateFrame(value) {
     }
     const agent = value.agents.find(row => row.pane === detail.pane);
     if (agent.generation !== detail.generation) throw new HttpError(400, 'Plugin transcript generation does not match its pane.');
+    if (detail.pendingQuestion !== undefined && detail.pendingQuestion !== null) {
+      try { detail.pendingQuestion = parseRemoteQuestion(detail.pendingQuestion); }
+      catch { throw new HttpError(400, 'Invalid plugin request.'); }
+      if (detail.pendingQuestion.kind !== 'choice') throw new HttpError(400, 'Unsupported Tern request kind.');
+    }
   }
   if (value.receipts !== undefined && (!Array.isArray(value.receipts) || value.receipts.length > 8 ||
       !value.receipts.every(row => record(row) && id(row.id) && ['forwarded', 'rejected', 'unknown'].includes(row.status) &&
@@ -204,8 +217,10 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
       }
     }
     return { ...PROTOCOL, epoch, revision, session,
-      capabilities: { prompt: !readOnly && detail.canPrompt, interrupt: !readOnly && detail.canInterrupt, modelSelection: false },
+      capabilities: { prompt: !readOnly && detail.canPrompt && !detail.pendingQuestion,
+        interrupt: !readOnly && detail.canInterrupt, modelSelection: false, questions: !readOnly },
       readOnly, messages, tools, availableModels: [], truncated: detail.truncated || tools.length >= 4000,
+      pendingQuestion: detail.pendingQuestion ?? null,
       notices: [...detail.notices.map(n => n.slice(0, 2000)), ...(agent.deliveryError ? [agent.deliveryError.slice(0, 2000)] : []),
         'Tern supplies rendered conversation text. Entry timestamps and the canonical OMP session identity are unavailable.'],
     };
@@ -274,6 +289,13 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
             operation.receipt.status = 'rejected'; operation.command = undefined;
             operation.receipt.message = 'The pane generation changed before delivery.'; continue;
           }
+          if (operation.command.type === 'answer') {
+            const rejected = answerRejection(bridge.details.get(operation.pane)?.value.pendingQuestion, operation.command);
+            if (rejected) {
+              operation.receipt.status = 'rejected'; operation.command = undefined;
+              operation.receipt.message = rejected; continue;
+            }
+          }
           operation.dispatched = true;
           commands.push({ ...operation.command, pane: operation.pane, generation: current.generation });
           operation.command = undefined;
@@ -323,7 +345,8 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
       catch (error) { if (error instanceof HttpError) throw error; throw new HttpError(400, 'Invalid command.'); }
       if (command.conversationId !== undefined) throw new HttpError(400, 'Tern does not expose a canonical conversation ID.');
       const fingerprint = createHash('sha256').update(JSON.stringify({ sessionId, epoch: command.epoch, generation: command.generation,
-        type: command.type, text: command.text, provider: command.provider, modelId: command.modelId })).digest('hex');
+        type: command.type, text: command.text, provider: command.provider, modelId: command.modelId,
+        requestId: command.requestId, requestRevision: command.requestRevision, answer: command.answer })).digest('hex');
       const existing = operations.get(command.id);
       if (existing) {
         if (existing.fingerprint !== fingerprint) throw new HttpError(409, 'That command ID was already used for different input.');
@@ -338,11 +361,20 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
       else if (readOnly) rejection = 'This adapter is read-only.';
       else if (command.type === 'set-model') rejection = 'Model selection requires the OMP in-process adapter.';
       else if (!detail || now() - detail.at >= 2_000 || detail.value.generation !== agent.generation) rejection = 'Read a fresh pane snapshot before sending.';
-      else if (command.type === 'prompt' && !detail.value.canPrompt) rejection = 'The native OMP composer is not ready to accept a prompt.';
+      else if (command.type === 'prompt' && (!detail.value.canPrompt || detail.value.pendingQuestion)) rejection = 'The native OMP composer is not ready to accept a prompt.';
       else if (command.type === 'interrupt' && !detail.value.canInterrupt) rejection = 'This pane does not support interruption.';
-      else if ([...operations.values()].some(op => op.bridgeId === bridge.id && op.pane === agent.pane && op.receipt.status === 'pending')) rejection = 'Wait for the previous command receipt before sending another.';
+      else if (command.type === 'answer') {
+        const question = detail.value.pendingQuestion;
+        rejection = answerRejection(question, command);
+        if (!rejection && [...operations.values()].some(op => op.bridgeId === bridge.id && op.pane === agent.pane &&
+          op.requestId === command.requestId && ['pending', 'forwarded', 'unknown'].includes(op.receipt.status))) {
+          rejection = 'A response to this host request was already submitted. Wait for the host to dismiss it.';
+        }
+      }
+      if (!rejection && [...operations.values()].some(op => op.bridgeId === bridge.id && op.pane === agent.pane && op.receipt.status === 'pending')) rejection = 'Wait for the previous command receipt before sending another.';
       if (rejection) { receipt.status = 'rejected'; receipt.message = rejection; }
       operations.set(command.id, { receipt, fingerprint, command: rejection ? undefined : command, pane: agent.pane, bridgeId: bridge.id,
+        requestId: command.type === 'answer' ? command.requestId : undefined,
         dispatched: false, deadline: now() + commandMs, createdAt: now() });
       reply(response, rejection ? 200 : 202, receipt); return;
     }

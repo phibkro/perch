@@ -40,6 +40,10 @@ the [OMP extension](../server/omp-remote/README.md) or the
 [Tern plugin and bridge](../server/tern-remote/README.md) on the host first.
 The OMP extension runs inside the original OMP process. The Tern plugin inspects
 and operates existing supported agent panes through a running Tern window.
+This includes panes on remote hosts already added to that window. Perch shows
+the owning host name and does not require Tern's web assets. Adding a machine
+through Tern's own remote transport still happens in Tern; the phone connects
+to the Perch gateway.
 
 In `bun run setup:host`, choose **5 OMP remote sessions** or **6 Tern remote
 sessions**. The defaults are loopback ports 4781 and 4782 respectively. Enter
@@ -50,6 +54,12 @@ After pairing, choose the remote connection, then choose **Attach** beside the
 runtime you want. No prompt is sent by discovery or attachment. **Detach**
 returns to the host browser; **Interrupt** affects the selected agent's current
 work. Starting new host sessions and restoring saved history remain host actions.
+
+Choose **Tern remote sessions** for supported OMP approval and plan-review
+answers. Perch shows the host's exact choices and a native plan document reader.
+The **OMP remote** extension and **OMP Collab** connections retain their separate
+dialog limits. See [approvals and plan review](REMOTE-REQUESTS.md), including
+the difference between a forwarding receipt and an accepted host decision.
 
 For a private setup file, a remote connection has this form:
 
@@ -106,7 +116,7 @@ or sign in to a provider for you.
 | OpenCode | [OpenCode and the Perch OpenCode gateway](OPENCODE.md) | Host history, new chats, configured models, supported approvals |
 | OMP Collab | An active OMP `/collab` invitation | The shared terminal session, including one inside Tern |
 | OMP remote | [OMP extension](../server/omp-remote/README.md) loaded into the host process | Current conversation, prompt/interrupt, model selection, and exact process identity |
-| Tern remote | [Tern plugin and bridge](../server/tern-remote/README.md), with a compatible OMP pane | Existing agent panes, workspace context, prompt/interrupt, and bounded transcripts |
+| Tern remote | [Tern plugin and bridge](../server/tern-remote/README.md), with a compatible OMP pane | Existing agent panes, remote-host context, prompt/interrupt, bounded transcripts, supported owner approvals and plan choices |
 
 Run the workspace gateway behind your HTTPS endpoint. The local upstreams use
 literal loopback addresses; a phone never receives their private tokens or
@@ -219,6 +229,11 @@ conversation identity and model control; the Tern adapter adds window and pane
 context. They share explicit attachment and receipt-based reconnect, with
 different advertised capabilities. See [the design](REMOTE-WORKSPACE-DESIGN.md)
 and [implementation evidence](REMOTE-WORKSPACE-RESULTS.md).
+
+The [0.8 request follow-up](REMOTE-REQUESTS.md) uses the Tern window's structured
+surface/event APIs for supported OMP owner decisions. It preserves the existing
+process and request. General extension text dialogs and plan section editing
+remain host actions in the pinned OMP build.
 
 OMP's Bun SDK and RPC interfaces also offer session creation/history, branching,
 structured UI requests, provider-login callbacks, and more subagent controls.
