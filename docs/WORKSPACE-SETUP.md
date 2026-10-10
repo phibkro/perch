@@ -1,6 +1,6 @@
 # Set up Perch once per workspace
 
-Perch 0.6 adds two setup choices: **Self-hosted** and **Cloud**. Cloud uses your
+Perch offers two setup choices: **Self-hosted** and **Cloud**. Cloud uses your
 Cloudflare account. Both finish with one pairing code. Once paired, the phone
 discovers the workspace's available harnesses and lets you switch between them
 in **Connection & settings**, without entering their credentials again.
@@ -30,8 +30,46 @@ pairing code. Drafts and unresolved submission identities remain memory-only;
 saving a workspace does not make a pending prompt persistent or replay it.
 
 If an older host has no workspace endpoint, **Advanced connection** retains the
-existing Pi Durable, OMP Collab, Pi bridge, and OpenCode gateway forms. Those
+Pi Durable, OMP Collab, Pi bridge, OpenCode gateway, and Host sessions forms. Those
 direct connections retain their previous memory-only credential behavior.
+
+## Attach to a running OMP or Tern session
+
+The remote-session prototype adds **Host sessions** as a connection type. Install
+the [OMP extension](../server/omp-remote/README.md) or the
+[Tern plugin and bridge](../server/tern-remote/README.md) on the host first.
+The OMP extension runs inside the original OMP process. The Tern plugin inspects
+and operates existing supported agent panes through a running Tern window.
+
+In `bun run setup:host`, choose **5 OMP remote sessions** or **6 Tern remote
+sessions**. The defaults are loopback ports 4781 and 4782 respectively. Enter
+the adapter token from its private host configuration. The workspace gateway
+still uses port 4780 and produces one pairing code for the phone.
+
+After pairing, choose the remote connection, then choose **Attach** beside the
+runtime you want. No prompt is sent by discovery or attachment. **Detach**
+returns to the host browser; **Interrupt** affects the selected agent's current
+work. Starting new host sessions and restoring saved history remain host actions.
+
+For a private setup file, a remote connection has this form:
+
+```json
+{
+  "id": "omp-remote",
+  "name": "OMP remote sessions",
+  "kind": "remote",
+  "upstream": {
+    "url": "http://127.0.0.1:4781",
+    "token": "REPLACE_WITH_PRIVATE_REMOTE_ADAPTER_TOKEN"
+  }
+}
+```
+
+Both adapters publish bounded snapshots and explicit limitations. The Tern
+bridge currently needs its desktop window; OMP must have the extension loaded.
+See [the grounding design](REMOTE-WORKSPACE-DESIGN.md) for identity, receipt and
+recovery rules, and [the measured results](REMOTE-WORKSPACE-RESULTS.md) for the
+distinction between local fixtures and device verification.
 
 ## Self-hosted
 
@@ -66,7 +104,9 @@ or sign in to a provider for you.
 | Pi Durable | [Durable backend](DURABLE-BACKEND.md), with its model configuration and persistence bindings | Durable chats, model choice, protected artifact files |
 | Pi | [Pi RPC bridge](../server/pi-bridge/README.md), with the selected Pi profile | The bridge's existing agent session, models, and supported questions |
 | OpenCode | [OpenCode and the Perch OpenCode gateway](OPENCODE.md) | Host history, new chats, configured models, supported approvals |
-| OMP | An active OMP `/collab` invitation | The shared terminal session, including one inside Tern |
+| OMP Collab | An active OMP `/collab` invitation | The shared terminal session, including one inside Tern |
+| OMP remote | [OMP extension](../server/omp-remote/README.md) loaded into the host process | Current conversation, prompt/interrupt, model selection, and exact process identity |
+| Tern remote | [Tern plugin and bridge](../server/tern-remote/README.md), with a compatible OMP pane | Existing agent panes, workspace context, prompt/interrupt, and bounded transcripts |
 
 Run the workspace gateway behind your HTTPS endpoint. The local upstreams use
 literal loopback addresses; a phone never receives their private tokens or
@@ -173,25 +213,31 @@ make their files durable automatically.
 
 ## Deeper OMP and Tern integration
 
-OMP's current Bun SDK and RPC interfaces offer session creation/history,
-branching, model selection, structured UI requests, provider-login callbacks,
-and more subagent controls. A host adapter can bring those into the same
-workspace contract. Collab remains the implemented route for attaching to an
-already-running OMP terminal; creating a new SDK/RPC process does not attach to
-that terminal. [OMP SDK][omp-sdk] [OMP RPC][omp-rpc]
+Perch 0.7 adds an extension inside the original OMP process and a Tern window
+plugin as two remote-session adapters. The extension provides stronger OMP
+conversation identity and model control; the Tern adapter adds window and pane
+context. They share explicit attachment and receipt-based reconnect, with
+different advertised capabilities. See [the design](REMOTE-WORKSPACE-DESIGN.md)
+and [implementation evidence](REMOTE-WORKSPACE-RESULTS.md).
+
+OMP's Bun SDK and RPC interfaces also offer session creation/history, branching,
+structured UI requests, provider-login callbacks, and more subagent controls.
+Those remain candidates for later capabilities. Creating a new SDK/RPC process
+does not attach it to an independently running terminal.
+[OMP SDK][omp-sdk] [OMP RPC][omp-rpc]
 
 Tern already documents a remote-client model on iOS: shells and host plugins run
 on attached hosts. Its reviewed platform matrix does not list Android, and its
 public TSP SDK does not provide a drop-in Android renderer. The missing beta
 `tern web serve` distribution remains an upstream packaging/access issue.
 See [the detailed OMP/Tern integration note](HARNESS-INTEGRATION-RESEARCH.md)
-for the verified capabilities and proposed next adapter.
+for the platform research, and the remote design for the implemented first slice.
 
 ## What was checked
 
 The app includes bounded, authenticated workspace discovery; same-origin
 connector paths; private secure-store records; saved-profile reopening; and
-credential removal. Tests exercise all four connector routes, rejected path
+credential removal. Tests exercise the connector routes, rejected path
 escapes, interrupted secure-store writes/removals, stale discovery responses,
 and model/credential separation. A rendered Expo export additionally exercises
 the two setup choices, Advanced fallback, real client adapters against synthetic

@@ -143,6 +143,13 @@ Use a `durable` connection with `upstream: {"url":"http://127.0.0.1:8788",
 entry uses `{"id":"omp","name":"My OMP terminal","kind":"omp",
 "collabLink":"YOUR_EXISTING_INVITATION"}` instead of `upstream`.
 
+Use a `remote` connection for an instrumented OMP session or Tern bridge, with
+`upstream: {"url":"http://127.0.0.1:4781","token":"YOUR_REMOTE_ADAPTER_TOKEN"}`.
+The [OMP extension](../omp-remote/README.md) defaults to port 4781; the
+[Tern bridge](../tern-remote/README.md) defaults to 4782. Interactive setup
+offers these as choices 5 and 6. The phone discovers running sessions and asks
+for an explicit attachment; this gateway never starts another OMP process.
+
 To add or remove an adapter later, edit the `connections` array in the saved
 private configuration, keep `defaultConnectionId` valid, run `--check`, and
 restart the gateway. Reopen the saved workspace in Perch to refresh discovery.
@@ -163,6 +170,7 @@ capability delivered only to an authenticated phone.
 | Pi at `/harness/<id>` | Authenticate the first WebSocket `hello`; open the local bridge only after authentication; substitute the local bridge token |
 | OpenCode at `/harness/<id>` | Accept Basic `perch:<workspace-token>`; use the gateway's own credentials and fixed host directory |
 | OMP invitation | Advertise the invitation; the phone uses the existing encrypted Collab client |
+| Remote sessions at `/harness/<id>` | Replace the workspace bearer token with the local OMP extension or Tern bridge token; expose only health, catalog, snapshot, command and receipt routes |
 
 HTTP routes are restricted to the existing adapters' chat, history, model,
 question, receipt, and artifact operations. Client-supplied destinations are
@@ -184,10 +192,16 @@ For token rotation, replace it with a new random token in the private config,
 restart the gateway, then pair devices again. An OMP invitation already received
 by a device has its own lifetime: stop or rotate that OMP share separately.
 
+Remote commands are capped at 128 KiB and accept only the versioned prompt,
+interrupt and model-selection fields. Remote snapshots are capped at 6 MiB.
+Private Tern plugin exchange routes, raw control commands, arbitrary files and
+process termination are not exposed. A fresh health request bypasses the cached
+handshake so reconnect can detect a replaced adapter epoch.
+
 The gateway centralizes setup and transport. Session persistence, background
 agent execution, and stored artifacts still depend on the selected harness and
-its backend. A deeper OMP SDK/RPC adapter and a Tern Android client are discussed
-in [the integration research](../../docs/HARNESS-INTEGRATION-RESEARCH.md).
+its backend. [The remote-workspace design](../../docs/REMOTE-WORKSPACE-DESIGN.md)
+describes the implemented session boundary and subsequent TSP/terminal work.
 
 ## Verification
 

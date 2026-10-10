@@ -1,6 +1,6 @@
 {
   "name": "perch",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -23,6 +23,10 @@
     "test:device": "node tooling/run.mjs maestro test .maestro/smoke.yml",
     "verify:artifacts": "node src/artifacts/verify.cjs",
     "verify:workspaces": "bun test verification/workspace",
+    "verify:remote": "bun test verification/remote && bun run --cwd server/omp-remote test && bun run --cwd server/tern-remote test",
+    "setup:omp-remote": "bun server/omp-remote/setup.mjs",
+    "setup:tern-remote": "bun server/tern-remote/setup.mjs",
+    "tern:serve": "bun server/tern-remote/index.mjs",
     "setup:host": "bun server/workspace/setup.mjs",
     "workspace:serve": "bun server/workspace/index.mjs",
     "setup:cloud": "node scripts/setup-cloudflare.mjs",

@@ -1,5 +1,43 @@
 # Perch verification
 
+## Perch 0.7: native remote sessions
+
+Perch 0.7.0 / Android code 8 adds a native host-session browser, explicit
+attachment, an extension inside the original OMP process, and a Tern window
+plugin with a protected loopback bridge. The
+[grounding design](REMOTE-WORKSPACE-DESIGN.md) defines the first slice; the
+[complete results](REMOTE-WORKSPACE-RESULTS.md) record its implementation,
+review corrections, repeatable commands and remaining limits.
+
+The native remote driver passed seven tests / 78 assertions against an actual
+loopback HTTP fixture. Workspace driver/integration checks passed 14 tests /
+116 assertions, and workspace gateway/setup checks passed 16 tests / 177
+assertions. The rendered Expo export passed 113 DOM checks, including the actual
+Attach/Detach controls, host metadata, separate drafts and reconnect without
+another prompt POST. The full run reported no JavaScript errors or outside
+network attempts; the known jsdom CSS parser limitation remains separate.
+
+Stronger host checks exercised the real upstream implementations. OMP 18.8.7's
+actual AgentSession and stock InteractiveMode passed with one session and four
+in-memory mock-provider calls per verifier mode. The phone-originated answer
+appeared in captured TUI output. The supplied Tern 0.6.0 (`0e39682`) beta ran the
+production Luau plugin and a synthetic TSP peer in a real PTY, covering Unicode
+send, current transcript reads, same-process reconnect, unavailable-composer
+rejection and Ctrl-C without process exit. These are separate controlled tests,
+not a Pixel-to-live-provider run. No paid model calls were made.
+
+App types, the existing session/artifact and OpenCode/Durable client verifiers,
+all five keyboard-layout cases, 29 durable backend tests, and the backend's
+production build passed. Release/runtime guards passed 17 Node tests and six
+Python handoff tests; version/signing preflight and all 581 packaged dependency
+notices passed. The new `verify:remote` suite is included in the Android workflow.
+
+The adapters' READMEs and verification records describe precise coverage and
+limits. Native TSP/VT rendering, shared host-dialog answers, window-independent
+Tern attachment, live-provider integration and physical Pixel/GrapheneOS
+suspend-resume remain subsequent work. Android binary evidence is recorded in
+[ANDROID-BUILD.md](ANDROID-BUILD.md).
+
 ## Perch 0.6: one workspace setup
 
 Perch 0.6.0 / Android code 7 includes the published keyboard fix and adds saved

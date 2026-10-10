@@ -5,7 +5,7 @@ export const MAX_SAVED_WORKSPACES = 8;
 export type Deployment = 'self-hosted' | 'cloudflare';
 export type WorkspaceCredentials = { url: string; token: string };
 export type WorkspaceConnection =
-  | { id: string; name: string; kind: 'durable' | 'pi' | 'opencode'; path: string }
+  | { id: string; name: string; kind: 'durable' | 'pi' | 'opencode' | 'remote'; path: string }
   | { id: string; name: string; kind: 'omp'; collabLink: string };
 export type WorkspaceManifest = {
   protocol: typeof WORKSPACE_PROTOCOL; version: 1;
@@ -68,8 +68,8 @@ export function parseManifest(value: unknown): WorkspaceManifest {
       if (!fields(item, ['id', 'name', 'kind', 'collabLink']) || typeof item.collabLink !== 'string' || !item.collabLink || item.collabLink.length > 4096 || /[\u0000-\u0020\u007f]/.test(item.collabLink)) invalidManifest();
       return { id: item.id, name: item.name, kind: 'omp', collabLink: item.collabLink };
     }
-    if (!fields(item, ['id', 'name', 'kind', 'path']) || !['durable', 'pi', 'opencode'].includes(String(item.kind)) || typeof item.path !== 'string' || item.path.length > 256 || !/^(?:\/[A-Za-z0-9_-]+)*$/.test(item.path)) invalidManifest();
-    return { id: item.id, name: item.name, kind: item.kind as 'durable' | 'pi' | 'opencode', path: item.path };
+    if (!fields(item, ['id', 'name', 'kind', 'path']) || !['durable', 'pi', 'opencode', 'remote'].includes(String(item.kind)) || typeof item.path !== 'string' || item.path.length > 256 || !/^(?:\/[A-Za-z0-9_-]+)*$/.test(item.path)) invalidManifest();
+    return { id: item.id, name: item.name, kind: item.kind as 'durable' | 'pi' | 'opencode' | 'remote', path: item.path };
   });
   if (!seen.has(value.defaultConnectionId)) invalidManifest();
   return { protocol: WORKSPACE_PROTOCOL, version: 1,

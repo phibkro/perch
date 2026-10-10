@@ -93,6 +93,7 @@ jobs:
           bun run verify
           bun run verify:artifacts
           bun run verify:workspaces
+          bun run verify:remote
           bun run --cwd server/workspace test
           bun run --cwd verification/opencode test
           bun run --cwd verification/durable test

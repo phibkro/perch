@@ -147,6 +147,45 @@ inspect server history; it has no durable outbox, stored credentials, or offline
 transcript cache. The backend advertises no attachment, steering, or question UI.
 See [the durable backend guide](../../docs/DURABLE-BACKEND.md).
 
+## Remote host sessions
+
+`connectRemote({url, token})` authenticates a Perch remote adapter and reads its
+session catalog. It opens no transcript until `selectSession(id)` is called.
+The empty selection uses `activeSessionId: ''`, an empty transcript, and no prompt
+capability. The adapter can run next to an existing OMP process or bridge a Tern
+window. It never creates another harness on behalf of the phone.
+
+An attachment binds the host epoch, runtime ID, generation and, when available,
+conversation ID. The catalog and transcript become visible together after
+validation. Reconnect reads health again and observes the same identity. An
+adapter restart, replaced runtime, desktop conversation switch, or ended session
+returns to the catalog for a new explicit selection. Draft and artifact view keys
+include the remote epoch, generation and conversation, so old content cannot be
+mistaken for the new session.
+
+`detachSession()` clears the phone's selected view and continues reading the host
+catalog. It sends no interrupt or termination command. `interrupt()` is a separate
+capability-guarded action against the selected running session. A fresh phone
+process must pair or open a saved workspace, then select a session again.
+
+Each mutation carries a command ID and the current attachment identity. A lost
+response triggers a receipt lookup. Reconnect never reposts a command. An unknown
+receipt remains visible; sending the same unresolved text is blocked until its
+receipt is resolved. `forwarded` acknowledges dispatch to the existing host
+interface, not a completed model turn. These receipt IDs remain in phone memory.
+
+The first version polls full bounded snapshots every 750 ms while working and
+every three seconds while idle. It does not claim a lossless event stream or
+complete history. The host reports truncation, available controls, and model
+metadata. The existing native assistant-ui projection and derived artifact
+readers consume that state. Shared dialogs, native TSP surfaces, terminal byte
+streams, stored file references, and process crash recovery are separate work.
+
+Run `bun test verification/remote` for real loopback HTTP tests through the public
+store/driver boundary. No model call or user host is involved. See the
+[remote workspace design](../../docs/REMOTE-WORKSPACE-DESIGN.md) for identity,
+authority and milestone decisions.
+
 ## Verification
 
 Run `node src/session/verify.cjs` from the project root. It compiles the session

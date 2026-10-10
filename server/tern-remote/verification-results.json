@@ -1,0 +1,50 @@
+{
+  "verifiedAt": "2026-10-10",
+  "runtime": "Bun 1.4.2",
+  "bridgeTests": {
+    "command": "bun test server/tern-remote/test/bridge.test.mjs",
+    "passed": 16,
+    "failed": 0,
+    "assertions": 133
+  },
+  "tern": {
+    "version": "tern 0.6.0 (0e39682)",
+    "platform": "Linux x86-64",
+    "binarySha256": "30fb234233c013b8f669eb101cbaf4114392a8b65296747d264595dbd8d4a175",
+    "archiveSha256": "1378582b53e63469ea4c85d8fc7f62ecda1072b4c3381bd67e1dc1e3ff8c8db7",
+    "generatedTypesSha256": "dfb4c9f419dd8a37bd9305c46c8422299b7376b4b5da27c1684bc74637790bbe",
+    "distributedInRepository": false
+  },
+  "actualBetaCheck": {
+    "command": "TERN_BIN=/path/to/tern bun server/tern-remote/test/verify-tern.mjs",
+    "exitCode": 0,
+    "proof": "actual Tern + our Luau plugin + local synthetic TSP program",
+    "checks": [
+      "session catalog",
+      "native protocol parsing",
+      "two existing messages",
+      "atomic Unicode send",
+      "four updated messages",
+      "same child PID",
+      "reconnect without replay",
+      "non-ready send rejected",
+      "interrupt without process exit"
+    ],
+    "limitations": [
+      "No real OMP/model call",
+      "Headless fixture window; no restored user desktop",
+      "No physical Android device"
+    ]
+  },
+  "ompSourceReview": {
+    "revision": "b07a1c146d0d12cfc855a2c65d52f892ef319040",
+    "runtimeTestOfOmp": false,
+    "finding": "The sendable editor must be below the normal omp.editor wrapper in the omp.session dock."
+  },
+  "notes": [
+    "The production Luau plugin was copied unchanged into the isolated headless fixture.",
+    "The synthetic child speaks TSP over Tern's real PTY; no provider credentials were supplied.",
+    "Different-user config validation was tested with a mocked current UID because this environment rejects chown.",
+    "Tern exposes no canonical OMP conversation or entry IDs; bounded view reconciliation remains conservative."
+  ]
+}

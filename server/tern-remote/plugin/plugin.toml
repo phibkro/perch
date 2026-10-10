@@ -1,0 +1,6 @@
+schema = 1
+id = "perch-remote"
+name = "Perch remote sessions"
+version = "0.1.0"
+description = "Native Perch access to existing OMP panes through a local bridge."
+window = "window.luau"

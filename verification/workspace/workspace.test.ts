@@ -13,6 +13,7 @@ const manifest = (): WorkspaceManifest => ({ protocol: 'perch-workspace', versio
     { id: 'pi', name: 'Pi', kind: 'pi', path: '/harness/pi' },
     { id: 'opencode', name: 'OpenCode', kind: 'opencode', path: '/harness/opencode' },
     { id: 'omp', name: 'OMP terminal', kind: 'omp', collabLink: 'wss://relay.example/r/synthetic.public-test-key' },
+    { id: 'remote', name: 'Host sessions', kind: 'remote', path: '/harness/remote' },
   ] });
 const pairing = (value: unknown) => 'perch://pair#' + Buffer.from(JSON.stringify(value)).toString('base64url');
 function sessionSpy() {
@@ -22,6 +23,7 @@ function sessionSpy() {
     connectPi: async (config: unknown) => { calls.push({ kind: 'pi', config }); },
     connectOpenCode: async (config: unknown) => { calls.push({ kind: 'opencode', config }); },
     connectCollab: async (config: unknown) => { calls.push({ kind: 'omp', config }); },
+    connectRemote: async (config: unknown) => { calls.push({ kind: 'remote', config }); },
     useDemo: () => { calls.push({ kind: 'demo' }); },
   } };
 }
@@ -79,11 +81,12 @@ describe('one saved workspace, several harnesses', () => {
     const spy = sessionSpy(); const persistence = memoryWorkspacePersistence(); let discoveries = 0;
     const manager = new WorkspaceManager({ ...spy, persistence, newId: () => 'local-home', discover: async () => { discoveries++; return manifest(); } });
     await manager.join(credentials, 'self-hosted');
-    await manager.chooseConnection('pi'); await manager.chooseConnection('opencode'); await manager.chooseConnection('omp');
+    await manager.chooseConnection('pi'); await manager.chooseConnection('opencode'); await manager.chooseConnection('remote'); await manager.chooseConnection('omp');
     expect(spy.calls).toEqual([
       { kind: 'durable', config: { url: credentials.url + '/harness/durable', token } },
       { kind: 'pi', config: { url: 'wss://perch.example/base/harness/pi', token } },
       { kind: 'opencode', config: { url: credentials.url + '/harness/opencode', username: 'perch', password: token } },
+      { kind: 'remote', config: { url: credentials.url + '/harness/remote', token } },
       { kind: 'omp', config: manifest().connections[3].kind === 'omp' ? 'wss://relay.example/r/synthetic.public-test-key' : '' },
     ]);
     expect(discoveries).toBe(1);

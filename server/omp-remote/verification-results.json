@@ -1,0 +1,72 @@
+{
+  "verifiedOn": "2026-10-10",
+  "bunVersion": "1.4.2",
+  "ompVersion": "18.8.7",
+  "reviewedOmpSourceCommit": "b07a1c146d0d12cfc855a2c65d52f892ef319040",
+  "protocol": "perch-remote",
+  "protocolVersion": 1,
+  "unitVerification": {
+    "command": "bun test ./test",
+    "testsPassed": 16,
+    "testsFailed": 0,
+    "assertions": 121,
+    "coverage": [
+      "Authenticated existing-session catalog and snapshot; provider credentials and opaque provider payloads omitted",
+      "Command-ID reservation, duplicate receipts, differing-input rejection, reconnect without replay",
+      "In-flight model selection survives a dropped HTTP response and can be reconciled by receipt",
+      "Desktop conversation switch and branch retain the listener and invalidate old commands",
+      "One streaming message identity becomes the persisted host answer",
+      "Consecutive assistant messages sharing a timestamp retain distinct streaming identities",
+      "Complete write inputs become exact artifacts; truncated inputs do not",
+      "Subagents cannot replace the main session; approval notifications cannot become approval commands",
+      "Unconfirmed prompt admission remains guarded until an explicit idle host reset",
+      "A full receipt ledger rejects new commands without evicting old IDs",
+      "Missing receipts return HTTP 404 after a host conversation change instead of inventing a new identity",
+      "Compaction and tree navigation clear completed event overlays and change generation",
+      "Snapshot and request limits; browser origin, path, method, and field restrictions",
+      "The newest tool result survives the response budget while older conversation rows are omitted",
+      "Private setup reuse, no credential logging, owner-only files, no symlinks or checkout credential paths"
+    ]
+  },
+  "upstreamVerification": {
+    "dependencyLock": "upstream/bun.lock",
+    "frozenInstallVerified": true,
+    "modes": [
+      {
+        "command": "bun verify-upstream.mjs",
+        "runtime": "Real OMP SDK AgentSession and the stock non-interactive extension runner",
+        "terminal": "None",
+        "passed": true,
+        "agentSessionsCreated": 1,
+        "upstreamMockProviderCalls": 4,
+        "paidProviderCalls": 0
+      },
+      {
+        "command": "bun verify-upstream.mjs --interactive",
+        "runtime": "Real stock OMP InteractiveMode and its extension UI controller over one SDK AgentSession",
+        "terminal": "Synthetic output recorder injected through the public Composer terminal option; not a VT emulator",
+        "passed": true,
+        "agentSessionsCreated": 1,
+        "upstreamMockProviderCalls": 4,
+        "paidProviderCalls": 0,
+        "phoneAnswerObservedInTuiOutput": true
+      }
+    ],
+    "checks": [
+      "Read history already created on the host and preserve sessionManager transcript identity",
+      "Public sendUserMessage enters the same real session; duplicate command ID does not add a second model call",
+      "Phone reconnect reads preserve the host process and do not replay prompts",
+      "Public abort stops a delayed real agent turn while preserving the process and listener",
+      "Public model selection updates the same session using host-configured model metadata",
+      "A real host newSession transition changes conversation and generation, retains the listener, and rejects an old command",
+      "The real session_shutdown lifecycle event closes the extension listener"
+    ]
+  },
+  "notVerified": [
+    "A user's live provider credentials or subscription",
+    "Tern plugin or daemon integration",
+    "Native Android, GrapheneOS, a physical Pixel, or background socket behavior",
+    "Terminal pixel/grid correctness or arbitrary TSP rendering",
+    "OMP or host crash recovery, persisted command receipts, or exactly-once external tool effects"
+  ]
+}

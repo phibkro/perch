@@ -16,6 +16,8 @@ flowchart TD
   S --> P["Pi bridge adapter"]
   S --> C2["OpenCode server adapter"]
   S --> D["Pi Durable adapter"]
+  S --> R["Remote-session adapter"]
+  R --> RG["OMP extension or Tern bridge"]
   D --> DS["PiHarness session cell"]
   O --> T["OMP inside Tern"]
   P --> B["Pi RPC process"]
@@ -38,6 +40,21 @@ flowchart TD
 The phone does not run a second agent loop around OMP, Pi, Pi Durable, or OpenCode. There is no additional model provider SDK in the chat path. The native assistant-ui external runtime projects the existing session store. Infrastructure is chosen through the connected server; the adapter is the same whether that server runs at home or in a cloud container.
 
 This version exposes one active real connection at a time. Adding a harness means implementing the driver/update contract and a connection method, declaring capabilities, and translating its events. The chat and artifact readers remain unchanged. This is a small working boundary rather than a universal wire protocol.
+
+## Native remote workspaces
+
+[The remote-workspace design](REMOTE-WORKSPACE-DESIGN.md) grounds the next slice:
+one host session browser, explicit attachment to an existing runtime, and
+same-process prompt/interrupt controls. The new `perch-remote` adapter contract
+supports both an OMP extension and a Tern window plugin with a loopback bridge.
+It retains this session store and the native assistant-ui projection.
+
+Connection discovery does not select an arbitrary runtime. Reconnect checks
+host epoch, runtime generation, and known conversation identity, then reads
+snapshots and forwarding receipts. It never reposts commands. Capabilities and
+snapshot limitations are explicit. A Tern window-backed bridge is not yet a
+daemon-only client or a full TSP/terminal renderer. Implementation evidence is
+tracked in [the remote results](REMOTE-WORKSPACE-RESULTS.md).
 
 ## One setup per workspace
 
@@ -140,7 +157,9 @@ Markdown uses native text and virtualized blocks. Code becomes highlighted nativ
 
 ## Remaining boundaries
 
-Tern's plugin SDK and TSP are not transplanted into the phone. The initial route is OMP Collab from a Tern terminal session. Arbitrary terminal, Luau, or TSP widgets need a separate rendering adapter.
+Tern's plugin SDK and TSP are not transplanted into the phone. OMP Collab remains
+available alongside the remote-session adapters. Arbitrary terminal, Luau, or
+TSP widgets need a separate rendering adapter.
 
 The phone saves paired workspace access in SecureStore. Direct Advanced
 credentials, drafts, pending operation IDs, and its current view remain in

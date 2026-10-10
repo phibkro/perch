@@ -107,7 +107,7 @@ export function WorkspaceConnections({ theme: t, onConnected }: { theme: Theme; 
     <View style={s.group}>{workspace.connections.map(connection => <Pressable key={connection.id} accessibilityRole="button" accessibilityLabel={`Use ${connection.name}`} accessibilityState={{ selected: connection.id === workspace.selectedConnectionId }} disabled={workspace.busy || connection.id === workspace.selectedConnectionId} onPress={() => {
       setError(''); void workspaceManager.chooseConnection(connection.id).then(onConnected).catch(() => setError('This assistant could not be opened. Reconnect the workspace to refresh its list.'));
     }} style={[s.savedButton, { padding: 16 }]}>
-      <View style={s.flex}><Text style={s.heading}>{connection.name}</Text><Text style={s.small}>{connection.kind === 'omp' ? 'Join a shared terminal session' : connection.kind === 'durable' ? 'Persistent chats and artifacts' : connection.kind === 'pi' ? 'Host-managed Pi session' : 'OpenCode sessions'}</Text></View>
+      <View style={s.flex}><Text style={s.heading}>{connection.name}</Text><Text style={s.small}>{connection.kind === 'remote' ? 'Browse and attach to running host sessions' : connection.kind === 'omp' ? 'Join a shared terminal session' : connection.kind === 'durable' ? 'Persistent chats and artifacts' : connection.kind === 'pi' ? 'Host-managed Pi session' : 'OpenCode sessions'}</Text></View>
       {connection.id === workspace.selectedConnectionId ? <Check size={19} color={t.primary} /> : <ChevronRight size={18} color={t.subtle} />}
     </Pressable>)}</View>
     {error && <Text accessibilityRole="alert" style={s.error}>{error}</Text>}

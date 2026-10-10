@@ -10,6 +10,7 @@ import { ArtifactWorkspace, artifactForMessage, deriveArtifacts, storedArtifacts
 import { NativeAction, NativeAppearanceSwitch } from './src/ui/NativeAction';
 import { ModelPicker } from './src/ui/ModelPicker';
 import { WorkspaceSetup, WorkspaceConnections } from './src/ui/WorkspaceSetup';
+import { RemoteSessionAttachment, RemoteSessionBrowser } from './src/ui/RemoteSessions';
 import { workspaceManager } from './src/workspace';
 import { darkTheme, lightTheme, type Theme } from './src/ui/theme';
 
@@ -28,9 +29,9 @@ function Brand() { const { t, s } = useUI(); return <View style={s.row}><View st
 function Pill({ text, attention = false }: { text: string; attention?: boolean }) { const { t, s } = useUI(); return <View style={[s.pill, attention && { backgroundColor: t.amberSoft }]}><View style={[s.dot, { backgroundColor: attention ? t.amber : t.primary }]} /><Text style={{ color: attention ? t.amber : t.primary, fontSize: 11, fontWeight: '600' }}>{text}</Text></View>; }
 function TextAction({ label, onPress, icon: Icon = ArrowRight }: { label: string; onPress: () => void; icon?: LucideIcon }) { const { t, s } = useUI(); return <Pressable accessibilityRole="button" onPress={onPress} style={s.textAction}><Text style={s.actionText}>{label}</Text><Icon size={15} color={t.primary} /></Pressable>; }
 
-function Sidebar({ state, screen, artifactCount, onNewChat, onOpenChat, onNavigate, onConnect, onClose }: {
+function Sidebar({ state, screen, artifactCount, onNewChat, onOpenChat, onNavigate, onConnect, onBrowseHost, onClose }: {
   state: SessionSnapshot; screen: Screen; artifactCount: number; onNewChat: () => void;
-  onOpenChat: (id: string) => void; onNavigate: (screen: Screen) => void; onConnect: () => void; onClose?: () => void;
+  onOpenChat: (id: string) => void; onNavigate: (screen: Screen) => void; onConnect: () => void; onBrowseHost: () => void; onClose?: () => void;
 }) {
   const { t, s } = useUI();
   return <View testID="chat-sidebar" style={[s.sidebar, !!onClose && { width: '100%', borderRightWidth: 0 }]}>
@@ -38,8 +39,9 @@ function Sidebar({ state, screen, artifactCount, onNewChat, onOpenChat, onNaviga
     <View style={s.sidebarActions}>
       <Pressable accessibilityRole="button" accessibilityLabel="New chat" testID="new-chat-navigation" onPress={onNewChat} disabled={!!state.sessionAction} style={s.newChatButton}><SquarePen size={19} color={t.primary} /><Text style={[s.sidebarLabel, { color: t.primary }]}>{state.sessionAction === 'creating' ? 'Creating chat…' : 'New chat'}</Text><Plus size={17} color={t.primary} style={{ marginLeft: 'auto' }} /></Pressable>
       <Pressable accessibilityRole="button" accessibilityLabel="Artifacts" aria-selected={screen === 'artifacts'} accessibilityState={{ selected: screen === 'artifacts' }} onPress={() => onNavigate('artifacts')} style={[s.sidebarItem, screen === 'artifacts' && s.sidebarSelected]}><BookOpen size={18} color={t.muted} /><Text style={s.sidebarLabel}>Artifacts</Text><Text style={[s.smallMuted, { marginLeft: 'auto' }]}>{artifactCount}</Text></Pressable>
+      {state.mode === 'remote' && <Pressable accessibilityRole="button" accessibilityLabel="Browse host sessions" onPress={onBrowseHost} style={[s.sidebarItem, screen === 'chat' && !state.remote?.attached && s.sidebarSelected]}><Server size={18} color={t.muted} /><Text style={s.sidebarLabel}>Host sessions</Text></Pressable>}
     </View>
-    <Text style={s.historyHeading}>CHATS</Text>
+    <Text style={s.historyHeading}>{state.mode === 'remote' ? 'HOST SESSIONS' : 'CHATS'}</Text>
     <ScrollView style={s.flex} showsVerticalScrollIndicator={false} contentContainerStyle={s.historyList} keyboardShouldPersistTaps="handled">
       {state.sessions.map(session => <Pressable key={session.id} testID={`chat-history-${session.id}`} accessibilityRole="button" accessibilityLabel={`Open ${session.title}`} aria-selected={screen === 'chat' && state.activeSessionId === session.id} accessibilityState={{ selected: screen === 'chat' && state.activeSessionId === session.id, disabled: !!state.sessionAction }} disabled={!!state.sessionAction} onPress={() => onOpenChat(session.id)} style={[s.historyItem, screen === 'chat' && state.activeSessionId === session.id && s.sidebarSelected]}>
         {session.id === 'artifacts' ? <FileText size={17} color={t.muted} /> : <MessageSquare size={17} color={t.muted} />}
@@ -69,6 +71,8 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
     <Text style={[s.sectionTitle, { marginTop: 26, marginBottom: 12 }]}>Session details</Text>
     <View style={s.card}><Detail label="Harness" value={state.harness.name} /><Detail label="Transport" value={state.harness.transport} /><Detail label="Model" value={state.mode === 'demo' ? 'Simulated · no model call' : state.model ? `${state.model.name || state.model.id}${state.model.provider ? ` · ${state.model.provider}` : ''}` : 'Not reported by this host'} />
       {state.capabilities.modelSelection && !!state.availableModels?.length && <View style={{ paddingHorizontal: 16 }}><TextAction label="Choose a model" onPress={openModels} /></View>}
+      {state.remote?.host && <Detail label="Host" value={state.remote.host.name} />}
+      {state.remote?.attached && <><Detail label="Runtime" value={state.remote.attached.runtimeId} /><Detail label="Generation" value={state.remote.attached.generation} /><Detail label="Updates" value="Periodic host snapshots" /></>}
     </View>
     <Text style={[s.sectionTitle, { marginTop: 26, marginBottom: 12 }]}>Make yourself at home</Text><View style={[s.card, { padding: 16 }]}><NativeAppearanceSwitch value={dark} onValueChange={toggleDark} theme={t} /></View>
     <Text style={[s.sectionTitle, { marginTop: 26, marginBottom: 6 }]}>Try the experience</Text><Text style={[s.body, { marginBottom: 12 }]}>Explore the flow without a server or model.</Text>
@@ -76,7 +80,7 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
       {state.mode === 'demo' && <Pressable accessibilityRole="button" onPress={() => { sessionStore.simulateDisconnect(); openChat(); }} style={[s.settingRow, s.topLine]}><WifiOff size={20} color={t.primary} /><Text style={[s.noteTitle, s.flex]}>Simulate a connection drop</Text><ChevronRight size={18} color={t.subtle} /></Pressable>}
       {state.mode !== 'demo' && !online(state) && <Pressable accessibilityRole="button" onPress={sessionStore.reconnect} style={[s.settingRow, s.topLine]}><RefreshCw size={20} color={t.primary} /><Text style={s.noteTitle}>Reconnect</Text></Pressable>}
     </View>
-    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.6 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
+    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.7 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
   </ScrollView>;
 }
 function Detail({ label, value }: { label: string; value: string }) { const { s } = useUI(); return <View style={s.detail}><Text style={s.smallMuted}>{label}</Text><Text selectable style={[s.body, { flex: 1, textAlign: 'right' }]}>{value}</Text></View>; }
@@ -118,29 +122,31 @@ function ConnectSheet({ state, visible, onClose, onConnected, onAdvanced }: { st
 
 function AdvancedConnectSheet({ state, visible, onClose, onConnected }: { state: SessionSnapshot; visible: boolean; onClose: () => void; onConnected: () => void }) {
   const { t, s } = useUI();
-  const [kind, setKind] = useState<'durable' | 'omp' | 'pi' | 'opencode'>('durable');
+  const [kind, setKind] = useState<'durable' | 'remote' | 'omp' | 'pi' | 'opencode'>('durable');
   const [link, setLink] = useState(''); const [token, setToken] = useState(''); const [name, setName] = useState('Phone');
   const [username, setUsername] = useState('perch'); const [directory, setDirectory] = useState(''); const [error, setError] = useState(''); const [submitted, setSubmitted] = useState(false);
   const connecting = state.connection.status === 'connecting';
-  const labels = { durable: 'Pi Durable', omp: 'OMP Collab', pi: 'pi bridge', opencode: 'OpenCode' };
-  const urlLabels = { durable: 'Durable server URL', omp: 'Collab link', pi: 'Bridge WebSocket URL', opencode: 'OpenCode server URL' };
+  const labels = { durable: 'Pi Durable', remote: 'Host sessions', omp: 'OMP Collab', pi: 'pi bridge', opencode: 'OpenCode' };
+  const urlLabels = { durable: 'Durable server URL', remote: 'Remote host URL', omp: 'Collab link', pi: 'Bridge WebSocket URL', opencode: 'OpenCode server URL' };
   const descriptions = {
     durable: 'Keep chats and generated files on your server. Reopen them when your phone reconnects, and choose from the models configured on that host.',
+    remote: 'Connect to a Perch remote adapter on your host. Browse its running OMP or Tern sessions, then explicitly attach to the one you want. Provider credentials stay on the host.',
     omp: 'Start /collab inside your OMP session and paste its complete link. OMP can run inside a Tern pane.',
     pi: 'Run the included pi bridge on your hardware or a cloud server. Paste its WebSocket URL and access token. The bridge owns one pi session.',
     opencode: 'Run OpenCode with the included Perch gateway to open past chats and create new ones. Use the gateway’s HTTPS address and password. It keeps provider configuration on your host.',
   };
-  const placeholders = { durable: 'https://your-perch.example', omp: 'Paste your /collab link', pi: 'wss://your-host.example/pi', opencode: 'https://your-opencode.example' };
+  const placeholders = { durable: 'https://your-perch.example', remote: 'https://your-host.example', omp: 'Paste your /collab link', pi: 'wss://your-host.example/pi', opencode: 'https://your-opencode.example' };
   useEffect(() => { if (submitted && state.mode !== 'demo' && state.connection.status === 'live') { setLink(''); setToken(''); setDirectory(''); setSubmitted(false); onConnected(); onClose(); } }, [submitted, state.mode, state.connection.status]);
   const join = () => {
     setError('');
     if (!link.trim() || (kind !== 'omp' && !token.length)) {
-      setError(kind === 'omp' ? 'Paste a Collab link from your OMP host.' : kind === 'opencode' ? 'Enter your OpenCode server URL and password.' : `Enter the ${kind === 'durable' ? 'durable server' : 'bridge WebSocket'} URL and access token.`);
+      setError(kind === 'omp' ? 'Paste a Collab link from your OMP host.' : kind === 'opencode' ? 'Enter your OpenCode server URL and password.' : `Enter the ${kind === 'remote' ? 'remote host' : kind === 'durable' ? 'durable server' : 'bridge WebSocket'} URL and access token.`);
       return;
     }
     setSubmitted(true);
     workspaceManager.detach();
     const pending = kind === 'durable' ? sessionStore.connectDurable({ url: link.trim(), token: token.trim() })
+      : kind === 'remote' ? sessionStore.connectRemote({ url: link.trim(), token: token.trim() })
       : kind === 'omp' ? sessionStore.connectCollab(link.trim(), name.trim() || 'Phone')
       : kind === 'pi' ? sessionStore.connectPi({ url: link.trim(), token: token.trim() }, name.trim() || 'Phone')
       : sessionStore.connectOpenCode({ url: link.trim(), username: username.trim() || 'perch', password: token, ...(directory.trim() ? { directory: directory.trim() } : {}) });
@@ -148,10 +154,10 @@ function AdvancedConnectSheet({ state, visible, onClose, onConnected }: { state:
   };
   return <Sheet visible={visible} title="Advanced connection" onClose={onClose}>
     <Text style={[s.smallMuted, { marginBottom: 14 }]}>Use this for a server that has not added workspace pairing yet.</Text>
-    <View style={s.harnessTabs}>{(['durable', 'omp', 'pi', 'opencode'] as const).map(value => <Pressable key={value} accessibilityRole="tab" aria-selected={kind === value} accessibilityState={{ selected: kind === value }} onPress={() => { setKind(value); setLink(''); setToken(''); setDirectory(''); setError(''); setSubmitted(false); }} disabled={connecting} style={[s.harnessTab, kind === value && { backgroundColor: t.primarySoft, borderColor: t.primary }]}><Text style={{ color: kind === value ? t.primary : t.muted, fontWeight: '600' }}>{labels[value]}</Text></Pressable>)}</View>
+    <View style={s.harnessTabs}>{(['durable', 'remote', 'omp', 'pi', 'opencode'] as const).map(value => <Pressable key={value} accessibilityRole="tab" aria-selected={kind === value} accessibilityState={{ selected: kind === value }} onPress={() => { setKind(value); setLink(''); setToken(''); setDirectory(''); setError(''); setSubmitted(false); }} disabled={connecting} style={[s.harnessTab, kind === value && { backgroundColor: t.primarySoft, borderColor: t.primary }]}><Text style={{ color: kind === value ? t.primary : t.muted, fontWeight: '600' }}>{labels[value]}</Text></Pressable>)}</View>
     <Text style={[s.body, { marginBottom: 19 }]}>{descriptions[kind]}</Text>
     <Text style={s.inputLabel}>{urlLabels[kind]}</Text><TextInput accessibilityLabel={urlLabels[kind]} testID="collab-link" secureTextEntry={kind === 'omp'} autoCapitalize="none" autoCorrect={false} autoComplete="off" value={link} onChangeText={setLink} placeholder={placeholders[kind]} placeholderTextColor={t.subtle} style={s.input} />
-    {(kind === 'pi' || kind === 'durable') && <><Text style={s.inputLabel}>Access token</Text><TextInput accessibilityLabel={`${labels[kind]} access token`} secureTextEntry autoCapitalize="none" autoCorrect={false} autoComplete="off" value={token} onChangeText={setToken} placeholder={kind === 'durable' ? 'Your workspace token' : 'Your bridge token'} placeholderTextColor={t.subtle} style={s.input} /></>}
+    {(kind === 'pi' || kind === 'durable' || kind === 'remote') && <><Text style={s.inputLabel}>Access token</Text><TextInput accessibilityLabel={`${labels[kind]} access token`} secureTextEntry autoCapitalize="none" autoCorrect={false} autoComplete="off" value={token} onChangeText={setToken} placeholder={kind === 'pi' ? 'Your bridge token' : 'Your workspace token'} placeholderTextColor={t.subtle} style={s.input} /></>}
     {kind === 'opencode' && <>
       <Text style={s.inputLabel}>Gateway username</Text><TextInput accessibilityLabel="OpenCode username" value={username} onChangeText={setUsername} autoCapitalize="none" autoCorrect={false} style={s.input} />
       <Text style={s.inputLabel}>Gateway password</Text><TextInput accessibilityLabel="OpenCode server password" value={token} onChangeText={setToken} secureTextEntry autoCapitalize="none" autoCorrect={false} autoComplete="off" style={s.input} />
@@ -176,7 +182,8 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
   const [drafts, setDrafts] = useState<Record<string, string>>({}); const [submittedCopies, setSubmittedCopies] = useState<Record<string, string>>({});
   const [toast, setToast] = useState(''); const [selectedArtifactId, setSelectedArtifactId] = useState<string | null>(null); const [documentIds, setDocumentIds] = useState<string[]>([]);
   const creationRequest = useRef(0);
-  const namespace = `${state.mode}:${state.connectionEpoch ?? 0}:${state.activeSessionId}`; const active = state.sessions.find(item => item.id === state.activeSessionId);
+  const remoteIdentity = state.mode === 'remote' ? `${state.remote?.epoch ?? ''}:${state.remote?.attached?.generation ?? ''}:${state.remote?.attached?.conversationId ?? ''}:` : '';
+  const namespace = `${state.mode}:${state.connectionEpoch ?? 0}:${remoteIdentity}${state.activeSessionId}`; const active = state.sessions.find(item => item.id === state.activeSessionId);
   const artifacts = useMemo(() => {
     const all = [...storedArtifactsToArtifacts(state.storedArtifacts ?? []), ...deriveArtifacts(state.messages, state.tools)];
     for (const id of documentIds) { const message = state.messages.find(item => item.id === id); if (message) { const artifact = artifactForMessage(message); if (artifact && !all.some(item => item.id === artifact.id)) all.push(artifact); } }
@@ -187,6 +194,7 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
   const openArtifact = (artifact: Artifact) => { setSelectedArtifactId(artifact.id); navigate('artifacts'); };
   const openMessage = (id: string) => { const message = state.messages.find(item => item.id === id); if (!message) return; const artifact = artifactForMessage(message); if (!artifact) return; setDocumentIds(prev => prev.includes(id) ? prev : [...prev, id]); openArtifact(artifact); };
   const openChat = (id = state.activeSessionId) => { sessionStore.selectSession(id); setSheet(null); navigate('chat'); };
+  const browseHost = () => { sessionStore.detachSession(); setSheet(null); navigate('chat'); };
   const startDemo = () => { ++creationRequest.current; setDrafts({}); setSubmittedCopies({}); workspaceManager.detach(); sessionStore.useDemo(); setSheet(null); navigate('chat'); };
   const newChat = () => {
     Keyboard.dismiss(); setDrawerOpen(false);
@@ -206,14 +214,14 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
   useEffect(() => { const sub = BackHandler.addEventListener('hardwareBackPress', () => { if (sheet) { setSheet(null); return true; } if (drawerOpen) { setDrawerOpen(false); return true; } if (selectedArtifactId && screen === 'artifacts') { setSelectedArtifactId(null); return true; } if (screen !== 'chat') { setScreen('chat'); return true; } return false; }); return () => sub.remove(); }, [sheet, drawerOpen, screen, selectedArtifactId]);
   useEffect(() => { const sub = AppState.addEventListener('change', next => { const current = sessionStore.getSnapshot(); if (next === 'active' && current.mode !== 'demo' && /offline|reconnecting/.test(current.connection.status)) sessionStore.reconnect(); }); return () => sub.remove(); }, []);
   const modelLabel = state.mode === 'demo' ? 'Demo · no model calls' : state.model?.name || state.model?.id || 'Host-configured model';
-  const sidebarProps = { state, screen, artifactCount: artifacts.length, onNewChat: newChat, onOpenChat: openChat, onNavigate: navigate, onConnect: openConnect };
+  const sidebarProps = { state, screen, artifactCount: artifacts.length, onNewChat: newChat, onOpenChat: openChat, onNavigate: navigate, onConnect: openConnect, onBrowseHost: browseHost };
   return <SafeAreaView edges={['top', 'left', 'right']} style={s.root}>
     <StatusBar barStyle={dark ? 'light-content' : 'dark-content'} backgroundColor={t.background} />
     {desktop && <Sidebar {...sidebarProps} />}
     <View testID="chat-shell" accessibilityElementsHidden={drawerOpen} importantForAccessibility={drawerOpen ? 'no-hide-descendants' : 'auto'} style={s.main}>
       <View testID="chat-header" style={s.chatHeader}>
         {!desktop && <IconButton icon={Menu} label="Open sidebar" onPress={() => { Keyboard.dismiss(); setDrawerOpen(true); }} />}
-        <View style={s.headerTitle}><Text accessibilityRole="header" numberOfLines={1} style={s.cardTitle}>{screen === 'chat' ? active?.title || 'New chat' : screen === 'artifacts' ? 'Artifacts' : 'Connection & settings'}</Text>
+        <View style={s.headerTitle}><Text accessibilityRole="header" numberOfLines={1} style={s.cardTitle}>{screen === 'chat' ? active?.title || (state.mode === 'remote' ? 'Host sessions' : 'New chat') : screen === 'artifacts' ? 'Artifacts' : 'Connection & settings'}</Text>
           {screen === 'chat' && (state.capabilities.modelSelection && !!state.availableModels?.length ? <Pressable accessibilityRole="button" accessibilityLabel="Choose a model" onPress={() => setSheet('models')} style={s.modelPicker}><Text numberOfLines={1} style={s.smallMuted}>{modelLabel}</Text><ChevronDown size={13} color={t.muted} /></Pressable> : <Text style={s.smallMuted} numberOfLines={1}>{modelLabel}</Text>)}
         </View>
         {screen === 'chat' ? <><IconButton icon={BookOpen} label="Open artifacts" onPress={() => navigate('artifacts')} /><IconButton icon={SquarePen} label="Start a new chat" onPress={newChat} disabled={!!state.sessionAction} /></> : <IconButton icon={ArrowLeft} label="Back to chat" onPress={() => navigate('chat')} />}
@@ -224,7 +232,10 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
         {!online(state) && <View style={s.banner}><WifiOff size={18} color={t.amber} /><Text style={[s.body, s.flex, { color: t.amber }]}>{state.connection.label}. Your draft stays here.</Text><TextAction label="Retry" onPress={sessionStore.reconnect} /></View>}
         {state.pendingQuestion && <Pressable accessibilityRole="button" accessibilityLabel="Answer agent question" onPress={() => setSheet('question')} style={s.banner}><CircleHelp size={21} color={t.amber} /><View style={s.flex}><Text style={[s.eyebrow, { color: t.amber }]}>YOUR INPUT</Text><Text style={[s.body, { color: t.amber }]}>{state.pendingQuestion.answering ? 'Answer sent · waiting for host' : state.pendingQuestion.title}</Text></View><ChevronRight size={20} color={t.amber} /></Pressable>}
         {state.mode === 'demo' && state.messages.length > 0 && !state.isWorking && !state.pendingQuestion && online(state) && <View style={s.demoActions}><TextAction label="Try a demo turn" icon={Sparkles} onPress={() => sessionStore.sendPrompt('Explore this workspace and ask me how to proceed.')} /></View>}
-        <ChatSurface key={namespace} state={state} theme={t} artifacts={artifacts} onOpenArtifact={openArtifact} onOpenMessage={openMessage} onOpenArtifactExample={() => openChat('artifacts')} onTryDemo={() => openChat('mobile')} onConnect={openConnect} onNewChat={newChat} notify={setToast} draft={drafts[namespace] || ''} onDraftChange={text => setDrafts(prev => prev[namespace] === text ? prev : { ...prev, [namespace]: text })} submittedCopy={submittedCopies[namespace] || ''} onKeepSubmitted={text => setSubmittedCopies(prev => ({ ...prev, [namespace]: text }))} onRestoreSubmitted={() => { setDrafts(prev => ({ ...prev, [namespace]: submittedCopies[namespace] || '' })); setSubmittedCopies(prev => ({ ...prev, [namespace]: '' })); setToast('Text restored. Check the transcript before sending again.'); }} />
+        {state.mode === 'remote' && !state.remote?.attached ? <RemoteSessionBrowser state={state} theme={t} onAttach={openChat} onRefresh={sessionStore.reconnect} /> : <>
+          {state.mode === 'remote' && <RemoteSessionAttachment key={namespace} state={state} theme={t} onDetach={browseHost} />}
+          <ChatSurface key={namespace} state={state} theme={t} artifacts={artifacts} onOpenArtifact={openArtifact} onOpenMessage={openMessage} onOpenArtifactExample={() => openChat('artifacts')} onTryDemo={() => openChat('mobile')} onConnect={openConnect} onNewChat={newChat} notify={setToast} draft={drafts[namespace] || ''} onDraftChange={text => setDrafts(prev => prev[namespace] === text ? prev : { ...prev, [namespace]: text })} submittedCopy={submittedCopies[namespace] || ''} onKeepSubmitted={text => setSubmittedCopies(prev => ({ ...prev, [namespace]: text }))} onRestoreSubmitted={() => { setDrafts(prev => ({ ...prev, [namespace]: submittedCopies[namespace] || '' })); setSubmittedCopies(prev => ({ ...prev, [namespace]: '' })); setToast('Text restored. Check the transcript before sending again.'); }} />
+        </>}
       </View>}
       {screen === 'artifacts' && <SafeAreaView edges={['bottom']} style={s.flex}><ArtifactWorkspace key={namespace} loadArtifact={sessionStore.loadArtifact} artifacts={artifacts} selectedArtifactId={selectedArtifactId} onSelectArtifact={setSelectedArtifactId} onClose={() => setSelectedArtifactId(null)} theme={t} /></SafeAreaView>}
       {screen === 'connection' && <SafeAreaView edges={['bottom']} style={s.flex}><ConnectionScreen state={state} openConnect={openConnect} dark={dark} toggleDark={toggleDark} openChat={() => openChat()} openModels={() => setSheet('models')} restartDemo={startDemo} /></SafeAreaView>}
@@ -240,7 +251,8 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
     <ConnectSheet state={state} visible={sheet === 'connect'} onClose={() => setSheet(null)} onAdvanced={() => setSheet('advanced-connect')} onConnected={() => { setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setSubmittedCopies(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setScreen('chat'); }} />
     <AdvancedConnectSheet state={state} visible={sheet === 'advanced-connect'} onClose={() => setSheet(null)} onConnected={() => { setDrafts(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setSubmittedCopies(prev => Object.fromEntries(Object.entries(prev).filter(([key]) => key.startsWith('demo:')))); setScreen('chat'); }} />
     <Sheet visible={sheet === 'host-new-chat'} title="New chats start on your host" onClose={() => setSheet(null)}>
-      <Text style={[s.body, { marginBottom: 20 }]}>{state.harness.name} shares one active session with this app. Start a new session on the host, then connect to it here.</Text>
+      <Text style={[s.body, { marginBottom: 20 }]}>{state.mode === 'remote' ? 'Start a session on your host, then choose it from Host sessions. Attaching uses that existing process.' : `${state.harness.name} shares one active session with this app. Start a new session on the host, then connect to it here.`}</Text>
+      {state.mode === 'remote' && <View style={{ marginBottom: 10 }}><NativeAction label="Browse host sessions" theme={t} onPress={browseHost} /></View>}
       <NativeAction label="Return to current chat" theme={t} onPress={() => { setSheet(null); navigate('chat'); }} />
       <Pressable accessibilityRole="button" onPress={() => setSheet('connect')} style={[s.settingRow, { marginTop: 10 }]}><Link2 size={20} color={t.primary} /><Text style={[s.noteTitle, s.flex]}>Connect another host</Text><ChevronRight size={18} color={t.subtle} /></Pressable>
       <Pressable accessibilityRole="button" onPress={startDemo} style={s.settingRow}><Sparkles size={20} color={t.primary} /><View style={s.flex}><Text style={s.noteTitle}>Start a demo</Text><Text style={s.smallMuted}>Leave this connection and explore the app.</Text></View><ChevronRight size={18} color={t.subtle} /></Pressable>

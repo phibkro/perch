@@ -62,14 +62,22 @@ async function interactiveSetup() {
     process.stdout.write('Perch host setup\nUse adapters already running on this machine. Provider login and project folders stay on this host.\n\n');
     const name = await ask('Workspace name', 'Home workspace');
     const publicUrl = await ask('Public HTTPS address that forwards to this gateway');
-    process.stdout.write('\nLocal adapters: 1 Pi Durable, 2 Pi bridge, 3 OpenCode gateway, 4 Existing OMP invitation\n');
+    process.stdout.write('\nLocal adapters: 1 Pi Durable, 2 Pi bridge, 3 OpenCode gateway, 4 Existing OMP invitation, 5 OMP remote sessions, 6 Tern remote sessions\n');
     const selections = (await ask('Choose numbers separated by commas', '2')).split(',').map(value => value.trim());
-    if (!selections.length || new Set(selections).size !== selections.length || selections.some(value => !['1', '2', '3', '4'].includes(value))) throw new Error('Choose each adapter number once, from 1 through 4.');
+    if (!selections.length || new Set(selections).size !== selections.length || selections.some(value => !['1', '2', '3', '4', '5', '6'].includes(value))) throw new Error('Choose each adapter number once, from 1 through 6.');
     const connections = [];
     for (const selection of selections) {
       if (selection === '4') {
         process.stdout.write('\nOMP attaches to an existing session. Its invitation has its own sharing lifetime.\n');
         connections.push({ id: 'omp', name: 'OMP terminal', kind: 'omp', collabLink: await credential('OMP Collab invitation') });
+        continue;
+      }
+      if (selection === '5' || selection === '6') {
+        const omp = selection === '5'; const name = omp ? 'OMP remote sessions' : 'Tern remote sessions';
+        process.stdout.write(`\n${name}\nThe adapter must already be configured on this host. This connection attaches to running sessions.\n`);
+        const url = await ask('Local adapter address', `http://127.0.0.1:${omp ? 4781 : 4782}`);
+        const token = await credential('Remote adapter token');
+        connections.push({ id: omp ? 'omp-remote' : 'tern-remote', name, kind: 'remote', upstream: { url, token } });
         continue;
       }
       const kind = { 1: 'durable', 2: 'pi', 3: 'opencode' }[selection];

@@ -3,13 +3,13 @@ import { connectionUrl, MAX_SAVED_WORKSPACES, parseManifest, validateCredentials
 import type { WorkspacePersistence } from './persistence';
 
 export type WorkspaceSummary = Omit<SavedWorkspace, 'token'>;
-export type ConnectionSummary = { id: string; name: string; kind: 'durable' | 'pi' | 'opencode' | 'omp' };
+export type ConnectionSummary = { id: string; name: string; kind: 'durable' | 'pi' | 'opencode' | 'omp' | 'remote' };
 export type WorkspaceSnapshot = {
   loaded: boolean; busy: boolean; persistent: boolean; profiles: WorkspaceSummary[];
   active?: WorkspaceSummary; connections: ConnectionSummary[]; selectedConnectionId?: string;
   error?: string; storageError?: string;
 };
-type Sessions = Pick<SessionStore, 'connectDurable' | 'connectPi' | 'connectOpenCode' | 'connectCollab' | 'useDemo'>;
+type Sessions = Pick<SessionStore, 'connectDurable' | 'connectPi' | 'connectOpenCode' | 'connectCollab' | 'connectRemote' | 'useDemo'>;
 type Dependencies = {
   sessions: Sessions; persistence: WorkspacePersistence;
   discover: (credentials: WorkspaceCredentials, signal: AbortSignal) => Promise<WorkspaceManifest>;
@@ -94,6 +94,7 @@ export class WorkspaceManager {
     if (connection.kind === 'omp') return sessions.connectCollab(connection.collabLink, 'Perch');
     const url = connectionUrl(profile, connection);
     if (connection.kind === 'durable') return sessions.connectDurable({ url, token: profile.token });
+    if (connection.kind === 'remote') return sessions.connectRemote({ url, token: profile.token });
     if (connection.kind === 'pi') return sessions.connectPi({ url, token: profile.token });
     return sessions.connectOpenCode({ url, username: 'perch', password: profile.token });
   }

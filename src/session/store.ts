@@ -1,6 +1,6 @@
-import type { CollabDriver, CollabUpdate, Message, PendingQuestion, SessionSnapshot, SessionSummary, ToolActivity, AgentSummary, PiConnection, OpenCodeConnection, DurableConnection } from './types';
+import type { CollabDriver, CollabUpdate, Message, PendingQuestion, SessionSnapshot, SessionSummary, ToolActivity, AgentSummary, PiConnection, OpenCodeConnection, DurableConnection, RemoteConnection } from './types';
 import type { StoredArtifact } from '../harness/durable';
-import { DEMO_CAPABILITIES, DEMO_HARNESS, OMP_CAPABILITIES, OMP_HARNESS, PI_CAPABILITIES, PI_HARNESS, OPENCODE_CAPABILITIES, OPENCODE_HARNESS, DURABLE_CAPABILITIES, DURABLE_HARNESS } from '../harness/capabilities';
+import { DEMO_CAPABILITIES, DEMO_HARNESS, OMP_CAPABILITIES, OMP_HARNESS, PI_CAPABILITIES, PI_HARNESS, OPENCODE_CAPABILITIES, OPENCODE_HARNESS, DURABLE_CAPABILITIES, DURABLE_HARNESS, REMOTE_CAPABILITIES, REMOTE_HARNESS } from '../harness/capabilities';
 import { DEMO_ARTIFACT_REPLY } from '../harness/demo-artifacts';
 
 type Thread = {
@@ -86,8 +86,8 @@ export class SessionStore {
       const live = this.liveUpdate;
       this.snapshot = {
         mode: this.mode, connection: { ...this.connection }, displayName: this.displayName, connectionEpoch: this.connectionGeneration,
-        harness: live?.harness ?? ({ pi: PI_HARNESS, collab: OMP_HARNESS, opencode: OPENCODE_HARNESS, durable: DURABLE_HARNESS }[this.mode]),
-        capabilities: live?.capabilities ?? ({ pi: PI_CAPABILITIES, collab: OMP_CAPABILITIES, opencode: OPENCODE_CAPABILITIES, durable: DURABLE_CAPABILITIES }[this.mode]),
+        harness: live?.harness ?? ({ pi: PI_HARNESS, collab: OMP_HARNESS, opencode: OPENCODE_HARNESS, durable: DURABLE_HARNESS, remote: REMOTE_HARNESS }[this.mode]),
+        capabilities: live?.capabilities ?? ({ pi: PI_CAPABILITIES, collab: OMP_CAPABILITIES, opencode: OPENCODE_CAPABILITIES, durable: DURABLE_CAPABILITIES, remote: REMOTE_CAPABILITIES }[this.mode]),
         model: live?.model, availableModels: live?.availableModels,
         sessions: live ? (live.sessions ?? [live.session]).map(session => ({ ...session })) : [], activeSessionId: live?.session.id ?? 'connecting',
         sessionAction: live?.sessionAction,
@@ -95,6 +95,7 @@ export class SessionStore {
         storedArtifacts: live?.storedArtifacts?.map(artifact => ({ ...artifact })) ?? [],
         pendingQuestion: live?.pendingQuestion ? { ...live.pendingQuestion } : null,
         agents: live ? [...live.agents] : [], isWorking: live?.isWorking ?? false, readOnly: live?.readOnly ?? true,
+        remote: live?.remote,
       };
     } else if (this.disconnected && this.snapshot?.mode === 'demo') {
       // The simulated host continues privately; the disconnected phone retains its last view.
@@ -123,6 +124,11 @@ export class SessionStore {
     if (this.disconnected || !this.threads.has(sessionId)) return;
     this.active = sessionId;
     this.publish();
+  };
+
+  /** Leave the live attachment; the host runtime and its work keep running. */
+  detachSession = (): void => {
+    if (!this.disposed && this.mode === 'remote') this.driver?.detachSession?.();
   };
 
   startNewChat = (): string | undefined => {
@@ -346,6 +352,28 @@ export class SessionStore {
     try {
       const { createDurableDriver } = await import('./durable');
       const driver = await createDurableDriver(config, update => {
+        if (generation !== this.connectionGeneration || this.disposed) return;
+        this.liveUpdate = update; this.connection = update.connection; this.publish();
+      });
+      if (generation !== this.connectionGeneration || this.disposed) { driver.close(); return; }
+      this.driver = driver; driver.connect();
+    } catch (error) {
+      if (generation !== this.connectionGeneration || this.disposed) return;
+      this.connection = { status: 'error', label: 'Could not connect', error: error instanceof Error ? error.message : 'Connection failed.' };
+      this.publish();
+    }
+  };
+
+  /** Connecting lists host sessions. Only a later selection attaches a transcript. */
+  connectRemote = async (config: RemoteConnection, name = 'Perch'): Promise<void> => {
+    const generation = ++this.connectionGeneration;
+    this.driver?.close(); this.driver = null;
+    this.cancelAllJobs(); this.mode = 'remote'; this.liveUpdate = null; this.disconnected = false;
+    this.displayName = name.trim() || 'Perch';
+    this.connection = { status: 'connecting', label: 'Connecting to host sessions' }; this.publish();
+    try {
+      const { createRemoteDriver } = await import('./remote');
+      const driver = createRemoteDriver(config, update => {
         if (generation !== this.connectionGeneration || this.disposed) return;
         this.liveUpdate = update; this.connection = update.connection; this.publish();
       });

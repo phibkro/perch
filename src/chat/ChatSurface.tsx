@@ -88,7 +88,7 @@ const NativeComposerInput = () => {
     </View>}
     <ComposerPrimitive.Input testID="composer" accessibilityLabel="Message to assistant" multiline submitMode="none"
       editable={!state.readOnly && !state.sessionAction} maxLength={12000}
-      placeholder={state.sessionAction ? 'Opening your chat…' : state.readOnly ? 'View-only session' : !state.capabilities.prompt ? 'Start a new chat to send…' : state.pendingQuestion ? 'Answer the question to continue…' : offline ? 'Write a draft while offline…' : 'Message Perch…'}
+      placeholder={state.sessionAction ? 'Opening your chat…' : state.readOnly ? 'View-only session' : !state.capabilities.prompt ? state.mode === 'remote' ? 'Waiting for host prompt control…' : 'Start a new chat to send…' : state.pendingQuestion ? 'Answer the question to continue…' : offline ? 'Write a draft while offline…' : 'Message Perch…'}
       placeholderTextColor={t.subtle}
       style={{ color: t.ink, minHeight: 48, maxHeight: 160, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 8, fontSize: 16, lineHeight: 23 }} />
     <Text style={{ color: t.subtle, fontSize: 10, paddingHorizontal: 12, paddingTop: 2 }}>{state.mode === 'demo' ? 'Demo · no model calls' : state.readOnly ? 'View only' : `${state.harness.name} · tools run on your host`}</Text>

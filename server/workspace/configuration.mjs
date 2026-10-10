@@ -35,7 +35,7 @@ function connection(value) {
     if ('error' in parsed) failure('The OMP Collab invitation is invalid.');
     return { ...base, collabLink: value.collabLink };
   }
-  if (!['durable', 'pi', 'opencode'].includes(value.kind)
+  if (!['durable', 'pi', 'opencode', 'remote'].includes(value.kind)
       || !hasFields(value, ['id', 'name', 'kind', 'upstream'])) failure('A connection kind or its fields are unsupported.');
   const upstream = value.upstream;
   if (value.kind === 'opencode') {
@@ -45,7 +45,7 @@ function connection(value) {
         || /[\x00-\x1f\x7f]/.test(upstream.password)) failure('OpenCode needs the local Perch OpenCode gateway username and password.');
     return { ...base, upstream: { url: upstreamUrl(upstream.url, false), username: upstream.username, password: upstream.password } };
   }
-  if (!hasFields(upstream, ['url', 'token']) || !secret(upstream.token, value.kind === 'durable' ? 32 : 24)) failure('Pi and Durable need their local adapter token.');
+  if (!hasFields(upstream, ['url', 'token']) || !secret(upstream.token, ['durable', 'remote'].includes(value.kind) ? 32 : 24)) failure('Pi, Durable, and remote sessions need their local adapter token.');
   return { ...base, upstream: { url: upstreamUrl(upstream.url, value.kind === 'pi'), token: upstream.token } };
 }
 

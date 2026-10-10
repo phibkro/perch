@@ -3,9 +3,9 @@ export type ConnectionStatus = 'demo' | 'connecting' | 'live' | 'offline' | 'rec
 
 /** Transport and harness are independent of the selected model/provider. */
 export interface HarnessMetadata {
-  id: 'demo' | 'omp' | 'pi' | 'opencode' | 'pi-durable';
+  id: 'demo' | 'omp' | 'pi' | 'opencode' | 'pi-durable' | 'tern';
   name: string;
-  transport: 'simulation' | 'omp-collab' | 'pi-rpc' | 'opencode-http' | 'durable-http';
+  transport: 'simulation' | 'omp-collab' | 'pi-rpc' | 'opencode-http' | 'durable-http' | 'remote-http';
   version?: string;
 }
 export interface ModelMetadata { id: string; name?: string; provider?: string }
@@ -24,6 +24,8 @@ export interface HarnessCapabilities {
 export interface PiConnection { url: string; token: string }
 /** A workspace token for the durable API; provider credentials remain on the server. */
 export interface DurableConnection { url: string; token: string }
+/** A device credential for the host session adapter, never a provider credential. */
+export interface RemoteConnection { url: string; token: string }
 /** Server authentication only. Model/provider credentials stay on the host. */
 export interface OpenCodeConnection { url: string; username: string; password: string; directory?: string }
 
@@ -79,7 +81,7 @@ export interface AgentSummary {
 }
 
 export interface SessionSnapshot {
-  mode: 'demo' | 'collab' | 'pi' | 'opencode' | 'durable';
+  mode: 'demo' | 'collab' | 'pi' | 'opencode' | 'durable' | 'remote';
   /** Changes when the connection's credential scope changes, even on the same session ID. */
   connectionEpoch?: number;
   harness: HarnessMetadata;
@@ -99,6 +101,18 @@ export interface SessionSnapshot {
   isWorking: boolean;
   displayName: string;
   readOnly: boolean;
+  remote?: RemoteSessionView;
+}
+
+/** Display metadata from the remote host; an absent attachment means browse only. */
+export interface RemoteSessionView {
+  host?: RemoteHealth['host'];
+  epoch?: string;
+  sessions: RemoteCatalog['sessions'];
+  attached?: RemoteSnapshot['session'];
+  synchronization: 'snapshot';
+  truncated: boolean;
+  notices: readonly string[];
 }
 
 /** The driver is deliberately independent of the app's native presentation. */
@@ -111,6 +125,8 @@ export interface CollabDriver {
   reconnect(): void;
   setModel?(provider: string, modelId: string): void;
   selectSession?(sessionId: string): void;
+  /** Stop observing this session without interrupting or terminating its host. */
+  detachSession?(): void;
   createSession?(): Promise<string | undefined>;
   loadArtifact?(artifact: StoredArtifact): Promise<string>;
 }
@@ -132,8 +148,10 @@ export interface CollabUpdate {
   agents: readonly AgentSummary[];
   isWorking: boolean;
   readOnly: boolean;
+  remote?: RemoteSessionView;
 }
 
 export type HarnessDriver = CollabDriver;
 export type HarnessUpdate = CollabUpdate;
 import type { StoredArtifact } from '../harness/durable.js';
+import type { RemoteCatalog, RemoteHealth, RemoteSnapshot } from '../harness/remote.js';

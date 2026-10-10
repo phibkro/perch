@@ -1,0 +1,15 @@
+{
+  "name": "@perch/tern-remote",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Bounded native session access through a local Tern window plugin",
+  "packageManager": "bun@1.4.2",
+  "engines": { "bun": ">=1.4.2" },
+  "scripts": {
+    "start": "bun index.mjs",
+    "setup": "bun setup.mjs",
+    "test": "bun test ./test/bridge.test.mjs",
+    "test:tern": "bun test/verify-tern.mjs"
+  }
+}

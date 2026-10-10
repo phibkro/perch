@@ -172,6 +172,7 @@ function createDurableFixture() {
   };
 }
 const durable = createDurableFixture();
+const remote = require('./remote/dom-fixture.cjs').createRemoteFixture(blocked);
 
 class NoResources extends ResourceLoader {
   fetch(url) { blocked.push(`resource:${url}`); return null; }
@@ -207,7 +208,7 @@ const dom = new JSDOM(fs.readFileSync(previewPath, 'utf8'), {
     const deny = k => function () { blocked.push(k); throw Error(`${k} disabled in DOM test`); };
     for (const k of ['XMLHttpRequest', 'WebSocket', 'EventSource', 'Worker', 'SharedWorker']) w[k] = deny(k);
     w.fetch = (url, init) => {
-      const fixture = [openCode, secondOpenCode, durable].find(candidate => candidate.matches(url));
+      const fixture = [openCode, secondOpenCode, durable, remote].find(candidate => candidate.matches(url));
       return fixture ? fixture.fetch(url, init) : deny('fetch')();
     };
     w.navigator.sendBeacon = deny('sendBeacon');
@@ -270,15 +271,15 @@ async function input(el, value) {
       assert.equal(byLabel('Pi Durable access token'), null);
       await press(byText('Advanced connection · existing servers'));
       await waitFor(() => byTab('Pi Durable') && byLabel('Pi Durable access token'), 'older servers are available through Advanced connection');
-      const tabs = ['Pi Durable', 'OMP Collab', 'pi bridge', 'OpenCode'];
+      const tabs = ['Pi Durable', 'Host sessions', 'OMP Collab', 'pi bridge', 'OpenCode'];
       assert.equal(byTab('Pi Durable').getAttribute('aria-selected'), 'true');
-      for (const selected of ['OMP Collab', 'pi bridge', 'OpenCode', 'Pi Durable']) {
+      for (const selected of ['Host sessions', 'OMP Collab', 'pi bridge', 'OpenCode', 'Pi Durable']) {
         await press(byTab(selected));
         for (const label of tabs) assert.equal(byTab(label).getAttribute('aria-selected'), String(label === selected));
       }
-      checks.push('all four connection tabs expose exactly one selected accessibility state');
+      checks.push('all five connection tabs expose exactly one selected accessibility state');
       assert.deepEqual(errors, []); assert.deepEqual(logs.filter(entry => entry[0] === 'error'), []); assert.deepEqual(blocked, []);
-      assert.equal(openCode.calls.length + secondOpenCode.calls.length + durable.calls.length, 0);
+      assert.equal(openCode.calls.length + secondOpenCode.calls.length + durable.calls.length + remote.calls.length, 0);
       console.log(JSON.stringify({ result: 'PASS (focused connection DOM check only; no network)', checks, errors, cssLimitations, logs, blocked }, null, 2));
       return;
     }
@@ -642,8 +643,60 @@ async function input(el, value) {
     await press(byLabel('Close sheet'));
     checks.push('saved workspace reopen and removal do not create chats, replay prompts, or expose credentials');
 
+    // Remote sessions use the real exported store, driver, native components,
+    // workspace pairing and assistant-ui runtime with in-memory HTTP responses.
+    assert.equal(remote.calls.length, 0);
+    await press(doc.querySelector('[data-testid="open-connect"]'));
+    await waitFor(() => byLabel('Workspace pairing code'), 'remote attachment also starts from one workspace pairing field');
+    const remotePairingCode = 'perch://pair#' + Buffer.from(JSON.stringify({ version: 1, url: remote.origin, token: remote.token })).toString('base64url');
+    await input(byLabel('Workspace pairing code'), remotePairingCode); remote.enable();
+    await press(doc.querySelector('[data-testid="join-workspace"]'));
+    await waitFor(() => !byLabel('Workspace pairing code') && doc.querySelector('[data-testid="remote-session-browser"]'), 'remote pairing opens the host catalog without attaching a session');
+    assert.equal(byLabel('Message to assistant'), null);
+    assert.equal(doc.querySelector('[data-testid="remote-attachment"]'), null);
+    assert.equal(remote.calls.filter(call => call.method === 'POST').length, 0);
+    assert.deepEqual(remote.calls.slice(0, 3).map(call => call.path), ['/perch/workspace', '/perch/health', '/perch/sessions']);
+    assert.ok(byLabel('Attach to First remote session')); assert.ok(byLabel('Attach to Second remote session'));
+    await press(byLabel('Attach to Second remote session'));
+    await waitFor(() => byLabel('Message to assistant') && text().includes('Second remote session: existing synthetic host transcript.'), 'explicit Attach loads the chosen second host transcript');
+    assert.equal(doc.querySelector('[data-testid="remote-session-browser"]'), null);
+    assert.ok(doc.querySelector('[data-testid="remote-attachment"]').textContent.includes('PID 4762'));
+    assert.ok(doc.querySelector('[data-testid="remote-attachment"]').textContent.includes('periodic snapshots'));
+    assert.ok(!text().includes('First remote session: existing synthetic host transcript.'));
+    const remoteDock = doc.querySelector('[data-testid="chat-composer-dock"]');
+    assert.equal(remoteDock.parentElement.lastElementChild, remoteDock);
+    checks.push('attached remote chat retains the bottom assistant-ui composer and the selected host PID');
+    await input(byLabel('Message to assistant'), 'Continue the existing remote session.'); await press(byLabel('Send message'));
+    await waitFor(() => text().includes('Remote controlled reply.') && byLabel('Stop generating'), 'remote prompt updates the existing host session through assistant-ui');
+    const remoteCommands = () => remote.calls.filter(call => call.method === 'POST' && call.path.endsWith('/commands'));
+    assert.equal(remoteCommands().length, 1);
+    assert.equal(remoteCommands()[0].path, '/perch/sessions/remote_two/commands');
+    assert.equal(remoteCommands()[0].body.type, 'prompt');
+    assert.equal(remoteCommands()[0].body.generation, 'generation-one');
+    assert.equal(remoteCommands()[0].body.conversationId, 'conversation-remote_two');
+    await input(byLabel('Message to assistant'), 'Draft belongs to the original runtime.');
+    await press(byLabel('Detach from host session'));
+    await waitFor(() => doc.querySelector('[data-testid="remote-session-browser"]') && !byLabel('Message to assistant'), 'Detach returns to the catalog and removes the active composer');
+    assert.equal(remoteCommands().length, 1);
+    assert.equal(remote.snapshots.get('remote_two').session.status, 'working');
+    assert.equal(remote.snapshots.get('remote_two').session.pid, 4762);
+    await press(byLabel('Attach to Second remote session'));
+    await waitFor(() => byLabel('Message to assistant')?.value === 'Draft belongs to the original runtime.', 'reattaching the same process restores only its own draft');
+    assert.ok(text().includes('Remote controlled reply.')); assert.ok(text().includes('PID 4762'));
+    assert.equal(remoteCommands().length, 1); checks.push('detach and reattach neither interrupt the host nor replay its prompt');
+    remote.replaceGeneration('remote_two');
+    await waitFor(() => doc.querySelector('[data-testid="remote-session-browser"]') && !byLabel('Message to assistant'), 'a replaced runtime returns to the catalog for explicit attachment');
+    assert.ok(text().includes('Choose a session to attach again.'));
+    await press(byLabel('Attach to Second remote session'));
+    await waitFor(() => text().includes('A replacement runtime has its own host history.') && byLabel('Message to assistant'), 'the replacement runtime opens only after explicit Attach');
+    assert.equal(byLabel('Message to assistant').value, '');
+    assert.ok(!text().includes('Remote controlled reply.')); assert.ok(text().includes('PID 4862'));
+    assert.equal(remoteCommands().length, 1);
+    checks.push('runtime replacement does not inherit the previous generation’s draft, transcript, or pending input');
+    assert.ok(!text().includes(remote.token));
+
     assert.deepEqual(errors, []); assert.deepEqual(logs.filter(entry => entry[0] === 'error'), []); assert.deepEqual(blocked, []);
-    console.log(JSON.stringify({ result: 'PASS (DOM emulation only; synthetic OpenCode and Pi Durable protocols, no real host or model)', checks, fixtureRequests: openCode.calls.length + secondOpenCode.calls.length, durableFixtureRequests: durable.calls.length, durableArtifactRequests: durable.artifactCalls().length, errors, cssLimitations, logs, blocked }, null, 2));
+    console.log(JSON.stringify({ result: 'PASS (DOM emulation only; synthetic OpenCode, Pi Durable and remote session protocols, no real host or model)', checks, fixtureRequests: openCode.calls.length + secondOpenCode.calls.length, durableFixtureRequests: durable.calls.length, durableArtifactRequests: durable.artifactCalls().length, remoteFixtureRequests: remote.calls.length, errors, cssLimitations, logs, blocked }, null, 2));
   } catch (e) {
     console.log(JSON.stringify({ failure: String(e), checks, renderedText: text().slice(0, 5000), controls: [...doc.querySelectorAll('button,[role=button],[role=radio]')].map(x => ({ label: x.getAttribute('aria-label'), text: x.textContent.slice(0, 100) })), errors, cssLimitations, logs, blocked }, null, 2));
     process.exitCode = 1;

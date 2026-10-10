@@ -1,0 +1,14 @@
+{
+  "name": "@perch/omp-remote",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "An in-process OMP extension for Perch remote session attachment",
+  "packageManager": "bun@1.4.2",
+  "engines": { "bun": ">=1.4.2" },
+  "scripts": {
+    "setup": "bun setup.mjs",
+    "test": "bun test ./test",
+    "test:upstream": "bun verify-upstream.mjs"
+  }
+}

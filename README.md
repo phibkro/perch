@@ -1,10 +1,10 @@
-# Perch 0.6
+# Perch 0.7
 
 **A native AI workspace with replaceable models, harnesses, and hosting.**
 
 Perch connects a phone to an agent running on your own host. The chat uses native **assistant-ui** components. Generated Markdown, HTML, and code open in a dedicated artifact workspace with preview, source, copy, and export.
 
-Choose **Self-hosted** or **Cloud**, pair one workspace, then switch between the assistants it advertises. Cloud defaults to Cloudflare. Available connections are **Pi Durable**, **OMP Collab** (including OMP inside Tern), the **Pi RPC bridge**, and **OpenCode through its included gateway**. The phone renders the conversation and artifacts; the host owns provider configuration and tool execution.
+Choose **Self-hosted** or **Cloud**, pair one workspace, then switch between the assistants it advertises. Cloud defaults to Cloudflare. Available connections are **OMP and Tern remote sessions**, **Pi Durable**, **OMP Collab**, the **Pi RPC bridge**, and **OpenCode through its included gateway**. The phone renders the conversation and artifacts; the host owns provider configuration and tool execution.
 
 The current target is a Pixel 8a running GrapheneOS. The project uses Expo 57, React Native, native assistant-ui, and Uniwind. Platform action buttons use Expo UI. iOS shares the application source but has not been built or device-tested.
 
@@ -12,7 +12,7 @@ The current target is a Pixel 8a running GrapheneOS. The project uses Expo 57, R
 
 The app opens on **New chat** with the composer at the bottom. The sidebar contains chats, artifacts, connections, and settings. It stays visible on wide screens and opens from the menu on a phone. There is no bottom navigation bar.
 
-The demo supports separate new conversations and drafts. Its first message becomes the chat title. Pi Durable and OpenCode add real remote history and New chat. During a session change, the current transcript stays visible until the replacement is ready. Current OMP and Pi connections each expose one host session: **New chat** explains how to connect another session and leaves the current transcript intact.
+The demo supports separate new conversations and drafts. Its first message becomes the chat title. Pi Durable and OpenCode add real remote history and New chat. During a session change, the current transcript stays visible until the replacement is ready. OMP Collab, the OMP extension, and the Pi bridge expose their current host session. The Tern remote browser lists existing agent panes. Creating a new process or conversation through these connections remains a host action.
 
 ## Try the artifact demo
 
@@ -103,7 +103,32 @@ for automated layout evidence and the physical-device flow.
 
 Model keys stay on the backend. Workspace tokens authorize that workspace's sessions and files. The production entry has no demo-model fallback. Its configured API families are OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages, including the required conversation headers for OpenCode Go. This is a smaller set than the full Pi RPC provider catalog; subscription OAuth is a separate host integration.
 
-## Connect OMP in Tern
+## Attach to OMP or Tern remote sessions
+
+Perch 0.7 adds a native host session browser with explicit **Attach** and
+**Detach**. It observes an existing host runtime, keeps the existing artifact
+readers, and never launches another agent to imitate your current session.
+
+- [OMP extension](server/omp-remote/README.md): runs inside the original OMP
+  process and exposes its conversation, prompt/interrupt controls and advertised
+  model selection through the public extension API.
+- [Tern plugin and bridge](server/tern-remote/README.md): discovers supported
+  agent panes through an attached Tern window and exposes bounded native
+  transcripts and targeted agent controls. It does not need Tern's web assets.
+
+Configure the adapter on your host, add it through `bun run setup:host` (choices
+5 or 6), and pair the workspace once. Open the remote connection on the phone,
+then choose a running session. **Detach** leaves the host running. Reconnect
+reads the latest snapshot and any forwarding receipts without resending work.
+New host generations require another explicit attachment.
+
+This first slice uses periodic snapshots. Full TSP widgets, a VT terminal view,
+shared host dialogs and daemon-only Tern access are subsequent milestones.
+[The grounding design](docs/REMOTE-WORKSPACE-DESIGN.md) separates those phases;
+[the verification record](docs/REMOTE-WORKSPACE-RESULTS.md) states the runtime
+evidence and remaining device checks.
+
+## Connect OMP with Collab
 
 1. Start OMP in your Tern workspace and run OMP's `/collab` command.
 2. Open **Connect a workspace → Advanced connection → OMP Collab** from the sidebar in Perch, or include the invitation in your shared workspace's host configuration.
@@ -132,13 +157,13 @@ The gateway exposes only the session APIs Perch needs and removes provider crede
 
 ## Providers and the durable foundation
 
-Model search and provider filters use the connected host's catalog, with virtualized rows. A selection is a provider/model pair. The [reproducible provider audit](docs/PROVIDERS.md) records **41 Pi and 71 OMP provider definitions with bundled chat models**. OMP's raw catalog contains 72 IDs; one has no matching provider definition and is excluded from that headline. The definition-backed sets contain **83 literal IDs in their union**, or **78 groups after five documented naming mappings**. These counts do not establish account access or test every route. Pi, Pi Durable, and OpenCode expose phone model selection; the current OMP Collab adapter reports the host's selection.
+Model search and provider filters use the connected host's catalog, with virtualized rows. A selection is a provider/model pair. The [reproducible provider audit](docs/PROVIDERS.md) records **41 Pi and 71 OMP provider definitions with bundled chat models**. OMP's raw catalog contains 72 IDs; one has no matching provider definition and is excluded from that headline. The definition-backed sets contain **83 literal IDs in their union**, or **78 groups after five documented naming mappings**. These counts do not establish account access or test every route. Pi, Pi Durable, OpenCode, and the OMP extension expose phone model selection; the OMP Collab adapter reports the host's selection.
 
 The included Pi version has an OpenCode Go provider. [Configure your subscription on the host](server/pi-bridge/README.md#opencode-go-subscription) using the supplied [environment example](server/pi-bridge/opencode-go.env.example). Go is intended for coding-agent traffic; a configured provider does not establish an account's entitlement. No subscription request was made during verification.
 
 [Pi Durable](docs/PI-DURABLE.md) is the basis for Perch's own persistent assistant: the same durable core can use Node SQLite at home or PiHarness in Cloudflare Durable Objects. The isolated experiment kills real processes and verifies safe-tool replay, unsafe-tool interruption, and model recovery. Perch supplies the mobile backend through `server/pi-durable`, and 0.6 adds its Cloudflare setup runner. [Cloudflare hosting](docs/CLOUDFLARE.md) discusses additional Linux/Sandbox capabilities, which that runner does not provision. No live Cloudflare deployment has been performed during development.
 
-[OpenClaw and Hermes](docs/ASSISTANT-INTEGRATIONS.md) are researched future assistant backends. The proposed adapters use their native client APIs to preserve sessions, decisions, memory, and artifacts. OpenClaw has an experimental Cloudflare Containers template; Hermes would need a custom Linux deployment. Their recovery guarantees depend on the selected transport and preserved state. Neither adapter is included in 0.6.
+[OpenClaw and Hermes](docs/ASSISTANT-INTEGRATIONS.md) are researched future assistant backends. The proposed adapters use their native client APIs to preserve sessions, decisions, memory, and artifacts. OpenClaw has an experimental Cloudflare Containers template; Hermes would need a custom Linux deployment. Their recovery guarantees depend on the selected transport and preserved state. Neither adapter is included in 0.7.
 
 [Pi Durable on celld with R2](docs/PI-CELLD.md) explores a self-hosted persistent-agent route: celld owns cell storage, ownership, and wake-up; Pi owns continuation and tool replay. The existing PiHarness adapter now passes [real celld recovery checks](docs/PI-CELLD-RESULTS.md), including alarm-driven continuation after removing all local runtime data while work is unfinished. The [durable backend](docs/DURABLE-BACKEND.md) adds the mobile protocol and stored artifact downloads. R2 and multi-node failover remain separate deployment checks. The earlier [runnable experiment](experiments/pi-celld/README.md) preserves the recovery evidence that led to this composition.
 
@@ -149,7 +174,8 @@ The included Pi version has an OpenCode Go provider. [Configure your subscriptio
 | Chat | Native assistant-ui Thread, Message, Composer, and tool-call elements over an external store |
 | Harness boundary | Separate harness/model metadata, capabilities, and transport adapters |
 | Workspace setup | Self-hosted/Cloud choices, one authenticated discovery endpoint, saved native access, harness switching, Advanced fallback |
-| OMP | Encrypted Collab, prompt, interrupt, supported host questions, synchronized reconnect |
+| Remote sessions | Host catalog, explicit attach/detach, same-process OMP extension and Tern plugin bridge, prompt/interrupt, receipts, identity-aware reconnect, OMP model choice |
+| OMP Collab | Encrypted Collab, prompt, interrupt, supported host questions, synchronized reconnect |
 | Pi Durable | Authenticated workspace, persistent history/create/select, idempotent submissions, model choice, abort, authoritative reconnect, stored artifact downloads |
 | Pi | Authenticated bridge, real RPC process, prompt, interrupt, supported extension questions, model selection, reconnect |
 | OpenCode | Authenticated host gateway, remote chat history/create/select, host-connected models, streaming, tools, supported decisions, abort, snapshot reconnect |
@@ -174,6 +200,7 @@ bun install --frozen-lockfile
 bun run typecheck
 bun run verify
 bun run verify:artifacts
+bun run verify:remote
 bun run --cwd verification/durable test
 bun install --cwd server/pi-durable --frozen-lockfile
 bun run --cwd server/pi-durable test
@@ -195,12 +222,14 @@ bun run preview:export
 | --- | --- |
 | `App.tsx` | Chat shell, sidebar/history, artifacts, and connection navigation |
 | `src/chat/` | Native assistant-ui runtime adapter and editable registry elements |
-| `src/session/` | Session authority, demo, OMP/Pi/OpenCode/Pi Durable connection drivers |
+| `src/session/` | Session authority, demo, remote-session and OMP/Pi/OpenCode/Pi Durable drivers |
 | `src/workspace/` | Pairing, bounded discovery, saved access, and harness selection |
 | `src/harness/` | Capabilities, bridge protocol, and known write-file extraction |
 | `src/artifacts/` | Artifact model, native readers, isolated HTML, export |
 | `server/pi-durable/` | Authenticated durable sessions, configured model runtime, immutable artifact storage |
 | `server/workspace/` | Shared self-hosted endpoint and private upstream-credential translation |
+| `server/omp-remote/` | Public OMP extension, same-process session snapshots and forwarding receipts |
+| `server/tern-remote/` | Window plugin, local bridge and bounded Tern agent access |
 | `scripts/setup-cloudflare.mjs` | Guided, reviewed Cloudflare backend provisioning |
 | `verification/durable-runtime/` | Actual mobile store + celld crash/cache-removal integration |
 | `server/pi-bridge/` | Pi process, RPC translation, authenticated WebSocket server |

@@ -4,6 +4,7 @@ import { Agent as HttpsAgent, request as httpsRequest } from 'node:https';
 import { Readable } from 'node:stream';
 import { BRIDGE_PROTOCOL, MAX_FRAME_BYTES, parseClientFrame, parseServerFrame } from '../../src/harness/protocol.ts';
 import { MAX_STORED_ARTIFACT_BYTES } from '../../src/harness/durable.ts';
+import { MAX_REMOTE_BYTES, MAX_REMOTE_COMMAND_BYTES, parseRemoteCommand, parseRemoteHealth } from '../../src/harness/remote.ts';
 import { health as projectDurableHealth } from '../../src/session/durable/projection.ts';
 import { parseConfiguration, manifestFor } from './configuration.mjs';
 
@@ -94,6 +95,10 @@ async function httpHealth(connection, signal) {
   let value;
   try { value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); }
   catch { reject(502, 'The local adapter returned an invalid handshake.'); }
+  if (connection.kind === 'remote') {
+    try { return parseRemoteHealth(value); }
+    catch { reject(502, 'Connect this route to a compatible Perch OMP or Tern remote-session adapter.'); }
+  }
   if (connection.kind === 'opencode') {
     if (!isObject(value) || value.protocol !== 'perch-opencode' || value.version !== 1 || value.healthy !== true
         || typeof value.upstreamVersion !== 'string' || value.upstreamVersion.length > 120
@@ -106,6 +111,11 @@ async function httpHealth(connection, signal) {
 }
 
 function allowedRoute(kind, method, path) {
+  if (kind === 'remote') {
+    if (method === 'GET' && ['/perch/health', '/perch/sessions'].includes(path)) return true;
+    if (method === 'GET' && new RegExp(`^/perch/sessions/${ID}(?:/operations/${ID})?$`).test(path)) return true;
+    return method === 'POST' && new RegExp(`^/perch/sessions/${ID}/commands$`).test(path);
+  }
   if (kind === 'durable') {
     if (method === 'GET' && path === '/perch/health') return true;
     if (['GET', 'POST'].includes(method) && path === '/perch/sessions') return true;
@@ -122,7 +132,7 @@ function allowedRoute(kind, method, path) {
 }
 
 function validateQuery(connection, path, params, directory) {
-  if (connection.kind === 'durable') { if ([...params].length) reject(400, 'This route does not accept query parameters.'); return ''; }
+  if (['durable', 'remote'].includes(connection.kind)) { if ([...params].length) reject(400, 'This route does not accept query parameters.'); return ''; }
   const allowed = path === '/session' ? ['directory', 'roots', 'limit'] : ['directory'];
   const seen = new Set();
   for (const [key, value] of params) {
@@ -293,13 +303,15 @@ export function createWorkspaceGateway(input) {
           const contentType = request.headers.get('content-type');
           const bodylessAbort = route.kind === 'opencode' && path.endsWith('/abort') && contentType === null;
           if (!bodylessAbort && !jsonType(contentType)) reject(415, 'Send application/json for adapter commands.');
-          body = await boundedBytes(request.body, MAX_REQUEST_BYTES, abort.signal, request.headers.get('content-length'));
+          body = await boundedBytes(request.body, route.kind === 'remote' ? MAX_REMOTE_COMMAND_BYTES : MAX_REQUEST_BYTES, abort.signal, request.headers.get('content-length'));
           if (bodylessAbort) {
             if (body.byteLength) reject(415, 'Send application/json for adapter commands.');
             body = undefined;
           } else {
-            try { JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(body)); }
-            catch { reject(400, 'The adapter command is not valid JSON.'); }
+            try {
+              const value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(body));
+              if (route.kind === 'remote') body = new TextEncoder().encode(JSON.stringify(parseRemoteCommand(value)));
+            } catch { reject(400, 'The adapter command is not valid JSON or has unsupported fields.'); }
           }
         }
         const stream = route.kind === 'opencode' && path === '/event';
@@ -339,7 +351,7 @@ export function createWorkspaceGateway(input) {
         if (upstream.status === 204) { await upstream.body?.cancel(); return new Response(null, { status: 204, headers: responseHeaders(origin) }); }
         const artifact = route.kind === 'durable' && /\/artifacts\//.test(path);
         if (!artifact && !jsonType(upstream.headers.get('content-type'))) { await upstream.body?.cancel(); reject(502, 'The local adapter returned an unexpected content type.'); }
-        const bytes = await boundedBytes(upstream.body, artifact ? MAX_STORED_ARTIFACT_BYTES : MAX_RESPONSE_BYTES, abort.signal, upstream.headers.get('content-length'));
+        const bytes = await boundedBytes(upstream.body, artifact ? MAX_STORED_ARTIFACT_BYTES : route.kind === 'remote' ? MAX_REMOTE_BYTES : MAX_RESPONSE_BYTES, abort.signal, upstream.headers.get('content-length'));
         const headers = responseHeaders(origin, { 'Content-Type': artifact ? 'application/octet-stream' : 'application/json', 'Content-Length': String(bytes.byteLength) });
         if (artifact) {
           headers.set('Content-Security-Policy', "sandbox; default-src 'none'");
