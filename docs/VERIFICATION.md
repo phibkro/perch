@@ -27,6 +27,8 @@ The following checks ran against this source on 10 October 2026:
 | Durable backend and production bundle | Passed, 29 tests and build | Existing server, provider, provisioning, and runtime contracts still compile and pass |
 | Release/version/package guards | Passed | 17 Node tests, six Python tests, consistent 0.8.0/code 9, preserved prototype signer, and all 581 packaged dependency notices |
 | Fresh standalone Expo export | Passed | 8,656,937 bytes with all eight current JavaScript chunks inlined |
+| Hosted Android build and publication | Passed, first attempt | All three jobs succeeded; lint-enabled ARM64 build, binary checks, exact source tag, and published prerelease |
+| Independent release download verification | Passed | All three GitHub digests and SHA256SUMS match; actual APK identity, preserved signer, SDK/ABI, bundle/notices, and 16 KB ZIP/native ELF alignment verified |
 
 The full DOM run used 76 controlled OpenCode requests, 29 Durable requests,
 five artifact downloads, and 67 remote-session requests. It reported no
@@ -53,9 +55,25 @@ arbitrary TSP widgets remain host actions. TSP events have no atomic upstream
 expected-document-revision guard, so a forwarding receipt is not a durable
 execution acknowledgment.
 
+The [0.8 workflow](https://github.com/phibkro/perch/actions/runs/38030586155)
+passed all three jobs on attempt 1 from commit
+`61bf8cbfb39409b590f84ad3c38b4ff324683d51`, tree
+`63fae2cb390ce9ab28e49b5a01c3859db099b229`. Source checks took 46 seconds;
+native compilation with lint took 16 minutes 41 seconds. The
+[v0.8.0 prerelease](https://github.com/phibkro/perch/releases/tag/v0.8.0)
+was published at 06:39:42 UTC on 10 October 2026.
+
+All three release downloads were independently verified at 06:40:38 UTC.
+The 47,853,190-byte APK has SHA-256
+`25cffabbd0a3140b1a4918ad2130448e1c7d0acc1e964c548ddd88d7d1310507`.
+Actual package/version, preserved signer and v2 signature, SDK/ABI, bundle and
+notices, ZIP alignment and all 21 native ELF libraries passed. GitHub digests,
+SHA256SUMS and exact source/tag/run provenance also matched. The complete
+binary inspection is recorded in [ANDROID-BUILD.md](ANDROID-BUILD.md).
+
 Physical Pixel/GrapheneOS operation, a real external SSH host, and restoration
-of a user's desktop window were not tested. Android release evidence is
-recorded separately in [ANDROID-BUILD.md](ANDROID-BUILD.md).
+of a user's desktop window were not tested. A verified APK and controlled
+runtime fixtures do not establish those device and host results.
 
 ## Perch 0.7: native remote sessions
 

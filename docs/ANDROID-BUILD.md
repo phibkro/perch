@@ -1,11 +1,78 @@
 # Android build verification
 
-The current standalone release is **Perch 0.7.0 / code 8**, built on GitHub with
+The current standalone release is **Perch 0.8.0 / code 9**, built on GitHub with
 Bun 1.4.2 from the published source. The verified APK retains the original
-prototype package and signer. Earlier 0.6, 0.5, and 0.4 records remain historical
+prototype package and signer. Earlier 0.7, 0.6, 0.5, and 0.4 records remain historical
 evidence. The last verified development APK is still 0.4.
 
-## Current hosted Perch 0.7 — 2026-10-10
+## Current hosted Perch 0.8 — 2026-10-10
+
+[GitHub run 38030586155](https://github.com/phibkro/perch/actions/runs/38030586155)
+built commit [`61bf8cbfb39409b590f84ad3c38b4ff324683d51`](https://github.com/phibkro/perch/commit/61bf8cbfb39409b590f84ad3c38b4ff324683d51),
+tree `63fae2cb390ce9ab28e49b5a01c3859db099b229`.
+The [v0.8.0 release tag](https://github.com/phibkro/perch/releases/tag/v0.8.0)
+points directly to that commit. GitHub published the prerelease at
+**06:39:42 UTC**. Independent download verification completed at
+**06:40:38 UTC**.
+
+| Check | Verified GitHub APK |
+| --- | --- |
+| Delivery file | `perch-prototype-arm64.apk` |
+| Package | `dev.perch.assistant` |
+| Version / code | `0.8.0` / `9` |
+| Bytes | 47,853,190 |
+| APK SHA-256 | `25cffabbd0a3140b1a4918ad2130448e1c7d0acc1e964c548ddd88d7d1310507` |
+| Minimum / target / compile SDK | 24 / 36 / 36 |
+| ABI / debuggable | `arm64-v8a` only / No |
+| Signature | v2 verified independently, one preserved prototype signer, no verifier warnings |
+| Signer certificate SHA-256 | `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c` |
+| Embedded application bundle | `assets/index.android.bundle`, 6,518,540 bytes |
+| Bundle SHA-256 | `980faf92bd8623b82a597cd8ab293dff7de45272b8596c22c1b712db97de6d14` |
+| Packaged license notices | `assets/third-party-notices.txt`, 1,069,848 bytes |
+| Notices SHA-256 | `685cc1f116afc3c4a0875c2d29555f51f34aa801f4c5941a0fed22c906aa2f54` |
+| ZIP contents | No duplicate entries or CRC errors |
+| ZIP alignment | CI `zipalign -c -P 16 4` passed; independent local-header inspection confirmed 4-byte alignment for ordinary uncompressed entries and 16 KB for native libraries |
+| Native ELF alignment | All LOAD segments in all 21 ARM64 libraries have alignment of at least 16,384 bytes |
+
+All three GitHub asset API digests matched the downloaded bytes. `SHA256SUMS`
+also matched the APK and `release-metadata.json`. The metadata identifies the
+exact source commit, release tag, successful run, and attempt **1**, and records
+a clean build checkout. The release contains exactly those three assets.
+
+The independent inspection used Google's
+[`com.android.tools.build:apksig:8.11.1`](https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.11.1/apksig-8.11.1.jar)
+on OpenJDK 17.0.20 to verify the signature and read the binary manifest. Python's
+standard library and the repository's `inspect_elf` helper checked ZIP offsets,
+checksums, native architectures, and ELF program headers. No local Android SDK
+or second Android build was required. CI separately ran the official Android
+Build Tools 36.0.0 identity, signature, and ZIP-alignment gates.
+
+The embedded bundle matched its release metadata. **CI** also checked that this
+bundle matched the generated build output; the independent download inspection
+did not have that generated file. The packaged notices matched blob
+`3b5fbad454bf560038997d7712ad81a94c8eb92d` in the exact published source commit.
+
+All three jobs succeeded on their first attempt:
+
+| Phase | Observed duration |
+| --- | --- |
+| App, protocol, artifact, and backend checks | 46 seconds |
+| Complete ARM64 job | 18 minutes 5 seconds |
+| Native build and lint step | 16 minutes 41 seconds |
+| Prerelease publication job | 20 seconds |
+| Workflow start to completed run record | 19 minutes 22 seconds |
+
+Gradle reported `BUILD SUCCESSFUL in 16m 40s`, with 875 actionable tasks:
+745 executed and 130 restored from cache. Binary packaging and release
+publication succeeded without a retry or source correction.
+
+No device or emulator ran this release during verification. Installation,
+upgrade behavior, native startup, Pixel keyboard clearance, WebView behavior,
+GrapheneOS permissions, and live-host networking remain device checks. The
+[0.8 verification record](VERIFICATION.md#perch-08-native-owner-approvals-and-plan-review)
+separately records the source, rendered UI, and actual Tern/OMP request checks.
+
+## Historical hosted Perch 0.7 — 2026-10-10
 
 [GitHub run 38021389970](https://github.com/phibkro/perch/actions/runs/38021389970)
 built commit [`f717410d6f415e1e8ec359f1402a23fff50d0030`](https://github.com/phibkro/perch/commit/f717410d6f415e1e8ec359f1402a23fff50d0030),
