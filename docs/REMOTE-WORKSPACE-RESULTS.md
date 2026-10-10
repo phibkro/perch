@@ -215,11 +215,24 @@ See [workspace setup](WORKSPACE-SETUP.md) for the complete path.
 
 ## Release and remaining qualification
 
-The source targets **Perch 0.7.0 / code 8**, with package
-`dev.perch.assistant` and the preserved prototype signer. The existing GitHub
-workflow includes the new remote suite before its lint-enabled ARM64 build and
-trusted prerelease publication. Binary results are recorded separately in
-[Android build verification](ANDROID-BUILD.md).
+The [Perch 0.7.0 prerelease](https://github.com/phibkro/perch/releases/tag/v0.7.0)
+was published at **03:58:34 UTC on 10 October 2026**. All three jobs in
+[workflow 38021389970](https://github.com/phibkro/perch/actions/runs/38021389970)
+passed on attempt 1, from source commit
+`f717410d6f415e1e8ec359f1402a23fff50d0030` and tree
+`bd435e231cbaa8434e883056c72051c115670af5`. Native compilation and enabled lint
+took 15 minutes 55 seconds.
+
+The [ARM64 APK](https://github.com/phibkro/perch/releases/download/v0.7.0/perch-prototype-arm64.apk)
+is **47,822,986 bytes**, version **0.7.0 / code 8**, with package
+`dev.perch.assistant` and the preserved prototype signer. Its SHA-256 is
+`55566a3a7f33f2ed25724bcc5fa00b8c73855965ab8f00767ca170a1db984fa4`.
+
+Independent download verification passed at **04:00:21 UTC**: all GitHub asset
+digests and checksums matched, as did source/tag/run provenance, actual package
+and version, the v2 signature and signer, embedded bundle and notices, ZIP
+alignment and all 21 ARM64 native libraries. Full CI and independent binary
+results are recorded in [Android build verification](ANDROID-BUILD.md).
 
 The remaining device trial is to install the resulting APK on the Pixel 8a,
 attach to the user's host, type while the GrapheneOS keyboard is visible, inspect

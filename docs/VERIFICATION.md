@@ -38,6 +38,22 @@ Tern attachment, live-provider integration and physical Pixel/GrapheneOS
 suspend-resume remain subsequent work. Android binary evidence is recorded in
 [ANDROID-BUILD.md](ANDROID-BUILD.md).
 
+The [0.7 workflow](https://github.com/phibkro/perch/actions/runs/38021389970)
+passed all three jobs on attempt 1 from commit
+`f717410d6f415e1e8ec359f1402a23fff50d0030`, tree
+`bd435e231cbaa8434e883056c72051c115670af5`. Source checks took 50 seconds;
+native compilation with lint took 15 minutes 55 seconds. The
+[v0.7.0 prerelease](https://github.com/phibkro/perch/releases/tag/v0.7.0)
+was published at 03:58:34 UTC on 10 October 2026.
+
+All three release downloads were independently verified at 04:00:21 UTC.
+The 47,822,986-byte APK has SHA-256
+`55566a3a7f33f2ed25724bcc5fa00b8c73855965ab8f00767ca170a1db984fa4`.
+Actual package/version, preserved signer and v2 signature, SDK/ABI, bundle and
+notices, ZIP alignment and all 21 native ELF libraries passed. GitHub digests,
+SHA256SUMS and exact source/tag/run provenance also matched. This verifies the
+distributed binary without claiming a physical device run.
+
 ## Perch 0.6: one workspace setup
 
 Perch 0.6.0 / Android code 7 includes the published keyboard fix and adds saved
