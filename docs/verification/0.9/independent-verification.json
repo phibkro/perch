@@ -1,0 +1,488 @@
+{
+  "verifiedAt": "2026-10-10T14:40:31.340267+00:00",
+  "releaseUrl": "https://github.com/phibkro/perch/releases/tag/v0.9.0",
+  "publishedAt": "2026-10-10T14:38:58Z",
+  "sourceCommit": "bbd545d375c9e4d102eae0cbfe5efb0fc590e7e7",
+  "sourceTree": "ad957f834b278022933491978053aa41b7b4394e",
+  "releaseTag": "v0.9.0",
+  "workflowRunUrl": "https://github.com/phibkro/perch/actions/runs/38059416790",
+  "workflowRunAttempt": 1,
+  "workflowStartedAt": "2026-10-10T14:23:32Z",
+  "workflowUpdatedAt": "2026-10-10T14:39:02Z",
+  "jobs": [
+    {
+      "id": 114234449540,
+      "name": "App, protocols, and durable backend",
+      "startedAt": "2026-10-10T14:23:35Z",
+      "completedAt": "2026-10-10T14:24:26Z",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "startedAt": "2026-10-10T14:23:36Z",
+          "completedAt": "2026-10-10T14:23:37Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out source and release history",
+          "startedAt": "2026-10-10T14:23:37Z",
+          "completedAt": "2026-10-10T14:23:39Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up Node 24",
+          "startedAt": "2026-10-10T14:23:39Z",
+          "completedAt": "2026-10-10T14:23:40Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check versions, prototype key, and release eligibility",
+          "startedAt": "2026-10-10T14:23:40Z",
+          "completedAt": "2026-10-10T14:23:40Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up pinned Bun package manager",
+          "startedAt": "2026-10-10T14:23:40Z",
+          "completedAt": "2026-10-10T14:23:41Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Bun package cache",
+          "startedAt": "2026-10-10T14:23:41Z",
+          "completedAt": "2026-10-10T14:23:45Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install app and backend dependencies",
+          "startedAt": "2026-10-10T14:23:45Z",
+          "completedAt": "2026-10-10T14:23:48Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check app types, protocols, artifacts, and durable behavior",
+          "startedAt": "2026-10-10T14:23:48Z",
+          "completedAt": "2026-10-10T14:24:18Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Save Bun package cache from the default branch",
+          "startedAt": "2026-10-10T14:24:18Z",
+          "completedAt": "2026-10-10T14:24:23Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up pinned Bun package manager",
+          "startedAt": "2026-10-10T14:24:23Z",
+          "completedAt": "2026-10-10T14:24:23Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up Node 24",
+          "startedAt": "2026-10-10T14:24:23Z",
+          "completedAt": "2026-10-10T14:24:23Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out source and release history",
+          "startedAt": "2026-10-10T14:24:23Z",
+          "completedAt": "2026-10-10T14:24:24Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "startedAt": "2026-10-10T14:24:24Z",
+          "completedAt": "2026-10-10T14:24:24Z",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 114234615432,
+      "name": "Standalone ARM64 APK",
+      "startedAt": "2026-10-10T14:24:33Z",
+      "completedAt": "2026-10-10T14:38:40Z",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "startedAt": "2026-10-10T14:24:34Z",
+          "completedAt": "2026-10-10T14:24:36Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out the exact build source",
+          "startedAt": "2026-10-10T14:24:36Z",
+          "completedAt": "2026-10-10T14:24:37Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up Node 24",
+          "startedAt": "2026-10-10T14:24:37Z",
+          "completedAt": "2026-10-10T14:24:38Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up pinned Bun package manager",
+          "startedAt": "2026-10-10T14:24:38Z",
+          "completedAt": "2026-10-10T14:24:38Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Bun package cache",
+          "startedAt": "2026-10-10T14:24:38Z",
+          "completedAt": "2026-10-10T14:24:43Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install JDK 17 toolchain and JDK 21 build runtime",
+          "startedAt": "2026-10-10T14:24:43Z",
+          "completedAt": "2026-10-10T14:24:44Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Gradle dependencies and build cache",
+          "startedAt": "2026-10-10T14:24:44Z",
+          "completedAt": "2026-10-10T14:24:44Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install exact Android tools and bound build memory",
+          "startedAt": "2026-10-10T14:24:44Z",
+          "completedAt": "2026-10-10T14:25:11Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install locked app dependencies",
+          "startedAt": "2026-10-10T14:25:11Z",
+          "completedAt": "2026-10-10T14:25:12Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build the standalone APK with enabled lint",
+          "startedAt": "2026-10-10T14:25:12Z",
+          "completedAt": "2026-10-10T14:38:19Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify and package the prototype assets",
+          "startedAt": "2026-10-10T14:38:19Z",
+          "completedAt": "2026-10-10T14:38:20Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload APK, checksums, and metadata",
+          "startedAt": "2026-10-10T14:38:20Z",
+          "completedAt": "2026-10-10T14:38:21Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Save Bun package cache from the default branch",
+          "startedAt": "2026-10-10T14:38:21Z",
+          "completedAt": "2026-10-10T14:38:21Z",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Keep build log and available lint reports",
+          "startedAt": "2026-10-10T14:38:21Z",
+          "completedAt": "2026-10-10T14:38:22Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore Gradle dependencies and build cache",
+          "startedAt": "2026-10-10T14:38:22Z",
+          "completedAt": "2026-10-10T14:38:39Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Install JDK 17 toolchain and JDK 21 build runtime",
+          "startedAt": "2026-10-10T14:38:39Z",
+          "completedAt": "2026-10-10T14:38:39Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up pinned Bun package manager",
+          "startedAt": "2026-10-10T14:38:39Z",
+          "completedAt": "2026-10-10T14:38:39Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up Node 24",
+          "startedAt": "2026-10-10T14:38:39Z",
+          "completedAt": "2026-10-10T14:38:39Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out the exact build source",
+          "startedAt": "2026-10-10T14:38:39Z",
+          "completedAt": "2026-10-10T14:38:39Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "startedAt": "2026-10-10T14:38:39Z",
+          "completedAt": "2026-10-10T14:38:39Z",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 114237408440,
+      "name": "Publish trusted prototype prerelease",
+      "startedAt": "2026-10-10T14:38:44Z",
+      "completedAt": "2026-10-10T14:39:01Z",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "startedAt": "2026-10-10T14:38:45Z",
+          "completedAt": "2026-10-10T14:38:46Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out the trusted source and current branch history",
+          "startedAt": "2026-10-10T14:38:46Z",
+          "completedAt": "2026-10-10T14:38:47Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up Node without package caching",
+          "startedAt": "2026-10-10T14:38:47Z",
+          "completedAt": "2026-10-10T14:38:48Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Recheck release version and default-branch ancestry",
+          "startedAt": "2026-10-10T14:38:48Z",
+          "completedAt": "2026-10-10T14:38:48Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Download assets from this exact workflow run",
+          "startedAt": "2026-10-10T14:38:48Z",
+          "completedAt": "2026-10-10T14:38:52Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify assets and publish a new prototype prerelease",
+          "startedAt": "2026-10-10T14:38:52Z",
+          "completedAt": "2026-10-10T14:38:58Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up Node without package caching",
+          "startedAt": "2026-10-10T14:38:58Z",
+          "completedAt": "2026-10-10T14:38:58Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out the trusted source and current branch history",
+          "startedAt": "2026-10-10T14:38:58Z",
+          "completedAt": "2026-10-10T14:38:58Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "startedAt": "2026-10-10T14:38:58Z",
+          "completedAt": "2026-10-10T14:38:58Z",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "assets": {
+    "perch-prototype-arm64.apk": {
+      "id": 628195626,
+      "bytes": 58894158,
+      "sha256": "37e27e36ce7736d5cccf70446a7ab3588c2a4903bdc52b2525be83b0f7619a43",
+      "githubDigestMatched": true
+    },
+    "release-metadata.json": {
+      "id": 628195620,
+      "bytes": 3929,
+      "sha256": "685d22277f851a7d192404ea649d55dafa3f3ab75fa88745c6d54bdaecb7fc11",
+      "githubDigestMatched": true
+    },
+    "SHA256SUMS": {
+      "id": 628195623,
+      "bytes": 180,
+      "sha256": "10912adb3900e4af873732dcffd0dd238ecd39a56d7c0fc4a25876a8bc944106",
+      "githubDigestMatched": true
+    }
+  },
+  "distributionChecksumsMatched": true,
+  "signatureAndManifest": {
+    "verifier": "Google apksig 8.11.1",
+    "signatureVerified": true,
+    "v2Verified": true,
+    "signers": 1,
+    "certificateSha256": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+    "packageName": "dev.perch.assistant",
+    "versionName": "0.9.0",
+    "versionCode": 10,
+    "minSdk": 24,
+    "targetSdk": 36,
+    "compileSdk": 36,
+    "debuggable": false,
+    "warnings": 0
+  },
+  "noDuplicateZipEntries": true,
+  "zipChecksumsValid": true,
+  "zipAlignmentDirectInspection": {
+    "ordinaryUncompressedBytes": 4,
+    "nativeLibraryBytes": 16384,
+    "nativeEntryOffsets": {
+      "lib/arm64-v8a/libandroidx.graphics.path.so": 17137664,
+      "lib/arm64-v8a/libappmodules.so": 17154048,
+      "lib/arm64-v8a/libc++_shared.so": 18415616,
+      "lib/arm64-v8a/libexpo-modules-core.so": 19709952,
+      "lib/arm64-v8a/libexpo-updates.so": 21217280,
+      "lib/arm64-v8a/libfbjni.so": 21331968,
+      "lib/arm64-v8a/libgesturehandler.so": 21512192,
+      "lib/arm64-v8a/libgifimage.so": 21561344,
+      "lib/arm64-v8a/libhermestooling.so": 21889024,
+      "lib/arm64-v8a/libhermesvm.so": 22036480,
+      "lib/arm64-v8a/libimagepipeline.so": 24526848,
+      "lib/arm64-v8a/libjsi.so": 24543232,
+      "lib/arm64-v8a/libnative-filters.so": 24969216,
+      "lib/arm64-v8a/libnative-imagetranscoder.so": 25001984,
+      "lib/arm64-v8a/libreact_codegen_rnsvg.so": 25591808,
+      "lib/arm64-v8a/libreact_codegen_safeareacontext.so": 26394624,
+      "lib/arm64-v8a/libreactnative.so": 26558464,
+      "lib/arm64-v8a/libreanimated.so": 33554432,
+      "lib/arm64-v8a/libstatic-webp.so": 35061760,
+      "lib/arm64-v8a/libworklets.so": 35569664,
+      "lib/arm64-v8a/libzstd-kmp.so": 36683776
+    }
+  },
+  "abis": [
+    "arm64-v8a"
+  ],
+  "nativeLibraryCount": 21,
+  "nativeElfLoadAlignments": {
+    "lib/arm64-v8a/libandroidx.graphics.path.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libappmodules.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libc++_shared.so": [
+      16384,
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libexpo-modules-core.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libexpo-updates.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libfbjni.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libgesturehandler.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libgifimage.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libhermestooling.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libhermesvm.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libimagepipeline.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libjsi.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libnative-filters.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libnative-imagetranscoder.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libreact_codegen_rnsvg.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libreact_codegen_safeareacontext.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libreactnative.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libreanimated.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libstatic-webp.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libworklets.so": [
+      16384,
+      16384,
+      16384
+    ],
+    "lib/arm64-v8a/libzstd-kmp.so": [
+      16384,
+      16384,
+      16384
+    ]
+  },
+  "embeddedBundle": {
+    "entry": "assets/index.android.bundle",
+    "bytes": 17538796,
+    "sha256": "c7d34abb855817ce9e73d069a4217732e215f222e134e09283fad873c6738edc"
+  },
+  "thirdPartyNotices": {
+    "entry": "assets/third-party-notices.txt",
+    "bytes": 1335234,
+    "sha256": "25f639d2b3fddaa2d32e8de8a09d9b42e6eb0c5258a2b9502c8811f7a07bede7"
+  },
+  "noticesSourceBlob": "59e647b084de0f2f2efd3d348ee4ac083d5cbf28",
+  "independentTools": {
+    "apksigJarSource": "https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.11.1/apksig-8.11.1.jar",
+    "apksigJarSha256": "c070ed1394629d74641aa0906f60b2ffa1ee77e6366a1f93437f59717b1aeb89",
+    "archiveAndElf": "Python standard library; repository inspect_elf helper",
+    "javaRuntime": "OpenJDK 17.0.20"
+  },
+  "boundary": "No device or emulator. CI, not this independent inspection, compared the embedded bundle with its generated build output and ran official zipalign. Independent inspection verified signature/manifest with Google apksig, exact downloaded digests, ZIP offsets, ELF headers, and packaged bytes."
+}

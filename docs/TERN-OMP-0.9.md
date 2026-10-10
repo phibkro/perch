@@ -33,6 +33,24 @@ host's asynchronous persistence API. Neither change is displayed optimistically.
 current pane. Read-only access, offline state, an opening session, an unavailable
 pane, or an unresolved prior command still blocks it. It cannot answer a dialog.
 
+### Added remote protocol surface
+
+These are host-adapter paths. The paired workspace gateway forwards them under
+the selected connection. They extend Perch's projection protocol; they are not
+new upstream OMP RPC or Tern daemon endpoints.
+
+| Existing or new route | Addition in 0.9 |
+| --- | --- |
+| `GET /perch/sessions/{id}` | Optional `insights`, `storedArtifacts`, and `thinkingSelection`, `sessionRename`, `focusSession` capability flags |
+| `POST /perch/sessions/{id}/commands` | `set-thinking` with `provider`, `modelId`, `level`; `rename-session` with `title`; `focus-session` with no action-specific fields |
+| `GET /perch/sessions/{id}/operations/{operationId}` | Existing receipt lookup also covers the new commands |
+| `GET /perch/sessions/{id}/artifacts/{artifactId}` | New bounded, authenticated delivery of a captured file by opaque ID |
+
+Commands retain their operation ID, host epoch, session generation and attached
+conversation ID. OMP supplies thinking and rename; Tern supplies focus. Missing
+optional capability flags mean unavailable. The full definitions and validators
+are in [the shared remote contract](../src/harness/remote.ts).
+
 ## Reuse instead of rebuilding
 
 | Need | Implementation |
@@ -158,8 +176,46 @@ The separate Mermaid fixture passes 13 rendering and isolation cases.
 
 All 12 required local Android workflow gates pass, together with app type
 checking, a frozen Bun install, packaged third-party notice verification and
-the Android version/signing-key guard. GitHub performs the standalone ARM64
-build and release-asset checks before publishing this version.
+the Android version/signing-key guard. GitHub repeated the required checks and
+passed the standalone ARM64 build, enabled lint and release-asset checks.
+
+### Published Android release
+
+[Perch 0.9.0](https://github.com/phibkro/perch/releases/tag/v0.9.0) was published
+on 10 October 2026 from commit `bbd545d375c9e4d102eae0cbfe5efb0fc590e7e7`.
+The [workflow](https://github.com/phibkro/perch/actions/runs/38059416790) passed
+all three jobs on its first attempt. It took 15 minutes 30 seconds overall;
+the native build and lint step took 13 minutes 7 seconds.
+
+| Downloaded APK property | Independently verified value |
+| --- | --- |
+| Version / Android version code | `0.9.0` / `10` |
+| Package | `dev.perch.assistant` |
+| ABI | ARM64 only; 21 native libraries |
+| Size | 58,894,158 bytes (**56.17 MiB**) |
+| SHA-256 | `37e27e36ce7736d5cccf70446a7ab3588c2a4903bdc52b2525be83b0f7619a43` |
+| Signature | APK v2 verified; same prototype certificate as 0.8 |
+| Android SDK | Minimum 24, target/compile 36; not debuggable |
+| Native alignment | 16 KiB ZIP offsets and ELF load alignments verified |
+
+Download the [ARM64 APK](https://github.com/phibkro/perch/releases/download/v0.9.0/perch-prototype-arm64.apk),
+[checksums](https://github.com/phibkro/perch/releases/download/v0.9.0/SHA256SUMS),
+or [release metadata](https://github.com/phibkro/perch/releases/download/v0.9.0/release-metadata.json).
+The existing Obtainium source and APK filename continue to apply. These binary
+checks do not establish installation or behavior on a physical Pixel 8a or
+GrapheneOS device.
+
+The APK is **10.53 MiB larger than 0.8.0**. Almost all of that increase comes
+from Mermaid being embedded as a UTF-16 string in the uncompressed Hermes
+bundle. The [package research](INTEGRATION-REUSE-RESEARCH.md#measured-cost-in-the-released-android-apk)
+records the exact comparison and a future separate-asset packaging option.
+
+Evidence: [independent release verification](verification/0.9/independent-verification.json),
+[timing and size measurements](verification/0.9/timing-size-summary.json), and
+[11-scenario exported-app report](verification/0.9/session-controls-browser.json).
+The first report distinguishes CI's generated-bundle comparison and official
+`zipalign` execution from independent signature, manifest, ZIP, ELF and packaged-byte
+inspection. Its notices digest matches the committed source blob.
 
 ## What still needs a deeper connection
 

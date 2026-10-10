@@ -1,0 +1,257 @@
+{
+  "workflowRun": "https://github.com/phibkro/perch/actions/runs/38059416790",
+  "sourceCommit": "bbd545d375c9e4d102eae0cbfe5efb0fc590e7e7",
+  "workflowSeconds": 930.0,
+  "jobs": [
+    {
+      "name": "App, protocols, and durable backend",
+      "seconds": 51.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out source and release history",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up Node 24",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check versions, prototype key, and release eligibility",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up pinned Bun package manager",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Bun package cache",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install app and backend dependencies",
+          "seconds": 3.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check app types, protocols, artifacts, and durable behavior",
+          "seconds": 30.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Save Bun package cache from the default branch",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up pinned Bun package manager",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up Node 24",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out source and release history",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Standalone ARM64 APK",
+      "seconds": 847.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out the exact build source",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up Node 24",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up pinned Bun package manager",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Bun package cache",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install JDK 17 toolchain and JDK 21 build runtime",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Restore Gradle dependencies and build cache",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install exact Android tools and bound build memory",
+          "seconds": 27.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install locked app dependencies",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build the standalone APK with enabled lint",
+          "seconds": 787.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify and package the prototype assets",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload APK, checksums, and metadata",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Save Bun package cache from the default branch",
+          "seconds": 0.0,
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Keep build log and available lint reports",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Restore Gradle dependencies and build cache",
+          "seconds": 17.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Install JDK 17 toolchain and JDK 21 build runtime",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up pinned Bun package manager",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up Node 24",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out the exact build source",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Publish trusted prototype prerelease",
+      "seconds": 17.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out the trusted source and current branch history",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Set up Node without package caching",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Recheck release version and default-branch ancestry",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Download assets from this exact workflow run",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify assets and publish a new prototype prerelease",
+          "seconds": 6.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Set up Node without package caching",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Check out the trusted source and current branch history",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "sizeComparison": {
+    "previousVersion": "0.8.0",
+    "version": "0.9.0",
+    "apkBytes": 58894158,
+    "apkMiB": 56.166,
+    "previousAPKBytes": 47853190,
+    "apkDeltaBytes": 11040968,
+    "bundleBytes": 17538796,
+    "previousBundleBytes": 6518540,
+    "bundleDeltaBytes": 11020256,
+    "noticesDeltaBytes": 265386,
+    "bundleZIPCompressionMethod": 0,
+    "bundleZIPCompressedBytes": 17538796
+  },
+  "offlineMermaid": {
+    "version": "12.1.0",
+    "browserBundleSha256": "6484afc32872a3aa16cac9a76ba1816a1ed4cc870a6593cc2e17757750f518b2",
+    "browserBundleUtf8Bytes": 5493176,
+    "literalUtf16Bytes": 10986064,
+    "exactUTF16ScriptFoundInAPKBundle": true,
+    "offset": 1655570
+  }
+}

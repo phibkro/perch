@@ -1,0 +1,59 @@
+{
+  "result": "PASS",
+  "viewport": {
+    "width": 412,
+    "height": 844
+  },
+  "checks": [
+    "light shell renders a bottom composer at 412 × 844",
+    "real remote attachment projects only advertised thinking levels, context and branch usage",
+    "thinking command is scoped to the current provider/model and selection waits for host data",
+    "explicit Save sends a trimmed scoped title; dispatch alone does not claim a saved title",
+    "advertised Tern focus dispatches once; read-only tool details expand",
+    "view-only blocks commands; working and pending questions block settings while preserving advertised Tern focus",
+    "a held session attachment keeps current content visible and blocks mutation until the new session is ready",
+    "connection loss disables controls and reconnection restores them without replay",
+    "removing capabilities hides actions while read-only metadata remains available",
+    "a replacement generation requires attachment and cannot inherit the old title draft",
+    "the real appearance switch updates the native shell and registry-backed chat in dark mode"
+  ],
+  "errors": [],
+  "blocked": [],
+  "warnings": [],
+  "preview": {
+    "sha256": "16f3744e4503bfa084eb4e24f8ebf89be5a9c5cf39855ecba8ed2760d14b85cd",
+    "metadata": {
+      "format": "Perch standalone Expo preview",
+      "version": 2,
+      "appVersion": "0.9.0",
+      "source": "Actual production Expo web export; no separate mockup",
+      "chunks": 8,
+      "liveAdapterIncluded": true,
+      "piAdapterIncluded": true,
+      "bundleSha256": "f666f33c65ec2af82265b1f5bfe4d25212b9ade58d1a2b95b4fed3b850783d08"
+    }
+  },
+  "commands": [
+    {
+      "type": "set-thinking",
+      "generation": "controls-generation-one"
+    },
+    {
+      "type": "rename-session",
+      "generation": "controls-generation-one"
+    },
+    {
+      "type": "focus-session",
+      "generation": "controls-generation-one"
+    },
+    {
+      "type": "focus-session",
+      "generation": "controls-generation-one"
+    },
+    {
+      "type": "focus-session",
+      "generation": "controls-generation-one"
+    }
+  ],
+  "scope": "Actual exported Expo web UI in Chromium with synthetic remote wire data. No physical Android, real host, model, or subscription."
+}

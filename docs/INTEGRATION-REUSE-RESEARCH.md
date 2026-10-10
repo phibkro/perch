@@ -45,7 +45,20 @@ We could add a Perch-specific allowlist and parser, but that would put grammar m
 | Mermaid 12.1.0 | 122,268,705 | Includes source maps and multiple builds; 23 direct dependencies |
 | Mermaid's selected `dist/mermaid.min.js` | **5,493,176** | **1,565,532 gzip bytes**, measured with deterministic gzip; this is the actual browser script embedded by Perch |
 
-The renderer file's SHA-256 is `6484afc32872a3aa16cac9a76ba1816a1ed4cc870a6593cc2e17757750f518b2`. These are file measurements, not speed claims or measured APK growth. The app's packaging determines its final compressed footprint. Registry metadata: [Beautiful Mermaid 1.1.3][beautiful-package], [Mermaid 12.1.0][mermaid-package].
+The renderer file's SHA-256 is `6484afc32872a3aa16cac9a76ba1816a1ed4cc870a6593cc2e17757750f518b2`. These distribution measurements do not establish APK growth or rendering speed. Registry metadata: [Beautiful Mermaid 1.1.3][beautiful-package], [Mermaid 12.1.0][mermaid-package].
+
+### Measured cost in the released Android APK
+
+Independent inspection of the published 0.8.0 and 0.9.0 assets establishes the actual packaging cost:
+
+| APK component | 0.8.0 bytes | 0.9.0 bytes | Increase |
+| --- | ---: | ---: | ---: |
+| Complete APK | 47,853,190 | 58,894,158 | **11,040,968 bytes (10.53 MiB)** |
+| Embedded Hermes app bundle | 6,518,540 | 17,538,796 | 11,020,256 bytes |
+
+The 0.9.0 APK is **56.17 MiB**. Its Hermes bundle contains the exact Mermaid script as a **10,986,064-byte UTF-16 literal**. That bundle is stored uncompressed in the APK (`ZIP_STORED`). This explains nearly all the APK growth; the script's 1,565,532 gzip bytes are not its Android delivery cost.
+
+A future packaging change should evaluate loading the same offline renderer from a separate app asset, avoiding its representation as a large Hermes string. That would preserve the official parser and offline behavior. It has not been implemented or measured, so no size reduction or startup improvement is claimed. The [size evidence](verification/0.9/timing-size-summary.json) records exact bytes, the literal match and release job timings; the [independent verification](verification/0.9/independent-verification.json) records the downloaded asset digests.
 
 Mermaid itself declares MIT, but that does not describe every dependency. The resolved graph includes `elkjs@0.9.3` with **EPL-2.0** and `dompurify@3.4.16` with **MPL-2.0 OR Apache-2.0**. Keep the actual component notices and source attribution in the release inventory; do not relabel the whole graph as MIT. [ELK package](https://registry.npmjs.org/elkjs/0.9.3) [DOMPurify package](https://registry.npmjs.org/dompurify/3.4.16)
 
@@ -122,7 +135,44 @@ The immediate addition is **Mermaid only**. It fills an observable product gap w
 
 Existing packages already cover much of the required infrastructure: assistant-ui's native runtime, `react-native-marked`, `lowlight`, WebView, SVG, secure storage, file export/sharing and Expo's platform services. A web component library, a terminal emulator or a browser-based editor should not be imported merely because it has a good demo; each would bring a different interaction/runtime contract.
 
-This note distinguishes upstream facts from proposed Perch choices. Package versions and source were checked on the research date; native rendering, accessibility, memory and final APK size require the app's own device verification.
+This note distinguishes upstream facts from proposed Perch choices. Package versions and source were checked on the research date. The published APK's size is measured above; native rendering, accessibility and memory behavior still require the app's own device verification.
+
+## 5. Tools for shorter Android builds
+
+This is follow-up research, not an optimization shipped in 0.9. Perch already
+builds ARM64 only, enables the Gradle build cache, and uses `setup-gradle` with
+the Basic provider. Its [build script](../scripts/build-android-apk.mjs) and native build
+limits deliberately constrain memory use. The previous 0.8 native build step
+took 16m41; elapsed time alone does not identify the slow tasks.
+
+The completed [0.9 Android job](https://github.com/phibkro/perch/actions/runs/38059416790/job/114234615432)
+took **13m07** in its build/lint step; Gradle reported **13m05**, with 875 tasks
+(745 executed and 130 from its task cache). Its setup report confirms **zero
+Gradle state entries restored** and one entry saved, with no matching restore
+key. This establishes a missed CI state restore in this run. Task-cache counts
+are a separate measure; these logs do not prove how much time a better restore
+would save.
+
+| Reusable tool | Concrete next use | Evidence needed |
+| --- | --- | --- |
+| Gradle `--profile`, then `gradle-profiler` | Capture a task profile from a normal release build before running controlled comparisons | Separate configuration, native compilation, bundling, lint and packaging costs; distinguish cold and restored caches |
+| `ccache` | React Native 0.86.3's installed CMake already detects it on `PATH`; trial a pinned install and persistent compiler cache | Record hit/miss statistics and unchanged binary checks; it does not accelerate every build phase |
+| Existing `setup-gradle` / `actions/cache` | Review actual cache restoration, then choose a suitable existing cache strategy | Keep one cache owner and the default-branch-only write policy |
+
+[Android's profiling guide](https://developer.android.com/build/profile-your-build)
+documents the profiling tools. [React Native's build guidance](https://reactnative.dev/docs/build-speed)
+recommends ccache for repeated native compilation. Its [manual](https://ccache.dev/manual/latest.html)
+describes compiler-content checks and cache statistics. Retain correctness checks
+and existing worker limits during an experiment; no Perch speedup is measured yet.
+
+The current [setup-gradle documentation](https://github.com/gradle/actions/blob/main/docs/setup-gradle.md#basic-caching)
+says Basic Caching hashes Gradle build files and has no fallback restore keys.
+Because Perch changes `android/app/build.gradle` on every version bump, a cold
+cache at release boundaries is a concrete mechanism to investigate; this run's
+cache report confirms a miss. The same tool offers Enhanced Caching with different licensing and
+terms, or documented external-cache management with existing cache actions.
+Choose after measuring restore behavior; do not run two independent managers
+over the same Gradle User Home.
 
 ## Sources
 
