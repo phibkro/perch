@@ -46,10 +46,11 @@ new upstream OMP RPC or Tern daemon endpoints.
 | `GET /perch/sessions/{id}/operations/{operationId}` | Existing receipt lookup also covers the new commands |
 | `GET /perch/sessions/{id}/artifacts/{artifactId}` | New bounded, authenticated delivery of a captured file by opaque ID |
 
-Commands retain their operation ID, host epoch, session generation and attached
-conversation ID. OMP supplies thinking and rename; Tern supplies focus. Missing
-optional capability flags mean unavailable. The full definitions and validators
-are in [the shared remote contract](../src/harness/remote.ts).
+Commands retain their operation ID, host epoch and session generation, plus the
+attached conversation ID where the adapter exposes one. OMP supplies that
+conversation ID; Tern does not. OMP supplies thinking and rename; Tern supplies
+focus. Missing optional capability flags mean unavailable. The full definitions
+and validators are in [the shared remote contract](../src/harness/remote.ts).
 
 ## Reuse instead of rebuilding
 
