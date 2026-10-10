@@ -9,6 +9,8 @@ import { ArtifactCard } from './ArtifactCard';
 import { CodePreview } from './CodePreview';
 import { MarkdownPreview } from './MarkdownPreview';
 import { HtmlPreview } from './HtmlPreview';
+import { DiagramPreview } from './DiagramPreview';
+import { isMermaidLanguage } from './diagram';
 import { exportArtifact } from './export';
 import { permitsInlineInteraction } from './html';
 import { artifactReadState, artifactReferenceKey, beginArtifactLoad, type ArtifactLoad } from './read';
@@ -85,7 +87,9 @@ export function ArtifactWorkspace({ artifacts, selectedArtifactId, onSelectArtif
   </View>;
 
   if (!artifact) return <View testID="artifact-workspace" style={{ flex: 1, minHeight: 0, backgroundColor: t.background }}>{list}</View>;
-  const source = view === 'source' || artifact.kind === 'code';
+  const diagram = artifact.kind === 'code' && isMermaidLanguage(artifact.language);
+  const hasPreview = artifact.kind !== 'code' || diagram;
+  const source = view === 'source' || !hasPreview;
   const stats = readable ? artifactStats(readable.content) : undefined;
   const actionsDisabled = busy || !readable;
   const buttonStyle = { minHeight: 44, minWidth: 44, paddingHorizontal: 12, flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'center' as const, gap: 7, borderRadius: 10 };
@@ -107,13 +111,13 @@ export function ArtifactWorkspace({ artifacts, selectedArtifactId, onSelectArtif
             onPress={() => { if (readable) void run(() => exportArtifact(readable)); }}><Download size={18} color={t.primary} /></Pressable>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7, paddingTop: 8 }}>
-          {artifact.kind !== 'code' && (['preview', 'source'] as const).map(option => <Pressable key={option} accessibilityRole="tab"
+          {hasPreview && (['preview', 'source'] as const).map(option => <Pressable key={option} accessibilityRole="tab"
             accessibilityState={{ selected: view === option, disabled: !readable }} accessibilityLabel={option === 'preview' ? 'Artifact preview' : 'Artifact source'}
             disabled={!readable} onPress={() => setView(option)} style={[buttonStyle, { backgroundColor: view === option ? t.primarySoft : 'transparent', opacity: readable ? 1 : 0.5 }]}>
             {option === 'preview' ? <Eye size={15} color={view === option ? t.primary : t.muted} /> : <Code2 size={15} color={view === option ? t.primary : t.muted} />}
             <Text style={{ color: view === option ? t.primary : t.muted, fontSize: 12, fontWeight: '600' }}>{option === 'preview' ? 'Preview' : 'Source'}</Text>
           </Pressable>)}
-          {artifact.kind === 'code' && <Text style={{ color: t.muted, paddingHorizontal: 12, fontSize: 12 }}>{artifact.language}</Text>}
+          {!hasPreview && <Text style={{ color: t.muted, paddingHorizontal: 12, fontSize: 12 }}>{artifact.language}</Text>}
           <View style={{ flex: 1 }} />
           {source && !!readable && <Pressable accessibilityRole="button" accessibilityLabel="Toggle line wrapping" accessibilityState={{ selected: wrap }}
             style={[buttonStyle, { backgroundColor: wrap ? t.primarySoft : 'transparent' }]} onPress={() => setWrap(!wrap)}><WrapText size={17} color={wrap ? t.primary : t.muted} /></Pressable>}
@@ -142,10 +146,11 @@ export function ArtifactWorkspace({ artifacts, selectedArtifactId, onSelectArtif
           </Pressable>}
         </View>
           : source ? <CodePreview key={artifact.id} content={readable.content} language={artifact.language} theme={t} wrap={wrap} />
+          : diagram ? <DiagramPreview key={artifact.id} content={readable.content} theme={t} streaming={artifact.streaming} />
           : artifact.kind === 'markdown' ? <MarkdownPreview key={artifact.id} content={readable.content} theme={t} />
           : readable.content.length > MAX_RENDER_CHARACTERS
             ? <View style={{ padding: 30, gap: 12 }}><Text style={{ color: t.ink, fontSize: 20, fontWeight: '600' }}>This page is larger than the preview limit.</Text><Text style={{ color: t.muted, lineHeight: 22 }}>Open Source to inspect it, or export the complete HTML file.</Text></View>
-            : <HtmlPreview key={artifact.id + ':' + revision} content={readable.content} interactive={interactive && !artifact.streaming} dark={t.background === '#17221D'} />}
+            : <HtmlPreview key={artifact.id + ':' + revision} content={readable.content} interactive={interactive && !artifact.streaming} dark={t.scheme === 'dark'} />}
       </View>
     </View>
   </View>;

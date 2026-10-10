@@ -14,6 +14,7 @@ export async function remoteFixture() {
   });
   const requests: { path: string; method: string; authorized: boolean; body?: unknown }[] = [];
   const operations = new Map<string, RemoteReceipt>();
+  const artifacts = new Map<string, Uint8Array>();
   const gates = new Map<string, { started: boolean; wait: Promise<void>; release: () => void }>();
   const overrides = new Map<string, { status?: number; body?: string; headers?: Record<string, string> }>();
   let commandMode: 'normal' | 'accepted-drop' | 'unrecorded-drop' | 'pending' | 'rejected' = 'normal';
@@ -33,11 +34,18 @@ export async function remoteFixture() {
       const snapshotMatch = /^\/perch\/sessions\/([A-Za-z0-9_-]+)$/.exec(path);
       const captured = snapshotMatch && snapshots.get(snapshotMatch[1]);
       const capturedSnapshot = captured && structuredClone(captured);
+      const artifactMatch = /^\/perch\/sessions\/([A-Za-z0-9_-]+)\/artifacts\/([A-Za-z0-9_-]+)$/.exec(path);
+      const capturedArtifact = artifactMatch && artifacts.get(artifactMatch[2])?.slice();
       const gate = gates.get(path);
       if (gate) { gate.started = true; await gate.wait; }
       if (path === '/perch/health') return json(response, { ...health, privateCredential: 'do-not-project' });
       if (path === '/perch/sessions') return json(response, { protocol: health.protocol, version: 1, epoch: health.epoch, revision, sessions: [...snapshots.values()].map(snapshot => snapshot.session) });
       if (snapshotMatch) return capturedSnapshot ? json(response, capturedSnapshot) : json(response, {}, 404);
+      if (artifactMatch && request.method === 'GET') {
+        if (!capturedArtifact) return json(response, {}, 404);
+        response.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Length': capturedArtifact.length });
+        response.end(capturedArtifact); return;
+      }
       const receipt = /^\/perch\/sessions\/([A-Za-z0-9_-]+)\/operations\/([A-Za-z0-9_-]+)$/.exec(path);
       if (receipt) return operations.has(receipt[2]) ? json(response, operations.get(receipt[2])) : json(response, {}, 404);
       const commandMatch = /^\/perch\/sessions\/([A-Za-z0-9_-]+)\/commands$/.exec(path);
@@ -58,6 +66,8 @@ export async function remoteFixture() {
           if (command.type === 'prompt') { snapshot.messages.push({ id: command.id, role: 'user', text: command.text, createdAt: Date.now() }); snapshot.session.status = 'working'; }
           if (command.type === 'interrupt') snapshot.session.status = 'idle';
           if (command.type === 'set-model') snapshot.session.model = { provider: command.provider, id: command.modelId };
+          if (command.type === 'rename-session') snapshot.session.title = command.title;
+          if (command.type === 'set-thinking' && snapshot.insights?.thinking) snapshot.insights.thinking.level = command.level;
           update();
         }
         operations.set(command.id, next);
@@ -70,7 +80,7 @@ export async function remoteFixture() {
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address(); if (!address || typeof address === 'string') throw new Error('Fixture did not bind.');
   return {
-    url: `http://127.0.0.1:${address.port}`, token, requests, health, snapshots, operations, overrides, update,
+    url: `http://127.0.0.1:${address.port}`, token, requests, health, snapshots, operations, artifacts, overrides, update,
     setCommandMode(mode: typeof commandMode) { commandMode = mode; },
     hold(path: string) {
       let release!: () => void; const wait = new Promise<void>(resolve => { release = resolve; });

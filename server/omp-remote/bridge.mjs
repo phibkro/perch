@@ -2,6 +2,8 @@ import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { REMOTE_PROTOCOL, REMOTE_VERSION, MAX_REMOTE_COMMAND_BYTES, parseRemoteCommand, isRemoteId } from '../../src/harness/remote.ts';
 import { validateConfiguration } from './configuration.mjs';
 import { LIMITATIONS, MAX_ROWS, liveMessage, liveTool, projectSnapshot, sessionSummary } from './projection.mjs';
+import { projectInsights, thinkingOptions } from './insights.mjs';
+import { OmpArtifactRegistry } from './artifacts.mjs';
 
 export const MAX_RECEIPTS = 4096;
 const headers = Object.freeze({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store',
@@ -57,11 +59,14 @@ export class OmpRemoteBridge {
   #admissionPending = false;
   #models = [];
   #modelsReadAt = 0;
+  #artifacts;
+  #writes = new Map();
 
   constructor(api, config, { allowEphemeralPort = false, maxReceipts = MAX_RECEIPTS } = {}) {
     this.#api = api;
     this.#config = validateConfiguration(config, { allowEphemeralPort });
     this.#maxReceipts = maxReceipts;
+    this.#artifacts = new OmpArtifactRegistry({ sessionId: this.#config.id });
   }
 
   get url() { return this.#server ? `http://127.0.0.1:${this.#server.port}` : undefined; }
@@ -81,6 +86,10 @@ export class OmpRemoteBridge {
 
   #updateContext(context, reset = false) {
     const conversation = context.sessionManager.getSessionId();
+    if (reset || conversation !== this.#conversation) {
+      this.#artifacts.reset(conversation);
+      this.#writes.clear();
+    }
     if (reset || (this.#conversation !== undefined && conversation !== this.#conversation)) {
       this.#generation = randomUUID();
       this.#live = undefined;
@@ -114,6 +123,19 @@ export class OmpRemoteBridge {
         error: () => error('The OMP remote adapter could not complete this request.', 500) });
     }
     if (event.type === 'agent_start') this.#admissionPending = false;
+    if (event.type === 'tool_execution_start' && event.toolName === 'write') {
+      // A similarly named extension tool is not evidence of a workspace write.
+      // Retain only the host's intended path; no provider or full argument copy.
+      try {
+        const tool = this.#api.getAllTools?.().find(item => item.name === 'write');
+        if (tool?.sourceInfo?.source === 'builtin' && typeof event.toolCallId === 'string'
+            && event.toolCallId.length <= 507 && typeof event.args?.path === 'string'
+            && event.args.path.length <= 4096 && this.#writes.size < 32) {
+          this.#writes.set(event.toolCallId, { cwd: context.cwd, path: event.args.path,
+            toolCallId: event.toolCallId, conversationId: this.#conversation });
+        }
+      } catch { /* Missing provenance means no saved-file claim. */ }
+    }
     if (event.type === 'message_start' || event.type === 'message_update' || event.type === 'message_end') {
       if (event.message.role === 'assistant') this.#live = { ...liveMessage(event.message, context.sessionManager.getBranch(), this.#live,
         event.type !== 'message_end', event.type === 'message_start'), order };
@@ -129,9 +151,15 @@ export class OmpRemoteBridge {
     }
     if (event.type === 'tool_approval_requested') this.#approvals.add(event.toolCallId);
     if (event.type === 'tool_approval_resolved') this.#approvals.delete(event.toolCallId);
+    if (event.type === 'tool_execution_end') {
+      const candidate = this.#writes.get(event.toolCallId);
+      this.#writes.delete(event.toolCallId);
+      if (candidate && event.toolName === 'write' && event.isError === false) await this.#artifacts.capture(candidate);
+    }
     if (event.type === 'agent_end') {
       this.#admissionPending = false;
       this.#approvals.clear();
+      this.#writes.clear();
       for (const [id, item] of this.#tools) if (item.tool.status === 'running') this.#tools.set(id, { ...item, tool: { ...item.tool, status: 'unknown' } });
       if (this.#live) this.#live.streaming = false;
     }
@@ -162,7 +190,12 @@ export class OmpRemoteBridge {
     }
     for (const entry of entries) if (entry.type === 'message' && entry.message?.role === 'toolResult') this.#tools.delete(entry.message.toolCallId);
     const snapshot = projectSnapshot({ config: this.#config, epoch: this.#epoch, generation: this.#generation, revision: ++this.#revision,
-      context: this.#context, entries, live: this.#live, activeTools: this.#tools, needsInput: this.#approvals.size > 0, models: this.#models });
+      context: this.#context, entries, live: this.#live, activeTools: this.#tools, needsInput: this.#approvals.size > 0, models: this.#models,
+      insights: projectInsights(this.#api, this.#context, entries), storedArtifacts: this.#artifacts.manifest(this.#conversation) });
+    const idle = this.#context.isIdle() && !this.#context.hasPendingMessages() && !this.#approvals.size
+      && !this.#mutationPending && !this.#admissionPending;
+    snapshot.capabilities.thinkingSelection = idle && !!snapshot.insights.thinking?.availableLevels.length;
+    snapshot.capabilities.sessionRename = idle && typeof this.#api.setSessionName === 'function';
     if (this.#admissionPending) {
       snapshot.capabilities.prompt = false;
       snapshot.notices.push('The prompt was forwarded, but OMP has not yet signalled a turn. Check the host terminal before submitting again.');
@@ -195,8 +228,9 @@ export class OmpRemoteBridge {
     this.#receipts.set(command.id, entry); // Reserve before any effect, including async model lookup.
     const rejected = message => { entry.receipt = this.#receipt(command, 'rejected', message); return { ...entry.receipt }; };
     if (command.type === 'answer') return rejected('Native owner dialogs require the Tern remote connection. This OMP extension cannot answer them.');
+    if (command.type === 'focus-session') return rejected('Showing a pane requires the Tern connection.');
     if (command.type !== 'interrupt' && (this.#mutationPending || this.#admissionPending || !this.#context.isIdle()
-        || this.#context.hasPendingMessages() || this.#approvals.size > 0)) return rejected('Wait for OMP to finish its current work or pending decision before sending a prompt or changing models.');
+        || this.#context.hasPendingMessages() || this.#approvals.size > 0)) return rejected('Wait for OMP to finish its current work or pending decision before sending a prompt or changing session settings.');
     try {
       if (command.type === 'prompt') {
         this.#admissionPending = true;
@@ -214,10 +248,22 @@ export class OmpRemoteBridge {
         if (!changed) return rejected('OMP could not select this model with the host credentials.');
         entry.receipt = this.#receipt(command, 'forwarded', 'OMP accepted the model selection. Refresh the session snapshot to see the current model.');
         this.#modelsReadAt = 0;
+      } else if (command.type === 'set-thinking') {
+        const model = this.#context.models?.current?.() ?? this.#context.model;
+        if (model?.provider !== command.provider || model?.id !== command.modelId) return rejected('The model changed. Refresh its thinking levels before choosing again.');
+        const options = thinkingOptions(this.#api, this.#context);
+        if (!options?.availableLevels.includes(command.level)) return rejected('Select a thinking level advertised by the current OMP model.');
+        this.#api.setThinkingLevel(command.level);
+        entry.receipt = this.#receipt(command, 'forwarded', 'Thinking preference sent to OMP. The host applies its model and session limits; the refreshed details show the applied level.');
+      } else if (command.type === 'rename-session') {
+        if (typeof this.#api.setSessionName !== 'function') return rejected('This OMP extension API cannot rename the session.');
+        this.#mutationPending = true;
+        await this.#api.setSessionName(command.title);
+        entry.receipt = this.#receipt(command, 'forwarded', 'Session title sent to OMP.');
       }
     } catch {
       entry.receipt = this.#receipt(command, 'unknown', 'The extension action did not return normally. Its effect is uncertain; inspect OMP in the host terminal before doing anything else.');
-    } finally { if (command.type === 'set-model') this.#mutationPending = false; }
+    } finally { if (command.type === 'set-model' || command.type === 'rename-session') this.#mutationPending = false; }
     return { ...entry.receipt };
   }
 
@@ -229,12 +275,21 @@ export class OmpRemoteBridge {
       if (url.search) return error('Query parameters are not supported.', 400);
       if (request.method === 'GET' && url.pathname === '/perch/health') return json(this.health());
       if (request.method === 'GET' && url.pathname === '/perch/sessions') return json(this.catalog());
-      const match = /^\/perch\/sessions\/([A-Za-z0-9][A-Za-z0-9_-]{0,127})(?:\/(commands|operations)(?:\/([A-Za-z0-9][A-Za-z0-9_-]{0,127}))?)?$/.exec(url.pathname);
+      const match = /^\/perch\/sessions\/([A-Za-z0-9][A-Za-z0-9_-]{0,127})(?:\/(commands|operations|artifacts)(?:\/([A-Za-z0-9][A-Za-z0-9_-]{0,127}))?)?$/.exec(url.pathname);
       if (!match || match[1] !== this.#config.id) return error('Unknown remote session route.', 404);
       if (request.method === 'GET' && !match[2]) return json(this.snapshot());
       if (request.method === 'GET' && match[2] === 'operations' && isRemoteId(match[3])) {
         const receipt = this.operation(match[3]);
         return receipt ? json(receipt) : error('No receipt is available. This does not prove that an earlier command did not run; inspect the host without replaying it.', 404);
+      }
+      if (request.method === 'GET' && match[2] === 'artifacts' && isRemoteId(match[3])) {
+        if (!this.#context) return error('The OMP session is unavailable.', 404);
+        this.#updateContext(this.#context);
+        const artifact = this.#artifacts.read({ conversationId: this.#conversation, id: match[3] });
+        if (!artifact) return error('This captured file is no longer available. Refresh the session artifacts.', 404);
+        return new Response(artifact.bytes, { headers: { ...headers, 'Content-Type': 'application/octet-stream',
+          'Content-Length': String(artifact.bytes.byteLength), 'Content-Disposition': `attachment; filename="${artifact.manifest.filename}"`,
+          'Content-Security-Policy': "sandbox; default-src 'none'", ETag: `"${artifact.manifest.sha256}"` } });
       }
       if (request.method === 'POST' && match[2] === 'commands' && !match[3]) {
         const receipt = await this.dispatch(await readCommand(request));
@@ -254,6 +309,8 @@ export class OmpRemoteBridge {
     this.#live = undefined;
     this.#tools.clear();
     this.#approvals.clear();
+    this.#writes.clear();
+    this.#artifacts.reset();
     await server?.stop(true);
   }
 }

@@ -1,4 +1,7 @@
-import type { Message, ModelMetadata, ToolActivity } from '../session/types.js';
+import type { Message, ModelMetadata, ToolActivity, SessionInsights } from '../session/types.js';
+import { isThinkingLevel, parseSessionInsights } from './insights';
+import type { StoredArtifact } from './durable.js';
+import { artifact as parseStoredArtifact } from '../session/durable/projection';
 
 /** Perch's projected session protocol. This is neither TSP nor OMP RPC. */
 export const REMOTE_PROTOCOL = 'perch-remote';
@@ -64,6 +67,9 @@ export interface RemoteCapabilities {
   modelSelection: boolean;
   /** Optional for adapters predating native owner dialogs. */
   questions?: boolean;
+  thinkingSelection?: boolean;
+  sessionRename?: boolean;
+  focusSession?: boolean;
 }
 
 export interface RemoteSnapshot {
@@ -80,6 +86,8 @@ export interface RemoteSnapshot {
   truncated: boolean;
   notices: string[];
   pendingQuestion?: RemoteQuestion | null;
+  insights?: SessionInsights;
+  storedArtifacts?: StoredArtifact[];
 }
 
 interface RemoteCommandIdentity {
@@ -92,6 +100,9 @@ export type RemoteCommand = RemoteCommandIdentity & (
   | { type: 'prompt'; text: string }
   | { type: 'interrupt' }
   | { type: 'set-model'; provider: string; modelId: string }
+  | { type: 'set-thinking'; level: string; provider: string; modelId: string }
+  | { type: 'rename-session'; title: string }
+  | { type: 'focus-session' }
   | { type: 'answer'; requestId: string; requestRevision: string; answer: string }
 );
 
@@ -243,14 +254,23 @@ export function parseRemoteSnapshot(input: unknown): RemoteSnapshot {
   const capabilities = value.capabilities;
   for (const key of ['prompt', 'interrupt', 'modelSelection']) if (typeof capabilities[key] !== 'boolean') invalid('session capabilities');
   if (capabilities.questions !== undefined && typeof capabilities.questions !== 'boolean') invalid('session request capability');
+  for (const key of ['thinkingSelection', 'sessionRename', 'focusSession']) {
+    if (capabilities[key] !== undefined && typeof capabilities[key] !== 'boolean') invalid('session control capability');
+  }
   if (!Array.isArray(value.messages) || value.messages.length > 4000 || !Array.isArray(value.tools) || value.tools.length > 4000
       || !Array.isArray(value.availableModels) || value.availableModels.length > MAX_REMOTE_MODELS) invalid('snapshot collections');
+  if (value.storedArtifacts !== undefined && (!Array.isArray(value.storedArtifacts) || value.storedArtifacts.length > 128)) invalid('artifact manifests');
+  const session = summary(value.session);
   return { protocol: REMOTE_PROTOCOL, version: REMOTE_VERSION, epoch: value.epoch as string, revision: value.revision,
-    session: summary(value.session), capabilities: { prompt: capabilities.prompt as boolean, interrupt: capabilities.interrupt as boolean,
-      modelSelection: capabilities.modelSelection as boolean, questions: capabilities.questions === true }, readOnly: value.readOnly,
+    session, capabilities: { prompt: capabilities.prompt as boolean, interrupt: capabilities.interrupt as boolean,
+      modelSelection: capabilities.modelSelection as boolean, questions: capabilities.questions === true,
+      thinkingSelection: capabilities.thinkingSelection === true, sessionRename: capabilities.sessionRename === true,
+      focusSession: capabilities.focusSession === true }, readOnly: value.readOnly,
     messages: unique(value.messages.map(message), 'message'), tools: unique(value.tools.map(tool), 'tool'),
     availableModels: value.availableModels.map(model), truncated: value.truncated, notices: descriptions(value.notices, 'snapshot notices'),
-    pendingQuestion: value.pendingQuestion === undefined || value.pendingQuestion === null ? null : parseRemoteQuestion(value.pendingQuestion) };
+    pendingQuestion: value.pendingQuestion === undefined || value.pendingQuestion === null ? null : parseRemoteQuestion(value.pendingQuestion),
+    ...(value.insights === undefined ? {} : { insights: parseSessionInsights(value.insights) }),
+    ...(value.storedArtifacts === undefined ? {} : { storedArtifacts: unique((value.storedArtifacts as unknown[]).map(item => parseStoredArtifact(item, session.id)), 'artifact') }) };
 }
 
 /** Public commands accept only their declared fields; no raw terminal or plugin payload. */
@@ -264,6 +284,10 @@ export function parseRemoteCommand(input: unknown): RemoteCommand {
   if (input.type === 'prompt' && only(['text']) && string(input.text, MAX_REMOTE_PROMPT_LENGTH) && input.text.trim()) return { ...base, type: 'prompt', text: input.text };
   if (input.type === 'interrupt' && only([])) return { ...base, type: 'interrupt' };
   if (input.type === 'set-model' && only(['provider', 'modelId']) && opaque(input.provider, 256) && opaque(input.modelId, 1024)) return { ...base, type: 'set-model', provider: input.provider, modelId: input.modelId };
+  if (input.type === 'set-thinking' && only(['level', 'provider', 'modelId']) && isThinkingLevel(input.level)
+      && opaque(input.provider, 256) && opaque(input.modelId, 1024)) return { ...base, type: 'set-thinking', level: input.level, provider: input.provider, modelId: input.modelId };
+  if (input.type === 'rename-session' && only(['title']) && opaque(input.title, 160) && input.title.trim()) return { ...base, type: 'rename-session', title: input.title.trim() };
+  if (input.type === 'focus-session' && only([])) return { ...base, type: 'focus-session' };
   if (input.type === 'answer' && only(['requestId', 'requestRevision', 'answer']) && opaque(input.requestId) && opaque(input.requestRevision)
       && string(input.answer, MAX_REMOTE_ANSWER_LENGTH) && input.answer.trim()) return { ...base, type: 'answer', requestId: input.requestId, requestRevision: input.requestRevision, answer: input.answer };
   throw new Error('This remote command is unsupported or invalid.');

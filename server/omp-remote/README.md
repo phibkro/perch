@@ -19,7 +19,11 @@ launch RPC, copy a session file into another process, or require Collab.
 | Send a message | Calls this process's public `sendUserMessage` API |
 | Interrupt | Calls this session's `abort`; the OMP process remains alive |
 | Change model while idle | Selects from `ctx.models.list()` using `setModel`; credentials stay on the host |
-| Read generated artifacts | Existing Perch readers use Markdown/code answers and complete `write` tool inputs |
+| Change thinking while idle | Uses the current model's declared effort choices and public `setThinkingLevel`; OMP applies its own session ceiling |
+| Rename while idle | Awaits public `setSessionName`; the phone displays the host-confirmed title |
+| Inspect context and usage | Reads `getContextUsage` and reported assistant usage on the current branch; cost is reported USD, not subscription quota |
+| Inspect tools | Shows names, descriptions and active status from `getAllTools/getActiveTools`; schemas and provider configuration stay on the host |
+| Read generated artifacts | Markdown/code answers, complete `write` inputs, and captured saved-file revisions after supported built-in writes on Linux |
 | Reconnect | Reads fresh snapshots and command receipts; no prompt is automatically resent |
 | Observe a host decision | Shows an outstanding tool approval; answer it in the terminal |
 
@@ -27,6 +31,25 @@ The phone's **Detach** only ends its connection. Desktop `/new`, branch,
 compaction, and tree navigation change the advertised session generation and
 invalidate commands from the old view. The loopback listener survives those
 transitions. Exiting OMP closes it.
+
+### Captured files
+
+The extension observes a built-in `write` start and successful completion. It
+checks public tool provenance before capturing a regular UTF-8 file inside the
+canonical project directory. A similarly named extension tool, failed write,
+arbitrary chat path, or download request cannot authorize a file read.
+
+The current capture implementation requires Linux `/proc/self/fd` to verify
+the opened descriptor's actual path. Final symlinks, escapes, binary content,
+unsupported formats, and files above **2,000,000 bytes** are skipped. It keeps
+at most **32 revisions / 8 MiB** without evicting advertised files. Each file is
+an immutable copy observed after completion, not a live view of a changing path.
+The registry is memory-only and clears on conversation/generation transitions
+or process exit. Historical files are not rediscovered by reading old chat paths.
+
+Downloads use `/perch/sessions/{sessionId}/artifacts/{opaqueId}` and the existing
+paired gateway. Perch verifies exact byte length, SHA-256, and UTF-8 before its
+normal artifact reader receives content. See [artifact policy](../../docs/ARTIFACTS.md).
 
 ## Prepare the host
 

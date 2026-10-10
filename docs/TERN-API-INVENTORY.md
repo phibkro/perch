@@ -1,5 +1,11 @@
 # Tern integration API inventory
 
+> **Version note:** This inventory records the pinned pre-0.9 baseline.
+> [Perch 0.9 additions](TERN-OMP-0.9.md) cover the new session controls,
+> captured file downloads, pane focus and diagrams.
+> [Runtime qualification](RUNTIME-QUALIFICATION-2026-10-10.md) adds the supplied
+> Tern 0.7 and OMP executable evidence.
+
 Research date: **2026-10-10**. This reference inventories the Tern side of a
 Perch ↔ Tern ↔ OMP integration. It distinguishes an API's existence from Perch
 using it, and from an operation being verified against a running host.

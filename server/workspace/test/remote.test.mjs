@@ -1,6 +1,7 @@
 import { afterEach, expect, test } from 'bun:test';
 import { createServer } from 'node:http';
 import { MAX_REMOTE_BYTES, parseRemoteCatalog, parseRemoteHealth, parseRemoteReceipt, parseRemoteSnapshot } from '../../../src/harness/remote.ts';
+import { MAX_STORED_ARTIFACT_BYTES } from '../../../src/harness/durable.ts';
 import { parseManifest } from '../../../src/workspace/protocol.ts';
 import { gateway, WORKSPACE_TOKEN } from './helpers.mjs';
 
@@ -45,6 +46,12 @@ async function fixture() {
           conversationId: identity.conversationId, status: 'forwarded' });
         if (mode === 'accepted-drop') { response.destroy(); return; }
         return json(operations.get(body.id));
+      }
+      if (request.url === '/perch/sessions/existing-omp/artifacts/captured') {
+        const bytes = Buffer.from('\ufeff# Host file\r\nUnicode 🦜');
+        response.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Length': mode === 'oversized' ? MAX_STORED_ARTIFACT_BYTES + 1 : bytes.length,
+          'Content-Disposition': 'attachment; filename="report.md"', ETag: '"captured-sha"' });
+        response.end(bytes); return;
       }
       const operationId = request.url.match(/^\/perch\/sessions\/existing-omp\/operations\/([A-Za-z0-9_-]+)$/)?.[1];
       if (operationId) return json(operations.get(operationId) ?? {}, operations.has(operationId) ? 200 : 404);
@@ -112,6 +119,23 @@ test('a transport drop after forwarding is reconciled through a read, with exact
   expect(upstream.requests.filter(request => request.method === 'POST')).toHaveLength(1);
   await handle.request('/harness/remote/perch/health'); await handle.request('/harness/remote/perch/sessions/existing-omp');
   expect(upstream.writes).toBe(1);
+});
+
+test('the remote gateway forwards bounded captured bytes with attachment policy and its own credential', async () => {
+  const upstream = await fixture(), handle = keep(gateway([upstream.connection]));
+  const path = '/harness/remote/perch/sessions/existing-omp/artifacts/captured';
+  const response = await handle.request(path);
+  expect(response.status).toBe(200);
+  expect(await response.text()).toBe('# Host file\r\nUnicode 🦜'); // Response.text consumes the UTF-8 BOM.
+  expect(response.headers.get('content-type')).toBe('application/octet-stream');
+  expect(response.headers.get('content-security-policy')).toContain("default-src 'none'");
+  expect(response.headers.get('content-disposition')).toBe('attachment; filename="report.md"');
+  expect(upstream.requests.every(row => row.authorization === `Bearer ${TOKEN}`)).toBe(true);
+  expect((await handle.request(path, { headers: { Authorization: 'Bearer wrong' } })).status).toBe(401);
+  expect((await handle.request(path + '?path=/etc/passwd')).status).toBe(400);
+  expect((await handle.request(path, post({ path: '/etc/passwd' }))).status).toBe(404);
+  upstream.mode('oversized'); expect((await handle.request(path)).status).toBe(413);
+  expect(upstream.writes).toBe(0);
 });
 
 test('owner answers pass only the request identity and chosen value through the paired gateway', async () => {

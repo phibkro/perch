@@ -18,3 +18,9 @@ tooling/.cache/
 tooling/local.json
 artifacts/device/
 tooling/reference/
+
+# Rebuilt from the locked Mermaid package during install.
+src/artifacts/generated/
+
+# Local verification captures and browser diagnostics.
+verification-output/

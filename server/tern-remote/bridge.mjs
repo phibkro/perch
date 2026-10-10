@@ -115,6 +115,7 @@ function validateFrame(value) {
         !detail.messages.every(row => record(row) && ['user', 'assistant'].includes(row.role) && string(row.text, 64_000) &&
           Array.isArray(row.tools) && row.tools.length <= 64 && row.tools.every(tool => record(tool))) ||
         typeof detail.canPrompt !== 'boolean' || typeof detail.canInterrupt !== 'boolean' ||
+        detail.canFocus !== undefined && typeof detail.canFocus !== 'boolean' ||
         typeof detail.truncated !== 'boolean' ||
         !Array.isArray(detail.notices) || detail.notices.length > 8 || !detail.notices.every(n => string(n, 2048))) {
       throw new HttpError(400, 'Invalid plugin transcript.');
@@ -218,7 +219,8 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
     }
     return { ...PROTOCOL, epoch, revision, session,
       capabilities: { prompt: !readOnly && detail.canPrompt && !detail.pendingQuestion,
-        interrupt: !readOnly && detail.canInterrupt, modelSelection: false, questions: !readOnly },
+        interrupt: !readOnly && detail.canInterrupt, modelSelection: false, questions: !readOnly,
+        focusSession: !readOnly && detail.canFocus === true },
       readOnly, messages, tools, availableModels: [], truncated: detail.truncated || tools.length >= 4000,
       pendingQuestion: detail.pendingQuestion ?? null,
       notices: [...detail.notices.map(n => n.slice(0, 2000)), ...(agent.deliveryError ? [agent.deliveryError.slice(0, 2000)] : []),
@@ -346,6 +348,7 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
       if (command.conversationId !== undefined) throw new HttpError(400, 'Tern does not expose a canonical conversation ID.');
       const fingerprint = createHash('sha256').update(JSON.stringify({ sessionId, epoch: command.epoch, generation: command.generation,
         type: command.type, text: command.text, provider: command.provider, modelId: command.modelId,
+        level: command.level, title: command.title,
         requestId: command.requestId, requestRevision: command.requestRevision, answer: command.answer })).digest('hex');
       const existing = operations.get(command.id);
       if (existing) {
@@ -360,9 +363,11 @@ export function createTernRemoteServer({ token, pluginToken, host = { id: 'tern-
       if (command.epoch !== epoch || command.generation !== session.generation) rejection = 'Stale host or pane generation. Refresh before sending.';
       else if (readOnly) rejection = 'This adapter is read-only.';
       else if (command.type === 'set-model') rejection = 'Model selection requires the OMP in-process adapter.';
+      else if (command.type === 'set-thinking' || command.type === 'rename-session') rejection = 'Session settings require the OMP in-process adapter.';
       else if (!detail || now() - detail.at >= 2_000 || detail.value.generation !== agent.generation) rejection = 'Read a fresh pane snapshot before sending.';
       else if (command.type === 'prompt' && (!detail.value.canPrompt || detail.value.pendingQuestion)) rejection = 'The native OMP composer is not ready to accept a prompt.';
       else if (command.type === 'interrupt' && !detail.value.canInterrupt) rejection = 'This pane does not support interruption.';
+      else if (command.type === 'focus-session' && detail.value.canFocus !== true) rejection = 'This Tern plugin does not advertise pane focus. Update the host adapter.';
       else if (command.type === 'answer') {
         const question = detail.value.pendingQuestion;
         rejection = answerRejection(question, command);

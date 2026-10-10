@@ -2,7 +2,7 @@
   "expo": {
     "name": "Perch",
     "slug": "perch",
-    "version": "0.8.0",
+    "version": "0.9.0",
     "orientation": "default",
     "userInterfaceStyle": "automatic",
     "scheme": "perch",
@@ -26,7 +26,7 @@
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT"
       ],
-      "versionCode": 9
+      "versionCode": 10
     },
     "ios": {
       "bundleIdentifier": "dev.perch.assistant",

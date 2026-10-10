@@ -7,7 +7,9 @@ import {
 } from '../harness/remote';
 import { validateCredentials } from '../workspace/protocol';
 import type { HarnessDriver, HarnessUpdate, PendingQuestion, RemoteConnection, SessionSummary } from './types';
-import { operationId } from './durable/crypto';
+import { operationId, sha256 } from './durable/crypto';
+import { MAX_STORED_ARTIFACT_BYTES, type StoredArtifact } from '../harness/durable';
+import { artifact as parseStoredArtifact } from './durable/projection';
 import { remoteFetch } from './remote/fetch';
 
 const EMPTY: SessionSummary = { id: '', title: 'Host sessions', project: '', status: 'idle' };
@@ -37,10 +39,10 @@ function parse<T>(parser: (value: unknown) => T, value: unknown): T {
   try { return parser(value); }
   catch { throw new ProtocolError('The remote host returned invalid session data. Update its Perch adapter and reconnect.'); }
 }
-async function readJson(response: Response): Promise<unknown> {
+async function readBytes(response: Response, maximum: number): Promise<Uint8Array> {
   if (!response.body) throw new ProtocolError('The remote host returned an empty response.');
   const length = response.headers.get('content-length');
-  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_REMOTE_BYTES)) {
+  if (length !== null && (!/^\d+$/.test(length) || Number(length) > maximum)) {
     await response.body.cancel(); throw new ProtocolError('The host snapshot exceeds the phone size limit.');
   }
   const reader = response.body.getReader(); const chunks: Uint8Array[] = []; let size = 0;
@@ -48,18 +50,21 @@ async function readJson(response: Response): Promise<unknown> {
     while (true) {
       const next = await reader.read(); if (next.done) break;
       size += next.value.byteLength;
-      if (size > MAX_REMOTE_BYTES) throw new ProtocolError('The host snapshot exceeds the phone size limit.');
+      if (size > maximum) throw new ProtocolError('The host response exceeds the phone size limit.');
       chunks.push(next.value);
     }
   } finally { await reader.cancel().catch(() => {}); reader.releaseLock(); }
   const bytes = new Uint8Array(size); let offset = 0;
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return bytes;
+}
+function utf8(bytes: Uint8Array): string {
   try {
     const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
     const encoded = new TextEncoder().encode(text);
     if (encoded.length !== bytes.length || encoded.some((byte, index) => byte !== bytes[index])) throw new Error();
-    return JSON.parse(text);
-  } catch { throw new ProtocolError('The remote host returned invalid UTF-8 JSON.'); }
+    return text;
+  } catch { throw new ProtocolError('The remote host returned invalid UTF-8 text.'); }
 }
 
 /** Owns an observation of an existing host runtime, never the runtime itself. */
@@ -109,11 +114,16 @@ export function createRemoteDriver(config: RemoteConnection, onUpdate: (update: 
       capabilities: { ...REMOTE_CAPABILITIES, prompt: valid && !!selected?.capabilities.prompt && !selected?.pendingQuestion && !actionPending && !sessionAction,
         interrupt: valid && !!selected?.capabilities.interrupt && !sending.size,
         modelSelection: valid && !!selected?.capabilities.modelSelection && !selected?.pendingQuestion && !!selected?.availableModels.length && !actionPending,
-        questions: valid && !!selected?.capabilities.questions && !sessionAction },
+        questions: valid && !!selected?.capabilities.questions && !sessionAction,
+        thinkingSelection: valid && !!selected?.capabilities.thinkingSelection && !selected?.pendingQuestion && !unconfirmed.length && !sessionAction,
+        sessionRename: valid && !!selected?.capabilities.sessionRename && !selected?.pendingQuestion && !unconfirmed.length && !sessionAction,
+        focusSession: valid && !!selected?.capabilities.focusSession && !unconfirmed.length && !sessionAction },
       connection: { ...status, label: live ? label() : status.label, ...(live && (deliveryNotice || notice) ? { error: deliveryNotice || notice } : {}) },
       session: selected ? summary(selected.session) : EMPTY, sessions, sessionAction,
       messages: selected?.messages ?? [], tools: selected?.tools ?? [], agents: [], pendingQuestion: currentQuestion(),
       model: selected?.session.model, availableModels: selected?.availableModels ?? [],
+      insights: selected?.insights,
+      storedArtifacts: selected?.storedArtifacts ?? [],
       isWorking: selected?.session.status === 'working', readOnly: !selected || selected.readOnly || !valid,
       remote: { host: health?.host, epoch: health?.epoch, sessions: catalog?.sessions ?? [], attached: selected?.session,
         synchronization: 'snapshot', truncated: selected?.truncated ?? false,
@@ -126,7 +136,8 @@ export function createRemoteDriver(config: RemoteConnection, onUpdate: (update: 
     if (item.command.type === 'answer') {
       const attempt = answers.get(answerKey(item.command, item.sessionId)); if (attempt) attempt.state = 'unknown';
     }
-    item.message = `${item.command.type === 'prompt' ? 'Prompt' : item.command.type === 'interrupt' ? 'Interrupt' : item.command.type === 'answer' ? 'Answer' : 'Model change'} delivery is unconfirmed. Check the host conversation before sending again. Reconnect checks its receipt and never resends it.`;
+    const action = { prompt: 'Prompt', interrupt: 'Interrupt', answer: 'Answer', 'set-model': 'Model change', 'set-thinking': 'Thinking change', 'rename-session': 'Title change', 'focus-session': 'Pane focus' }[item.command.type];
+    item.message = `${action} delivery is unconfirmed. Check the host conversation before sending again. Reconnect checks its receipt and never resends it.`;
   }
   function drop(error: unknown, g: number) {
     if (!current(g)) return;
@@ -136,7 +147,7 @@ export function createRemoteDriver(config: RemoteConnection, onUpdate: (update: 
       error: error instanceof HttpError || error instanceof ProtocolError ? error.message : 'The connection stopped. The host may still be working. Reconnect to read its current state.' };
     publish();
   }
-  async function request(path: string, g: number, method = 'GET', body?: unknown): Promise<unknown> {
+  async function request(path: string, g: number, method = 'GET', body?: unknown, artifactBytes = false): Promise<unknown> {
     if (!current(g)) throw new Error('The connection changed.');
     const signal = controller!.signal; const abort = new AbortController(); const cancel = () => abort.abort();
     signal.addEventListener('abort', cancel, { once: true }); const timeout = setTimeout(cancel, 20_000);
@@ -144,12 +155,14 @@ export function createRemoteDriver(config: RemoteConnection, onUpdate: (update: 
     try {
       const encoded = body === undefined ? undefined : JSON.stringify(body);
       if (encoded !== undefined && new TextEncoder().encode(encoded).byteLength > MAX_REMOTE_COMMAND_BYTES) throw new ProtocolError('This action exceeds the remote command size limit.');
-      const response = await remoteFetch(url, { method, headers: { Authorization: authorization, Accept: 'application/json', ...(encoded === undefined ? {} : { 'Content-Type': 'application/json' }) },
+      const response = await remoteFetch(url, { method, headers: { Authorization: authorization, Accept: artifactBytes ? 'application/octet-stream' : 'application/json', ...(encoded === undefined ? {} : { 'Content-Type': 'application/json' }) },
         ...(encoded === undefined ? {} : { body: encoded }), redirect: 'error', credentials: 'omit', signal: abort.signal });
       if (response.redirected || response.url && response.url !== url) { await response.body?.cancel(); throw new ProtocolError('The remote adapter redirected an authenticated request. Use its direct workspace address.'); }
       if (!response.ok) { await response.body?.cancel(); throw new HttpError(response.status); }
-      if (!/^application\/json(?:\s*;|$)/i.test(response.headers.get('content-type') ?? '')) { await response.body?.cancel(); throw new ProtocolError('The remote host did not return JSON.'); }
-      return await readJson(response);
+      if (!artifactBytes && !/^application\/json(?:\s*;|$)/i.test(response.headers.get('content-type') ?? '')) { await response.body?.cancel(); throw new ProtocolError('The remote host did not return JSON.'); }
+      const bytes = await readBytes(response, artifactBytes ? MAX_STORED_ARTIFACT_BYTES : MAX_REMOTE_BYTES);
+      if (artifactBytes) return bytes;
+      try { return JSON.parse(utf8(bytes)); } catch { throw new ProtocolError('The remote host returned invalid UTF-8 JSON.'); }
     } finally { clearTimeout(timeout); signal.removeEventListener('abort', cancel); }
   }
   function receipt(value: unknown, item: Pending): RemoteReceipt {
@@ -321,6 +334,42 @@ export function createRemoteDriver(config: RemoteConnection, onUpdate: (update: 
     setModel(provider, modelId) {
       if (!canWrite() || selected!.pendingQuestion || selected!.session.status !== 'idle' || !selected!.capabilities.modelSelection || !selected!.availableModels.some(item => item.provider === provider && item.id === modelId)) return;
       void dispatch({ ...commandIdentity(), type: 'set-model', provider, modelId });
+    },
+    setThinking(level) {
+      const model = selected?.session.model;
+      if (!canWrite() || selected!.pendingQuestion || selected!.session.status !== 'idle' || relevantPending().length
+          || !selected!.capabilities.thinkingSelection || !model?.provider || !selected!.insights?.thinking?.availableLevels.includes(level)) return;
+      void dispatch({ ...commandIdentity(), type: 'set-thinking', level, provider: model.provider, modelId: model.id });
+    },
+    renameSession(title) {
+      const clean = title.trim();
+      if (!canWrite() || selected!.pendingQuestion || selected!.session.status !== 'idle' || relevantPending().length
+          || !selected!.capabilities.sessionRename || !clean || clean.length > 160 || /[\u0000-\u001f\u007f]/.test(clean)) return;
+      void dispatch({ ...commandIdentity(), type: 'rename-session', title: clean });
+    },
+    focusSession() {
+      if (!canWrite() || !selected!.capabilities.focusSession || relevantPending().length) return;
+      void dispatch({ ...commandIdentity(), type: 'focus-session' });
+    },
+    async loadArtifact(value: StoredArtifact): Promise<string> {
+      if (!current(generation) || status.status !== 'live' || !selected || sessionAction) throw new Error('Reconnect to the artifact’s session before opening it.');
+      const g = generation, s = selection, scope = sessionScope(selected.epoch, selected.session);
+      const manifest = parse(input => parseStoredArtifact(input, selected!.session.id), value);
+      const known = selected.storedArtifacts?.find(item => item.id === manifest.id);
+      if (!known || JSON.stringify(known) !== JSON.stringify(manifest)) throw new Error('This artifact is no longer in the selected session. Refresh its manifest.');
+      const stillSelected = () => current(g) && selection === s && !!selected && sessionScope(selected.epoch, selected.session) === scope
+        && selected.storedArtifacts?.some(item => item.id === manifest.id && item.sha256 === manifest.sha256);
+      try {
+        const bytes = await request(`/sessions/${manifest.sessionId}/artifacts/${manifest.id}`, g, 'GET', undefined, true) as Uint8Array;
+        if (!stillSelected()) throw new Error('The selected session changed while the artifact loaded.');
+        if (bytes.byteLength !== manifest.bytes || await sha256(bytes) !== manifest.sha256) throw new Error('The artifact failed its byte-length or SHA-256 integrity check. Refresh its manifest before trying again.');
+        if (!stillSelected()) throw new Error('The selected session changed while the artifact loaded.');
+        return utf8(bytes);
+      } catch (error) {
+        if (error instanceof HttpError && [401, 403].includes(error.status)) drop(error, g);
+        if (error instanceof HttpError || error instanceof ProtocolError || error instanceof Error && /^(The artifact failed|The selected session changed)/.test(error.message)) throw error;
+        throw new Error('The artifact could not be downloaded from the connected host. Check the connection and retry.');
+      }
     },
     answerQuestion(question, answer) {
       const current = currentQuestion(); const request = selected?.pendingQuestion;

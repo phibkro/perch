@@ -95,7 +95,7 @@ export class SessionStore {
         storedArtifacts: live?.storedArtifacts?.map(artifact => ({ ...artifact })) ?? [],
         pendingQuestion: live?.pendingQuestion ? { ...live.pendingQuestion } : null,
         agents: live ? [...live.agents] : [], isWorking: live?.isWorking ?? false, readOnly: live?.readOnly ?? true,
-        remote: live?.remote,
+        remote: live?.remote, insights: live?.insights,
       };
     } else if (this.disconnected && this.snapshot?.mode === 'demo') {
       // The simulated host continues privately; the disconnected phone retains its last view.
@@ -392,7 +392,7 @@ export class SessionStore {
     const sessionId = this.liveUpdate?.session.id;
     const artifact = this.liveUpdate?.storedArtifacts?.find(item =>
       item.id === reference.id && item.sha256 === reference.sha256 && item.sessionId === reference.sessionId);
-    if (this.disposed || this.mode !== 'durable' || !this.driver?.loadArtifact || !artifact || artifact.sessionId !== sessionId) {
+    if (this.disposed || !this.driver?.loadArtifact || !artifact || artifact.sessionId !== sessionId) {
       throw new Error('This artifact is no longer available in the selected workspace.');
     }
     const content = await this.driver.loadArtifact(artifact);
@@ -405,6 +405,26 @@ export class SessionStore {
   setModel = (provider: string, modelId: string): void => {
     if (this.mode === 'demo' || this.connection.status !== 'live' || this.liveUpdate?.readOnly || !this.liveUpdate?.capabilities.modelSelection || this.liveUpdate.isWorking || this.liveUpdate.pendingQuestion || this.liveUpdate.sessionAction) return;
     this.driver?.setModel?.(provider, modelId);
+  };
+
+  setThinking = (level: string): void => {
+    const live = this.liveUpdate;
+    if (this.mode === 'demo' || this.connection.status !== 'live' || !live?.capabilities.thinkingSelection
+        || live.readOnly || live.isWorking || live.pendingQuestion || live.sessionAction) return;
+    this.driver?.setThinking?.(level);
+  };
+
+  renameSession = (title: string): void => {
+    const live = this.liveUpdate;
+    if (this.mode === 'demo' || this.connection.status !== 'live' || !live?.capabilities.sessionRename
+        || live.readOnly || live.isWorking || live.pendingQuestion || live.sessionAction) return;
+    this.driver?.renameSession?.(title);
+  };
+
+  focusSession = (): void => {
+    const live = this.liveUpdate;
+    if (this.mode === 'demo' || this.connection.status !== 'live' || !live?.capabilities.focusSession || live.readOnly || live.sessionAction) return;
+    this.driver?.focusSession?.();
   };
 
   useDemo = (): void => {

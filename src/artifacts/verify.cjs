@@ -9,12 +9,13 @@ const build = fs.mkdtempSync(path.join(project, '.artifact-test-'));
 async function main() {
   try {
     execFileSync(process.execPath, [path.join(project, 'node_modules/typescript/bin/tsc'),
-      'src/artifacts/model.ts', 'src/artifacts/html.ts', 'src/artifacts/read.ts', '--rootDir', 'src', '--outDir', build,
-      '--module', 'nodenext', '--target', 'es2022', '--lib', 'es2023,dom',
+      'src/artifacts/model.ts', 'src/artifacts/html.ts', 'src/artifacts/read.ts', 'src/artifacts/diagram.ts', '--rootDir', 'src', '--outDir', build,
+      '--module', 'commonjs', '--moduleResolution', 'node', '--target', 'es2022', '--lib', 'es2023,dom',
       '--esModuleInterop', '--skipLibCheck', '--strict'], { cwd: project, stdio: 'pipe' });
     const model = require(path.join(build, 'artifacts/model.js'));
     const html = require(path.join(build, 'artifacts/html.js'));
     const reader = require(path.join(build, 'artifacts/read.js'));
+    const diagrams = require(path.join(build, 'artifacts/diagram.js'));
     assert.equal(html.permitsInlineInteraction('html-a', false, null), false);
     assert.equal(html.permitsInlineInteraction('html-a', false, 'html-a'), true);
     assert.equal(html.permitsInlineInteraction('html-b', false, 'html-a'), false, 'A new selection never inherits script permission, even before effects');
@@ -42,6 +43,15 @@ async function main() {
     assert.equal(model.deriveArtifacts([{ ...response, role: 'user' }]).length, 0);
     assert.equal(model.deriveArtifacts([message('Okay, understood.')]).length, 0);
     assert.equal(model.deriveArtifacts([message('~~~markdown title="notes.md"\n# Notes\n~~~')])[0].kind, 'markdown');
+    const diagramText = 'flowchart TD\n  A[Perch] --> B[Tern]\n  B --> C[OMP]';
+    const diagramArtifact = model.deriveArtifacts([message(fence + 'mmd filename="workspace.mmd"\n' + diagramText + '\n' + fence)])[0];
+    assert.equal(diagramArtifact.language, 'mermaid');
+    assert.equal(diagramArtifact.content, diagramText, 'A rendered diagram retains exact source for copy/export');
+    assert.equal(diagrams.isMermaidLanguage(diagramArtifact.language), true);
+    assert.equal(diagrams.isMermaidLanguage('javascript'), false);
+    assert.equal(diagrams.diagramSourceProblem(' '.repeat(20)), 'This diagram is empty.');
+    assert.equal(diagrams.diagramSourceProblem(diagramText), undefined);
+    assert(diagrams.diagramSourceProblem('x'.repeat(diagrams.MAX_DIAGRAM_CHARACTERS + 1)));
     assert.equal(model.safeFilename('../../private/token.txt'), 'token.txt');
     assert.equal(model.safeFilename('C:\\private\\token.txt'), 'token.txt');
     assert.equal(model.safeFilename('...'), 'artifact.txt');
@@ -142,7 +152,23 @@ async function main() {
     assert.equal(html.permitsPreviewNavigation(html.ARTIFACT_ORIGIN + '.evil.invalid'), false);
     assert.equal(html.permitsPreviewNavigation('about:blank'), true);
     assert.equal(html.permitsPreviewNavigation(html.ARTIFACT_ORIGIN + '/#section'), true);
-    console.log('PASS artifacts: extraction, stored MIME/identity mapping, lazy-read gating and cancellation, exact content, filename boundaries, isolated-preview policy');
+    const diagramTheme = { scheme: 'dark', background: '#171719', surface: '#202024', ink: '#eeeeee', muted: '#aaaaaa', primary: '#cc9977', primarySoft: '#302822', line: '#39393f' };
+    const nonce = 'PerchDiagramFixtureNonce123456';
+    const scriptBoundary = '</script><script>globalThis.hostCompromised=true</script>\u2028\u2029';
+    assert(!diagrams.diagramJson(scriptBoundary).includes('<'));
+    assert.equal(JSON.parse(diagrams.diagramJson(scriptBoundary)), scriptBoundary, 'Embedding cannot change literal source characters');
+    const diagramDocument = diagrams.buildDiagramDocument(scriptBoundary, diagramTheme, nonce, 'globalThis.mermaid={};');
+    assert(!diagramDocument.includes(scriptBoundary));
+    assert(diagramDocument.includes('sandbox="allow-scripts"'));
+    assert(!diagramDocument.includes('allow-same-origin'));
+    assert(diagramDocument.includes("script-src 'nonce-" + nonce + "'"));
+    assert(!diagramDocument.includes("script-src 'unsafe-inline'"));
+    assert(diagramDocument.includes("connect-src 'none'"));
+    assert(diagramDocument.includes("worker-src 'none'"));
+    assert.throws(() => diagrams.diagramCsp('bad\"nonce'));
+    assert.throws(() => diagrams.buildDiagramDocument('x'.repeat(diagrams.MAX_DIAGRAM_CHARACTERS + 1), diagramTheme, nonce, ''));
+    assert.throws(() => diagrams.buildDiagramDocument(diagramText, diagramTheme, nonce, '</script>'));
+    console.log('PASS artifacts: extraction, stored MIME/identity mapping, lazy-read gating and cancellation, exact content, filename boundaries, isolated HTML/diagram policy and source serialization');
   } finally { fs.rmSync(build, { recursive: true, force: true }); }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

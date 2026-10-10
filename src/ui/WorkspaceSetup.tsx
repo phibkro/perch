@@ -116,13 +116,13 @@ export function WorkspaceConnections({ theme: t, onConnected }: { theme: Theme; 
 }
 
 function styles(t: Theme) { return StyleSheet.create({
-  flex: { flex: 1, minWidth: 0 }, label: { fontSize: 11, fontWeight: '700', letterSpacing: 1.4, color: t.subtle, marginBottom: 9 },
+  flex: { flex: 1, minWidth: 0 }, label: { fontSize: 11, fontWeight: '500', fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', letterSpacing: .6, color: t.subtle, marginBottom: 9 },
   heading: { fontSize: 15, lineHeight: 21, fontWeight: '600', color: t.ink }, body: { fontSize: 14, lineHeight: 21, color: t.muted }, small: { fontSize: 12, lineHeight: 18, color: t.muted },
-  choices: { flexDirection: 'row', gap: 10, marginBottom: 22 }, choice: { flex: 1, gap: 7, padding: 15, borderWidth: 1, borderColor: t.line, borderRadius: 14, backgroundColor: t.surface }, selected: { borderColor: t.primary, backgroundColor: t.primarySoft },
-  group: { borderWidth: 1, borderColor: t.line, borderRadius: 14, overflow: 'hidden', backgroundColor: t.surface },
+  choices: { flexDirection: 'row', gap: 10, marginBottom: 22 }, choice: { flex: 1, gap: 7, padding: 15, borderWidth: 1, borderColor: t.line, borderRadius: 12, backgroundColor: t.surface }, selected: { borderColor: t.primary, backgroundColor: t.primarySoft },
+  group: { borderWidth: 1, borderColor: t.line, borderRadius: 12, overflow: 'hidden', backgroundColor: t.surface },
   savedRow: { flexDirection: 'row', alignItems: 'center', paddingLeft: 14 }, savedButton: { flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', paddingVertical: 15 }, remove: { padding: 15 },
   step: { flexDirection: 'row', gap: 12, marginBottom: 23 }, number: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: t.primarySoft }, numberText: { fontSize: 12, fontWeight: '700', color: t.primary },
-  command: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, borderWidth: 1, borderColor: t.line, backgroundColor: t.surface, borderRadius: 9, padding: 12, marginTop: 12 }, code: { flex: 1, fontSize: 12, color: t.ink, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' },
-  inputLabel: { color: t.muted, fontSize: 12, marginBottom: 7 }, input: { borderWidth: 1, borderColor: t.line, borderRadius: 11, paddingHorizontal: 13, paddingVertical: 13, color: t.ink, backgroundColor: t.surface, fontSize: 14, marginBottom: 10, minHeight: 48 },
+  command: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, borderWidth: 1, borderColor: t.line, backgroundColor: t.surfaceAlt, borderRadius: 8, padding: 12, marginTop: 12, minHeight: 48 }, code: { flex: 1, fontSize: 12, color: t.ink, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' },
+  inputLabel: { color: t.muted, fontSize: 12, marginBottom: 7 }, input: { borderWidth: 1, borderColor: t.controlLine, borderRadius: 8, paddingHorizontal: 13, paddingVertical: 13, color: t.ink, backgroundColor: t.surface, fontSize: 15, marginBottom: 10, minHeight: 48 },
   textButton: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingVertical: 9 }, link: { color: t.primary, fontSize: 12, fontWeight: '600' }, error: { fontSize: 13, lineHeight: 19, color: t.error, marginBottom: 13 },
 }); }

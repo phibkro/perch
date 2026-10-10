@@ -1,4 +1,4 @@
--- Tern 0.6.0 (0e39682), checked against `tern plugin types` from that binary.
+-- Tern 0.6.0 (0e39682) and 0.7.0 (9ca00e4), checked against their generated SDKs.
 -- No cx is retained. Every timer/fetch callback receives a fresh window context.
 local PRIVATE_PROTOCOL = "perch-tern-plugin"
 local config = nil
@@ -124,6 +124,7 @@ local function capture(cx)
 				if native and not canPrompt then table.insert(notices, "The host composer is not ready. Perch does not queue a prompt in Tern.") end
 				detail = { pane = entry.pane, generation = currentGeneration, messages = messages,
 					canPrompt = canPrompt and entry.state ~= "exited", canInterrupt = native and entry.state ~= "exited",
+					canFocus = entry.state ~= "exited",
 					truncated = truncated, notices = notices, pendingQuestion = question }
 			end
 		end
@@ -166,6 +167,8 @@ local function dispatch(cx, command)
 			if agent.pane == command.pane and agent.state ~= "exited" then present = true; break end
 		end
 		if not present then error("The agent is no longer present.") end
+		-- Focusing a live pane does not require its conversation composer to be visible.
+		if command.type == "focus-session" then return end
 		local native, canPrompt = surfaceState(cx, command.pane)
 		if not native then error("The native OMP conversation is unavailable.") end
 		if command.type == "prompt" then
@@ -186,6 +189,7 @@ local function dispatch(cx, command)
 	local invoked, failure = pcall(function()
 		if command.type == "prompt" then cx.agents:ask(command.pane, command.text)
 		elseif command.type == "answer" then cx.session:event(command.pane, event)
+		elseif command.type == "focus-session" then cx.layout:focus(command.pane)
 		else cx.agents:interrupt(command.pane) end
 	end)
 	return { id = command.id, status = invoked and "forwarded" or "unknown",

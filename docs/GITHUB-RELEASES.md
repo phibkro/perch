@@ -46,18 +46,18 @@ Actions artifacts are retained for 14 days; diagnostic logs and available app li
 
 ## Prepare the next version
 
-The current published prototype is **[0.6.0 / Android version code 7](https://github.com/phibkro/perch/releases/tag/v0.6.0)**, with unified workspace setup and the keyboard fix. The earlier keyboard hotfix remains available as [0.5.1/code 6](https://github.com/phibkro/perch/releases/tag/v0.5.1). Every subsequently distributed update must increase both the app version and Android version code. A code must exceed every previously distributed code, including a version distributed locally before a GitHub tag existed. Never delete or reuse a released version/tag to work around that rule. Android uses `versionCode` to determine upgrade ordering; see [Android versioning](https://developer.android.com/studio/publish/versioning).
+See [GitHub Releases](https://github.com/phibkro/perch/releases) for the latest published prototype. Each distributed update must increase both the app version and Android version code. The code must exceed every previously distributed code, including local builds. Never delete or reuse a released version/tag. Android uses `versionCode` for upgrade ordering; see [Android versioning](https://developer.android.com/studio/publish/versioning).
 
-For example, prepare 0.6.1 with code 8:
+For example, after 0.9.0/code 10, prepare 0.9.1/code 11:
 
 ```sh
 git fetch origin --tags
-bun run release:version 0.6.1 --check
-bun run release:version 0.6.1
+bun run release:version 0.9.1 --check
+bun run release:version 0.9.1
 bun run release:check
 ```
 
-`--check` previews the proposed change without writing. The version helper defaults to the current code plus one; use `--code 8` when you need an explicit code. It updates all version locations together, validates them before writing, and preserves unrelated edits:
+`--check` previews the proposed change without writing. The version helper defaults to the current code plus one; use `--code 11` when you need an explicit code. It updates all version locations together, validates them before writing, and preserves unrelated edits:
 
 | File | Version values |
 | --- | --- |

@@ -113,14 +113,14 @@ const CodeBlock: FC<{ code: string; language: string | undefined }> = ({
   };
 
   return (
-    <View className="aui-md-code-block border-border bg-muted/50 my-2 overflow-hidden rounded-xl border">
-      <View className="aui-md-code-header border-border/50 flex-row items-center justify-between border-b py-1 pr-1 pl-3.5">
-        <Text className="text-muted-foreground text-xs font-medium lowercase">
+    <View className="aui-md-code-block border-border bg-muted my-2 overflow-hidden rounded-lg border">
+      <View className="aui-md-code-header border-border flex-row items-center justify-between border-b pr-1 pl-3.5">
+        <Text className="text-muted-foreground text-xs font-medium lowercase" style={{ fontFamily: MONOSPACE }}>
           {language || "text"}
         </Text>
         <Pressable
           onPress={copy}
-          className="active:bg-muted size-7 items-center justify-center rounded-md"
+          className="active:bg-accent size-11 items-center justify-center rounded-md"
           accessibilityRole="button"
           accessibilityLabel="Copy code"
         >

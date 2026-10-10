@@ -1,19 +1,31 @@
+/**
+ * Tern's documented kit defaults, adapted to native semantic roles.
+ * Keep the assistant-ui equivalents in global.css aligned with these values.
+ * See docs/TERN-OMP-VISUAL-DESIGN.md for provenance and adaptations.
+ * `primary` is readable ink; `primaryFill` carries white button text.
+ */
 export const lightTheme = {
-  background: '#F5F5F0', surface: '#FFFFFF', surfaceAlt: '#ECEEE7',
-  ink: '#25332D', muted: '#67746C', subtle: '#889188', line: '#E0E5DC',
-  primary: '#345E49', primarySoft: '#E6EEDF', primaryInk: '#FFFFFF',
-  lime: '#DAEBAA', limeInk: '#2D4228', amber: '#8E5D24', amberSoft: '#F8EDD7',
-  error: '#A33F3B', errorSoft: '#FCE9E5', dark: '#263F33', onDark: '#FAFFF3',
-  backdrop: 'rgba(22,35,27,0.40)', code: '#26342D', codeInk: '#DAE9CE',
+  scheme: 'light' as 'light' | 'dark',
+  background: '#FBFBFA', chrome: '#EFEFEC', surface: '#FFFFFF', surfaceAlt: '#F4F4F2',
+  ink: '#1B1C20', muted: '#55575F', subtle: '#6A6C74', line: 'rgba(27,28,32,0.10)',
+  controlLine: '#8B8D95',
+  primary: '#2448C4', primarySoft: '#EAF0FF', primaryFill: '#2F63F0', primaryInk: '#FFFFFF',
+  success: '#167A4D', successSoft: '#EDF8F2', activity: '#7540BD', activitySoft: '#F4EDFC',
+  lime: '#EAF0FF', limeInk: '#2448C4', amber: '#8A6000', amberSoft: '#FFF5DF',
+  error: '#BF3038', errorSoft: '#FFF0F0', dark: '#161619', onDark: '#EDEDED',
+  backdrop: 'rgba(27,28,32,0.32)', code: '#0C0C0D', codeInk: '#E4E4E7',
 };
 
 export const darkTheme: typeof lightTheme = {
-  background: '#17221D', surface: '#202E26', surfaceAlt: '#2A3930',
-  ink: '#E5EDDF', muted: '#A6B4A6', subtle: '#85978A', line: '#36493B',
-  primary: '#C2DBA4', primarySoft: '#324C34', primaryInk: '#21371F',
-  lime: '#DAEBAA', limeInk: '#2D4228', amber: '#EDC988', amberSoft: '#453B27',
-  error: '#FFB4A8', errorSoft: '#4B302E', dark: '#2A4637', onDark: '#FAFFF3',
-  backdrop: 'rgba(0,0,0,0.65)', code: '#131E17', codeInk: '#D6E6CC',
+  scheme: 'dark',
+  background: '#0F0F12', chrome: '#08080A', surface: '#161619', surfaceAlt: '#1D1D21',
+  ink: '#EDEDED', muted: '#A1A1A1', subtle: '#8A8A92', line: 'rgba(255,255,255,0.10)',
+  controlLine: '#62636C',
+  primary: '#9DBCFF', primarySoft: '#1B2743', primaryFill: '#2A5FE0', primaryInk: '#FFFFFF',
+  success: '#3ECF8E', successSoft: '#13271E', activity: '#A86AF4', activitySoft: '#241B32',
+  lime: '#1B2743', limeInk: '#9DBCFF', amber: '#F5A524', amberSoft: '#302512',
+  error: '#FF6166', errorSoft: '#301A1D', dark: '#08080A', onDark: '#EDEDED',
+  backdrop: 'rgba(0,0,0,0.65)', code: '#0C0C0D', codeInk: '#E4E4E7',
 };
 
 export type Theme = typeof lightTheme;

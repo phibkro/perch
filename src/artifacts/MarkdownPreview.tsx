@@ -3,6 +3,8 @@ import { Image, Linking, Pressable, Text, View, type ImageStyle, type TextStyle 
 import Markdown, { Renderer } from 'react-native-marked';
 import type { Theme } from '../ui/theme';
 import { CodePreview } from './CodePreview';
+import { DiagramPreview } from './DiagramPreview';
+import { isMermaidLanguage } from './diagram';
 import { MAX_RENDER_CHARACTERS } from './model';
 
 function externalUrl(value: string) {
@@ -27,7 +29,10 @@ function DocumentImage({ uri, alt, theme: t }: { uri: string; alt?: string; them
 class DocumentRenderer extends Renderer {
   constructor(private readonly theme: Theme) { super({ selectable: true }); }
   code(text: string, language?: string) {
-    return <View key={this.getKey()} style={{ marginVertical: 10 }}><CodePreview content={text} language={(language || 'text').split(/\s+/)[0]} theme={this.theme} compact /></View>;
+    const format = (language || 'text').split(/\s+/)[0];
+    return <View key={this.getKey()} style={{ marginVertical: 10 }}>{isMermaidLanguage(format)
+      ? <DiagramPreview content={text} theme={this.theme} compact />
+      : <CodePreview content={text} language={format} theme={this.theme} compact />}</View>;
   }
   image(uri: string, alt?: string, _style?: ImageStyle, title?: string) {
     return <DocumentImage key={this.getKey()} uri={uri} alt={alt || title} theme={this.theme} />;

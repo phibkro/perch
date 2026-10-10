@@ -9,6 +9,7 @@ export const LIMITATIONS = Object.freeze([
   'Prompt and interrupt receipts acknowledge forwarding through the OMP extension API, not a completed or persisted turn.',
   'Answer dialogs, approvals, branching, and session creation in the host terminal. This adapter does not intercept every TUI dialog.',
   'History survives according to OMP storage. Active model calls, tools, and command receipts are not restored after this process exits.',
+  'On Linux, supported built-in writes can produce a bounded file snapshot. Captured files are cleared on session transitions or process exit; they are not a filesystem browser.',
 ]);
 
 const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -99,7 +100,7 @@ export function sessionSummary(config, generation, context, needsInput) {
 }
 
 /** Read host branch entries afresh and add only the not-yet-persisted streaming tail. */
-export function projectSnapshot({ config, epoch, generation, revision, context, entries, live, activeTools, needsInput, models }) {
+export function projectSnapshot({ config, epoch, generation, revision, context, entries, live, activeTools, needsInput, models, insights, storedArtifacts = [] }) {
   let truncated = false;
   const mark = () => { truncated = true; };
   const messages = [], tools = new Map(), ordinals = new Map();
@@ -153,13 +154,22 @@ export function projectSnapshot({ config, epoch, generation, revision, context, 
   }
   if (messages.length > MAX_ROWS) { messages.splice(0, messages.length - MAX_ROWS); mark(); }
   let toolRows = [...tools.values()].sort((a, b) => toolOrder.get(a.id) - toolOrder.get(b.id));
+  const capturedSources = new Set(storedArtifacts.map(artifact => artifact.sourceId));
+  // When actual file bytes are available, don't present the original write
+  // arguments as a second saved revision of the same tool output.
+  toolRows = toolRows.map(tool => {
+    if (!tool.artifact || !capturedSources.has(`tool:${tool.id}`)) return tool;
+    const { artifact: _input, ...activity } = tool;
+    return activity;
+  });
   if (toolRows.length > MAX_ROWS) { toolRows = toolRows.slice(-MAX_ROWS); mark(); }
   const advertised = models.map(displayModel).filter(Boolean);
   if (advertised.length > MAX_REMOTE_MODELS) mark();
   const snapshot = { protocol: REMOTE_PROTOCOL, version: REMOTE_VERSION, epoch, revision,
     session: sessionSummary(config, generation, context, needsInput),
     capabilities: { prompt: true, interrupt: true, modelSelection: true }, readOnly: false,
-    messages, tools: toolRows, availableModels: advertised.slice(0, MAX_REMOTE_MODELS), truncated, notices: [] };
+    messages, tools: toolRows, availableModels: advertised.slice(0, MAX_REMOTE_MODELS), truncated, notices: [],
+    storedArtifacts, ...(insights ? { insights } : {}) };
   if (needsInput) snapshot.notices.push('OMP is awaiting a tool decision. Answer it in the host terminal; this adapter cannot approve it.');
   const truncatedNotice = 'This is a bounded recent view. Some earlier rows or oversized text were omitted or shortened; the full history remains in OMP.';
   const bytes = value => Buffer.byteLength(JSON.stringify(value));

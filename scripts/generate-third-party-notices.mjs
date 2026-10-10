@@ -21,6 +21,9 @@ const knownLicenses = new Set([
   'MIT', 'BSD-3-Clause', '(MIT OR CC0-1.0)', 'ISC', '0BSD', 'Apache-2.0',
   'BlueOak-1.0.0', '(BSD-3-Clause OR GPL-2.0)', 'Python-2.0',
   '(MIT OR Apache-2.0)', 'Unlicense', 'CC-BY-4.0', 'MPL-2.0', 'BSD-2-Clause', 'CC0-1.0',
+  // Mermaid 12.1.0: DOMPurify publishes both complete license alternatives;
+  // elkjs publishes EPL-2.0. Preserve their full texts and source links below.
+  '(MPL-2.0 OR Apache-2.0)', 'EPL-2.0',
 ]);
 const clean = (text) => text.replace(/\r\n?/g, '\n').trim();
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
@@ -309,7 +312,16 @@ for (const directory of [...locations].sort(compare)) {
   if (!relative.startsWith('node_modules/')) error('External linked dependency requires a reviewed publication notice.');
   const manifest = json(path.join(directory, 'package.json'));
   const identity = `${manifest.name}@${manifest.version}`;
-  if (!knownLicenses.has(manifest.license)) error(`Unknown or unresolved license for ${identity}: ${JSON.stringify(manifest.license)}`);
+  let license = manifest.license;
+  let licenseSource;
+  if (identity === 'khroma@2.1.0' && license === undefined) {
+    // The published package omits the manifest field but includes this full MIT
+    // license. Require the reviewed bytes; future packages need another review.
+    const hash = createHash('sha256').update(readFileSync(path.join(directory, 'license'))).digest('hex');
+    if (hash !== '66b333b0f66759a0b710459e03f7029abe17f4358114a128d2c972e642961b49') error('The reviewed khroma license changed.');
+    license = 'MIT'; licenseSource = 'Published license file; package.json omits the license field.';
+  }
+  if (!knownLicenses.has(license)) error(`Unknown or unresolved license for ${identity}: ${JSON.stringify(license)}`);
   const notices = licenseFiles(directory);
   const rootNotice = notices.some((entry) => !entry.source.includes('/') && entry.text.length > 200);
   const extra = supplementalNotices(manifest, directory);
@@ -317,7 +329,7 @@ for (const directory of [...locations].sort(compare)) {
   if (!rootNotice || extra.length) notices.push(...extra, ...sourceHeaders(directory, manifest));
   if (identity === 'structured-headers@0.4.1') omissions.push('structured-headers@0.4.1: published metadata supplies MIT and author attribution; its tarball omits a separate copyright/license notice. This specific fallback is documented in the packaged entry.');
   const repo = repositoryUrl(manifest);
-  const entry = packages.get(identity) || { identity, license: manifest.license, repo, notices: new Map() };
+  const entry = packages.get(identity) || { identity, license, licenseSource, repo, notices: new Map() };
   for (const notice of notices) {
     if (!notice.text) error(`Empty license text for ${identity}`);
     const hash = createHash('sha256').update(notice.text).digest('hex');
@@ -332,7 +344,7 @@ const sections = [
   `Package identities: ${packages.size}\nSource distributions: https://www.npmjs.com/package/<package>/v/<version> (substitute the exact package name and version shown in each entry).`,
 ];
 for (const entry of [...packages.values()].sort((a, b) => compare(a.identity, b.identity))) {
-  sections.push(`PACKAGE: ${entry.identity}\nDeclared license: ${entry.license}${entry.repo ? `\nUpstream source: ${entry.repo}` : ''}`);
+  sections.push(`PACKAGE: ${entry.identity}\nDeclared license: ${entry.license}${entry.licenseSource ? `\nLicense source: ${entry.licenseSource}` : ''}${entry.repo ? `\nUpstream source: ${entry.repo}` : ''}`);
   for (const notice of entry.notices.values()) sections.push(`NOTICE SOURCE: ${notice.source}\n\n${notice.text}`);
 }
 for (const [title, file] of [

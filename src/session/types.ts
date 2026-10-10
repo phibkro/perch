@@ -9,6 +9,13 @@ export interface HarnessMetadata {
   version?: string;
 }
 export interface ModelMetadata { id: string; name?: string; provider?: string }
+/** Bounded host facts. Missing values stay unknown; usage covers the current branch. */
+export interface SessionInsights {
+  context?: { tokens: number; contextWindow: number; percent: number };
+  thinking?: { level?: string; availableLevels: readonly string[] };
+  usage?: { input: number; output: number; cacheRead: number; cacheWrite: number; cost?: number; scope: 'current-branch' };
+  tools?: readonly { name: string; description: string; active: boolean }[];
+}
 /** Implemented adapter features; readOnly and connection state still govern writes. */
 export interface HarnessCapabilities {
   prompt: boolean;
@@ -20,6 +27,9 @@ export interface HarnessCapabilities {
   sessionSelection: boolean;
   /** Absent on older hosts; only true when this adapter can create a session. */
   sessionCreation?: boolean;
+  thinkingSelection?: boolean;
+  sessionRename?: boolean;
+  focusSession?: boolean;
 }
 export interface PiConnection { url: string; token: string }
 /** A workspace token for the durable API; provider credentials remain on the server. */
@@ -107,6 +117,7 @@ export interface SessionSnapshot {
   displayName: string;
   readOnly: boolean;
   remote?: RemoteSessionView;
+  insights?: SessionInsights;
 }
 
 /** Display metadata from the remote host; an absent attachment means browse only. */
@@ -129,6 +140,9 @@ export interface CollabDriver {
   answerQuestion(question: PendingQuestion, answer: string): void;
   reconnect(): void;
   setModel?(provider: string, modelId: string): void;
+  setThinking?(level: string): void;
+  renameSession?(title: string): void;
+  focusSession?(): void;
   selectSession?(sessionId: string): void;
   /** Stop observing this session without interrupting or terminating its host. */
   detachSession?(): void;
@@ -154,6 +168,7 @@ export interface CollabUpdate {
   isWorking: boolean;
   readOnly: boolean;
   remote?: RemoteSessionView;
+  insights?: SessionInsights;
 }
 
 export type HarnessDriver = CollabDriver;

@@ -688,7 +688,7 @@ const Composer: FC = () => {
 
   return (
     <ComposerPrimitive.Root className="aui-composer-root w-full">
-      <View className="aui-composer-shell border-border/60 dark:border-muted-foreground/15 bg-card gap-2 rounded-3xl border p-2">
+      <View className="aui-composer-shell border-input bg-card gap-2 rounded-xl border p-2">
         <ComposerAttachments />
         <ComposerInput />
         <ComposerAction />
@@ -716,13 +716,13 @@ const ComposerAction: FC = () => {
           }
         >
           <ComposerPrimitive.Send
-            className="aui-composer-send bg-primary active:bg-primary/90 size-7 items-center justify-center rounded-full disabled:opacity-50"
+            className="aui-composer-send bg-action active:bg-action/90 size-10 items-center justify-center rounded-md disabled:opacity-50"
             hitSlop={iconButtonHitSlop}
             accessibilityLabel="Send message"
           >
             <Icon
               as={ArrowUpIcon}
-              className="aui-composer-send-icon text-primary-foreground size-4"
+              className="aui-composer-send-icon text-primary-foreground size-5"
             />
           </ComposerPrimitive.Send>
         </AuiIf>
@@ -733,7 +733,7 @@ const ComposerAction: FC = () => {
           }
         >
           <ComposerPrimitive.Cancel
-            className="aui-composer-cancel bg-primary active:bg-primary/90 size-7 items-center justify-center rounded-full"
+            className="aui-composer-cancel bg-action active:bg-action/90 size-10 items-center justify-center rounded-md"
             hitSlop={iconButtonHitSlop}
             accessibilityLabel={
               isSending ? "Cancel sending" : "Stop generating"
@@ -905,7 +905,7 @@ const AssistantActionBar: FC = () => (
 const UserMessage: FC = () => (
   <MessagePrimitive.Root className="aui-user-message-root items-end gap-y-2 px-2">
     <UserMessageAttachments />
-    <View className="aui-user-message-content bg-muted max-w-[85%] rounded-xl px-4 py-2">
+    <View className="aui-user-message-content border-border bg-card max-w-[90%] rounded-lg border px-4 py-3">
       <MessagePrimitive.Parts components={{ Text: UserText, Image, File }} />
     </View>
     <View className="aui-user-message-footer -me-1 flex-row items-center justify-end">
@@ -942,13 +942,13 @@ const EditComposer: FC = () => {
 
   return (
     <MessagePrimitive.Root className="aui-edit-composer-wrapper px-2">
-      <ComposerPrimitive.Root className="aui-edit-composer-root border-border/60 dark:border-muted-foreground/15 bg-card ms-auto w-full max-w-[85%] rounded-3xl border">
+      <ComposerPrimitive.Root className="aui-edit-composer-root border-input bg-card ms-auto w-full max-w-[90%] rounded-xl border">
         <ComposerInput />
         <View className="aui-edit-composer-footer mx-2.5 mb-2.5 flex-row items-center gap-1.5 self-end">
-          <ComposerPrimitive.Cancel className="active:bg-accent h-8 justify-center rounded-full px-3.5">
+          <ComposerPrimitive.Cancel className="active:bg-accent h-11 justify-center rounded-md px-3.5">
             <Text className="text-foreground text-sm font-medium">Cancel</Text>
           </ComposerPrimitive.Cancel>
-          <ComposerPrimitive.Send className="bg-primary active:bg-primary/90 h-8 justify-center rounded-full px-3.5">
+          <ComposerPrimitive.Send className="bg-action active:bg-action/90 h-11 justify-center rounded-md px-3.5">
             <Text className="text-primary-foreground text-sm font-medium">
               Update
             </Text>

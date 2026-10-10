@@ -1,12 +1,28 @@
-# Perch 0.8
+# Perch 0.9
 
 **A native AI workspace with replaceable models, harnesses, and hosting.**
 
-Perch connects a phone to an agent running on your own host. The chat uses native **assistant-ui** components. Generated Markdown, HTML, and code open in a dedicated artifact workspace with preview, source, copy, and export.
+Perch connects a phone to an agent running on your own host. The chat uses native **assistant-ui** components. Generated Markdown, HTML, code, and Mermaid diagrams open in a dedicated artifact workspace with preview, source, copy, and export.
 
 Choose **Self-hosted** or **Cloud**, pair one workspace, then switch between the assistants it advertises. Cloud defaults to Cloudflare. Available connections are **OMP and Tern remote sessions**, **Pi Durable**, **OMP Collab**, the **Pi RPC bridge**, and **OpenCode through its included gateway**. The phone renders the conversation and artifacts; the host owns provider configuration and tool execution.
 
 The current target is a Pixel 8a running GrapheneOS. The project uses Expo 57, React Native, native assistant-ui, and Uniwind. Platform action buttons use Expo UI. iOS shares the application source but has not been built or device-tested.
+
+## New in 0.9
+
+| Area | Added |
+| --- | --- |
+| OMP session controls | Host-confirmed chat titles and thinking levels, context usage, reported branch usage/cost, and the host tool catalog |
+| OMP saved files | Bounded snapshots of supported built-in writes on Linux, downloaded by opaque ID and checked with SHA-256 |
+| Tern | Explicit **Show in Tern** to focus the attached pane, including while work or a decision is pending |
+| Artifact reader | Official Mermaid 12.1.0 bundled offline; diagram Preview/Source, fit/zoom, and on-demand diagrams within Markdown |
+| Appearance | Tern's documented neutral/cobalt tokens and OMP-inspired compact activity rows, with native touch sizing |
+
+[Integration details and host upgrade steps](docs/TERN-OMP-0.9.md),
+[package research](docs/INTEGRATION-REUSE-RESEARCH.md), and
+[runtime qualification](docs/RUNTIME-QUALIFICATION-2026-10-10.md) explain the
+scope. The two adapter routes remain explicit; Perch does not guess that a Tern
+pane and an independently advertised OMP session are the same conversation.
 
 ## Chat first
 
@@ -111,12 +127,13 @@ readers, and never launches another agent to imitate your current session.
 
 - [OMP extension](server/omp-remote/README.md): runs inside the original OMP
   process and exposes its conversation, prompt/interrupt controls and advertised
-  model selection through the public extension API.
+  model selection through the public extension API. Version 0.9 adds native
+  session details, title/thinking changes, and captured file downloads.
 - [Tern plugin and bridge](server/tern-remote/README.md): discovers supported
   agent panes through an attached Tern window and exposes bounded native
   transcripts and targeted agent controls. Perch 0.8 adds supported OMP approval
   answers, plan review with native Markdown/Source, and host choice controls.
-  It does not need Tern's web assets.
+  Version 0.9 adds explicit pane focus. It does not need Tern's web assets.
 
 Configure the adapter on your host, add it through `bun run setup:host` (choices
 5 or 6), and pair the workspace once. Open the remote connection on the phone,

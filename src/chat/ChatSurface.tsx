@@ -23,6 +23,7 @@ type Props = {
 };
 const ChatContext = createContext<Props | null>(null);
 function useChat() { const value = useContext(ChatContext); if (!value) throw new Error('Chat context is missing'); return value; }
+const metadataFont = Platform.OS === 'ios' ? 'Menlo' : 'monospace';
 
 /** Native registry thread, with our authoritative external-store adapter. */
 export function ChatSurface(props: Props) {
@@ -90,8 +91,9 @@ const NativeComposerInput = () => {
       editable={!state.readOnly && !state.sessionAction} maxLength={12000}
       placeholder={state.sessionAction ? 'Opening your chat…' : state.readOnly ? 'View-only session' : !state.capabilities.prompt ? state.mode === 'remote' ? 'Waiting for host prompt control…' : 'Start a new chat to send…' : state.pendingQuestion ? 'Answer the question to continue…' : offline ? 'Write a draft while offline…' : 'Message Perch…'}
       placeholderTextColor={t.subtle}
-      style={{ color: t.ink, minHeight: 48, maxHeight: 160, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 8, fontSize: 16, lineHeight: 23 }} />
-    <Text style={{ color: t.subtle, fontSize: 10, paddingHorizontal: 12, paddingTop: 2 }}>{state.mode === 'demo' ? 'Demo · no model calls' : state.readOnly ? 'View only' : `${state.harness.name} · tools run on your host`}</Text>
+      selectionColor={t.primary}
+      style={{ color: t.ink, minHeight: 48, maxHeight: 160, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 8, fontSize: 16, lineHeight: 24 }} />
+    <Text style={{ color: t.subtle, fontFamily: metadataFont, fontSize: 11, lineHeight: 17, paddingHorizontal: 12, paddingTop: 2 }}>{state.mode === 'demo' ? 'Demo · no model calls' : state.readOnly ? 'View only' : `${state.harness.name} · tools run on your host`}</Text>
   </View>;
 };
 
@@ -107,8 +109,8 @@ const PerchAssistantMessage = () => {
   return <MessagePrimitive.Root style={{ gap: 8 }}>
     {!activity && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
       {!isSystem && <Feather size={15} color={t.primary} />}
-      <Text style={{ color: t.muted, fontWeight: '700', fontSize: 10, letterSpacing: 1 }}>{isSystem ? 'SESSION UPDATE' : 'ASSISTANT'}</Text>
-      {message.role === 'assistant' && message.status?.type === 'running' && <Text style={{ color: t.primary, fontSize: 11 }}>writing</Text>}
+      <Text style={{ color: t.muted, fontFamily: metadataFont, fontWeight: '500', fontSize: 11, letterSpacing: .4 }}>{isSystem ? 'SESSION UPDATE' : 'ASSISTANT'}</Text>
+      {message.role === 'assistant' && message.status?.type === 'running' && <Text style={{ color: t.activity, fontSize: 11 }}>writing</Text>}
     </View>}
     <MessagePrimitive.Parts components={{ Text: PerchText, tools: { Fallback: PerchTool } }} />
     {attached.length > 0 && <View style={{ gap: 8 }}>{attached.map(artifact => <ArtifactCard key={artifact.id} artifact={artifact} onPress={() => onOpenArtifact(artifact)} theme={t} />)}</View>}
@@ -126,15 +128,18 @@ const PerchTool: ToolCallMessagePartComponent = ({ toolCallId, toolName }) => {
   const { state, theme: t, artifacts, onOpenArtifact } = useChat();
   const tool = state.tools.find(item => item.id === toolCallId);
   const [expanded, setExpanded] = useState(false);
-  return <View style={{ borderWidth: 1, borderColor: t.line, borderRadius: 16, backgroundColor: t.surface, overflow: 'hidden' }}>
-    <Pressable accessibilityRole="button" accessibilityLabel={`${expanded ? 'Collapse' : 'Expand'} ${tool?.label ?? toolName}`} accessibilityState={{ expanded }} onPress={() => setExpanded(!expanded)} style={{ minHeight: 62, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }}>
-      {tool?.status === 'done' ? <CheckCheck size={19} color={t.primary} /> : <Terminal size={19} color={tool?.status === 'error' ? t.error : t.primary} />}
-      <View style={{ flex: 1 }}><Text style={{ color: t.ink, fontWeight: '600', fontSize: 13 }}>{tool?.label ?? toolName}</Text><Text style={{ color: t.muted, fontSize: 11, marginTop: 3 }}>{TOOL_STATUS[tool?.status ?? 'unknown']}</Text></View>
+  const status = tool?.status ?? 'unknown';
+  const statusInk = status === 'done' ? t.success : status === 'running' ? t.activity : status === 'error' ? t.error : status === 'interrupted' ? t.amber : t.muted;
+  const statusFill = status === 'done' ? t.successSoft : status === 'running' ? t.activitySoft : status === 'error' ? t.errorSoft : status === 'interrupted' ? t.amberSoft : t.surfaceAlt;
+  return <View style={{ borderWidth: 1, borderColor: t.line, borderLeftWidth: 3, borderLeftColor: statusInk, borderRadius: 12, backgroundColor: t.surface, overflow: 'hidden' }}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`${expanded ? 'Collapse' : 'Expand'} ${tool?.label ?? toolName}`} accessibilityState={{ expanded }} onPress={() => setExpanded(!expanded)} style={{ minHeight: 60, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12 }}>
+      {status === 'done' ? <CheckCheck size={18} color={statusInk} /> : <Terminal size={18} color={statusInk} />}
+      <View style={{ flex: 1, minWidth: 0, gap: 5 }}><Text style={{ color: t.ink, fontFamily: metadataFont, fontWeight: '500', fontSize: 12, lineHeight: 19 }}>{tool?.label ?? toolName}</Text><View style={{ alignSelf: 'flex-start', backgroundColor: statusFill, borderRadius: 6, paddingHorizontal: 7, paddingVertical: 2 }}><Text style={{ color: statusInk, fontSize: 11, lineHeight: 16 }}>{TOOL_STATUS[status]}</Text></View></View>
       {expanded ? <ChevronUp size={17} color={t.muted} /> : <ChevronDown size={17} color={t.muted} />}
     </Pressable>
-    {expanded && <View style={{ borderTopWidth: 1, borderTopColor: t.line, padding: 14, gap: 12 }}>
-      <Text selectable style={{ color: t.muted, fontSize: 13, lineHeight: 20 }}>{tool?.detail ?? 'Activity reported by the host.'}</Text>
-      {!!tool?.output && <ScrollView horizontal><Text selectable style={{ color: t.codeInk, backgroundColor: t.code, borderRadius: 10, padding: 14, fontSize: 12, lineHeight: 19, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' }}>{tool.output}</Text></ScrollView>}
+    {expanded && <View style={{ borderTopWidth: 1, borderTopColor: t.line, padding: 12, gap: 12 }}>
+      <Text selectable style={{ color: t.muted, fontSize: 13, lineHeight: 21 }}>{tool?.detail ?? 'Activity reported by the host.'}</Text>
+      {!!tool?.output && <ScrollView horizontal><Text selectable style={{ color: t.codeInk, backgroundColor: t.code, borderRadius: 8, padding: 14, fontSize: 12, lineHeight: 20, fontFamily: metadataFont }}>{tool.output}</Text></ScrollView>}
       {artifacts.filter(artifact => artifact.sourceId === `tool:${toolCallId}`).map(artifact => <ArtifactCard key={artifact.id} artifact={artifact} theme={t} onPress={() => onOpenArtifact(artifact)} />)}
     </View>}
   </View>;
@@ -149,12 +154,12 @@ const Welcome = () => {
     { label: 'Connect a workspace', icon: Link2, onPress: onConnect },
   ];
   return <View testID="new-chat-welcome" style={{ alignItems: 'center', paddingHorizontal: 24, paddingVertical: 36, gap: 15 }}>
-    <View style={{ width: 52, height: 52, borderRadius: 18, backgroundColor: t.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }}><Feather size={27} color={t.primary} /></View>
-    <Text accessibilityRole="header" style={{ color: t.ink, fontSize: 28, lineHeight: 35, fontWeight: '600', letterSpacing: -.8, textAlign: 'center' }}>{state.readOnly ? 'Your shared conversation' : 'What would you like to do?'}</Text>
+    <View style={{ width: 52, height: 52, borderRadius: 12, borderWidth: 1, borderColor: t.line, backgroundColor: t.surface, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }}><Feather size={27} color={t.primary} /></View>
+    <Text accessibilityRole="header" style={{ color: t.ink, fontSize: 28, lineHeight: 36, fontWeight: '600', letterSpacing: -.7, textAlign: 'center' }}>{state.readOnly ? 'Your shared conversation' : 'What would you like to do?'}</Text>
     <Text style={{ color: t.muted, textAlign: 'center', lineHeight: 21, fontSize: 14, maxWidth: 340 }}>{state.mode === 'demo' ? 'A fresh space for your next idea.' : needsSession ? 'Your workspace is connected. Start your first chat.' : state.readOnly ? 'Messages appear here as your host works.' : 'Your assistant is ready when you are.'}</Text>
-    {needsSession && <Pressable accessibilityRole="button" onPress={onNewChat} disabled={!!state.sessionAction} style={{ minHeight: 48, justifyContent: 'center', borderRadius: 13, paddingHorizontal: 20, backgroundColor: t.primarySoft }}><Text style={{ color: t.primary, fontSize: 14, fontWeight: '600' }}>{state.sessionAction ? 'Creating chat…' : 'New chat'}</Text></Pressable>}
+    {needsSession && <Pressable accessibilityRole="button" onPress={onNewChat} disabled={!!state.sessionAction} style={{ minHeight: 48, justifyContent: 'center', borderRadius: 8, paddingHorizontal: 20, backgroundColor: t.primarySoft }}><Text style={{ color: t.primary, fontSize: 14, fontWeight: '600' }}>{state.sessionAction ? 'Creating chat…' : 'New chat'}</Text></Pressable>}
     {state.mode === 'demo' && <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 9, maxWidth: 520, marginTop: 9 }}>
-      {actions.map(({ label, icon: Icon, onPress }) => <Pressable key={label} accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => ({ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 11, borderRadius: 13, borderWidth: 1, borderColor: t.line, backgroundColor: pressed ? t.primarySoft : t.surface })}><Icon size={16} color={t.primary} /><Text style={{ fontSize: 12, fontWeight: '500', color: t.ink }}>{label}</Text></Pressable>)}
+      {actions.map(({ label, icon: Icon, onPress }) => <Pressable key={label} accessibilityRole="button" accessibilityLabel={label} onPress={onPress} style={({ pressed }) => ({ minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 11, borderRadius: 8, borderWidth: 1, borderColor: t.line, backgroundColor: pressed ? t.primarySoft : t.surface })}><Icon size={16} color={t.primary} /><Text style={{ fontSize: 13, fontWeight: '500', color: t.ink }}>{label}</Text></Pressable>)}
     </View>}
   </View>;
 };

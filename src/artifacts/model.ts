@@ -16,7 +16,7 @@ const extensions: Record<string, string> = {
 const languageAliases: Record<string, string> = {
   md: 'markdown', htm: 'html', ts: 'typescript', js: 'javascript', py: 'python',
   rs: 'rust', kt: 'kotlin', yml: 'yaml', sh: 'bash', shell: 'bash',
-  txt: 'text', plaintext: 'text', 'c++': 'cpp', 'c#': 'csharp',
+  txt: 'text', plaintext: 'text', 'c++': 'cpp', 'c#': 'csharp', mmd: 'mermaid',
 };
 const byExtension: Record<string, string> = {
   md: 'markdown', markdown: 'markdown', mdx: 'markdown', html: 'html', htm: 'html',
@@ -53,6 +53,7 @@ const languagesByMime: Record<string, string> = {
   'application/xml': 'xml', 'text/xml': 'xml', 'image/svg+xml': 'svg',
   'text/yaml': 'yaml', 'application/yaml': 'yaml', 'application/x-yaml': 'yaml',
   'text/x-python': 'python', 'text/x-shellscript': 'bash',
+  'text/vnd.mermaid': 'mermaid', 'text/x-mermaid': 'mermaid',
 };
 
 /**

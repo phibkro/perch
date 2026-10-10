@@ -9,6 +9,7 @@ import { ChatSurface } from './src/chat/ChatSurface';
 import { ArtifactWorkspace, artifactForMessage, deriveArtifacts, storedArtifactsToArtifacts, type Artifact } from './src/artifacts';
 import { NativeAction, NativeAppearanceSwitch } from './src/ui/NativeAction';
 import { ModelPicker } from './src/ui/ModelPicker';
+import { SessionControls } from './src/ui/SessionControls';
 import { WorkspaceSetup, WorkspaceConnections } from './src/ui/WorkspaceSetup';
 import { RemoteSessionAttachment, RemoteSessionBrowser } from './src/ui/RemoteSessions';
 import { QuestionContent, questionProgress } from './src/ui/QuestionContent';
@@ -16,7 +17,7 @@ import { workspaceManager } from './src/workspace';
 import { darkTheme, lightTheme, type Theme } from './src/ui/theme';
 
 type Screen = 'chat' | 'artifacts' | 'connection';
-type SheetName = 'connect' | 'advanced-connect' | 'question' | 'models' | 'host-new-chat' | null;
+type SheetName = 'connect' | 'advanced-connect' | 'question' | 'models' | 'host-new-chat' | 'session-controls' | null;
 const ThemeContext = createContext<Theme>(lightTheme);
 const useUI = () => { const t = useContext(ThemeContext); return { t, s: useMemo(() => styles(t), [t]) }; };
 const online = (state: SessionSnapshot) => state.connection.status === 'demo' || state.connection.status === 'live';
@@ -58,7 +59,7 @@ function Sidebar({ state, screen, artifactCount, onNewChat, onOpenChat, onNaviga
   </View>;
 }
 
-function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, openModels, restartDemo }: { state: SessionSnapshot; openConnect: () => void; dark: boolean; toggleDark: () => void; openChat: () => void; openModels: () => void; restartDemo: () => void }) {
+function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, openModels, openSessionControls, restartDemo }: { state: SessionSnapshot; openConnect: () => void; dark: boolean; toggleDark: () => void; openChat: () => void; openModels: () => void; openSessionControls: () => void; restartDemo: () => void }) {
   const { t, s } = useUI();
   return <ScrollView contentContainerStyle={s.page} showsVerticalScrollIndicator={false}>
     <Text style={s.eyebrow}>YOUR PHONE. YOUR WORKSPACE.</Text><Text style={[s.title, { marginBottom: 26 }]}>Connection</Text>
@@ -72,6 +73,7 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
     <Text style={[s.sectionTitle, { marginTop: 26, marginBottom: 12 }]}>Session details</Text>
     <View style={s.card}><Detail label="Harness" value={state.harness.name} /><Detail label="Transport" value={state.harness.transport} /><Detail label="Model" value={state.mode === 'demo' ? 'Simulated · no model call' : state.model ? `${state.model.name || state.model.id}${state.model.provider ? ` · ${state.model.provider}` : ''}` : 'Not reported by this host'} />
       {state.capabilities.modelSelection && !!state.availableModels?.length && <View style={{ paddingHorizontal: 16 }}><TextAction label="Choose a model" onPress={openModels} /></View>}
+      {(state.insights || state.capabilities.sessionRename || state.capabilities.focusSession) && <View style={{ paddingHorizontal: 16 }}><TextAction label="Host session controls" onPress={openSessionControls} /></View>}
       {state.remote?.host && <Detail label="Host" value={state.remote.host.name} />}
       {state.remote?.attached && <><Detail label="Runtime" value={state.remote.attached.runtimeId} /><Detail label="Generation" value={state.remote.attached.generation} /><Detail label="Updates" value="Periodic host snapshots" /></>}
     </View>
@@ -81,7 +83,7 @@ function ConnectionScreen({ state, openConnect, dark, toggleDark, openChat, open
       {state.mode === 'demo' && <Pressable accessibilityRole="button" onPress={() => { sessionStore.simulateDisconnect(); openChat(); }} style={[s.settingRow, s.topLine]}><WifiOff size={20} color={t.primary} /><Text style={[s.noteTitle, s.flex]}>Simulate a connection drop</Text><ChevronRight size={18} color={t.subtle} /></Pressable>}
       {state.mode !== 'demo' && !online(state) && <Pressable accessibilityRole="button" onPress={sessionStore.reconnect} style={[s.settingRow, s.topLine]}><RefreshCw size={20} color={t.primary} /><Text style={s.noteTitle}>Reconnect</Text></Pressable>}
     </View>
-    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.8 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
+    <Text style={[s.smallMuted, { textAlign: 'center', marginTop: 28 }]}>Perch 0.9 · an independent native assistant companion.{ '\n' }Pi Durable, OMP, pi, and OpenCode. Your models, your workspace.</Text>
   </ScrollView>;
 }
 function Detail({ label, value }: { label: string; value: string }) { const { s } = useUI(); return <View style={s.detail}><Text style={s.smallMuted}>{label}</Text><Text selectable style={[s.body, { flex: 1, textAlign: 'right' }]}>{value}</Text></View>; }
@@ -188,10 +190,11 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
   const remoteIdentity = state.mode === 'remote' ? `${state.remote?.epoch ?? ''}:${state.remote?.attached?.generation ?? ''}:${state.remote?.attached?.conversationId ?? ''}:` : '';
   const namespace = `${state.mode}:${state.connectionEpoch ?? 0}:${remoteIdentity}${state.activeSessionId}`; const active = state.sessions.find(item => item.id === state.activeSessionId);
   const artifacts = useMemo(() => {
-    const all = [...storedArtifactsToArtifacts(state.storedArtifacts ?? []), ...deriveArtifacts(state.messages, state.tools)];
+    const saved = storedArtifactsToArtifacts(state.storedArtifacts ?? []).map(artifact => state.mode === 'remote' ? { ...artifact, sourceLabel: 'Host file snapshot' } : artifact);
+    const all = [...saved, ...deriveArtifacts(state.messages, state.tools)];
     for (const id of documentIds) { const message = state.messages.find(item => item.id === id); if (message) { const artifact = artifactForMessage(message); if (artifact && !all.some(item => item.id === artifact.id)) all.push(artifact); } }
     return all;
-  }, [state.messages, state.tools, state.storedArtifacts, documentIds]);
+  }, [state.mode, state.messages, state.tools, state.storedArtifacts, documentIds]);
   const navigate = (next: Screen) => { Keyboard.dismiss(); setDrawerOpen(false); setScreen(next); };
   const openConnect = () => { ++creationRequest.current; Keyboard.dismiss(); setDrawerOpen(false); setSheet('connect'); };
   const openArtifact = (artifact: Artifact) => { setSelectedArtifactId(artifact.id); navigate('artifacts'); };
@@ -227,7 +230,7 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
         <View style={s.headerTitle}><Text accessibilityRole="header" numberOfLines={1} style={s.cardTitle}>{screen === 'chat' ? active?.title || (state.mode === 'remote' ? 'Host sessions' : 'New chat') : screen === 'artifacts' ? 'Artifacts' : 'Connection & settings'}</Text>
           {screen === 'chat' && (state.capabilities.modelSelection && !!state.availableModels?.length ? <Pressable accessibilityRole="button" accessibilityLabel="Choose a model" onPress={() => setSheet('models')} style={s.modelPicker}><Text numberOfLines={1} style={s.smallMuted}>{modelLabel}</Text><ChevronDown size={13} color={t.muted} /></Pressable> : <Text style={s.smallMuted} numberOfLines={1}>{modelLabel}</Text>)}
         </View>
-        {screen === 'chat' ? <><IconButton icon={BookOpen} label="Open artifacts" onPress={() => navigate('artifacts')} /><IconButton icon={SquarePen} label="Start a new chat" onPress={newChat} disabled={!!state.sessionAction} /></> : <IconButton icon={ArrowLeft} label="Back to chat" onPress={() => navigate('chat')} />}
+        {screen === 'chat' ? <>{(state.insights || state.capabilities.sessionRename || state.capabilities.focusSession) && <IconButton icon={Settings2} label="Host session controls" onPress={() => setSheet('session-controls')} />}<IconButton icon={BookOpen} label="Open artifacts" onPress={() => navigate('artifacts')} /><IconButton icon={SquarePen} label="Start a new chat" onPress={newChat} disabled={!!state.sessionAction} /></> : <IconButton icon={ArrowLeft} label="Back to chat" onPress={() => navigate('chat')} />}
       </View>
       {screen === 'chat' && <View style={s.flex}>
         {state.sessionAction && <View accessibilityLiveRegion="polite" style={s.banner}><RefreshCw size={18} color={t.primary} /><Text style={[s.body, s.flex]}>{state.sessionAction === 'creating' ? 'Creating your chat…' : 'Opening your chat…'} Your current conversation stays here until it is ready.</Text></View>}
@@ -241,7 +244,7 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
         </>}
       </View>}
       {screen === 'artifacts' && <SafeAreaView edges={['bottom']} style={s.flex}><ArtifactWorkspace key={namespace} loadArtifact={sessionStore.loadArtifact} artifacts={artifacts} selectedArtifactId={selectedArtifactId} onSelectArtifact={setSelectedArtifactId} onClose={() => setSelectedArtifactId(null)} theme={t} /></SafeAreaView>}
-      {screen === 'connection' && <SafeAreaView edges={['bottom']} style={s.flex}><ConnectionScreen state={state} openConnect={openConnect} dark={dark} toggleDark={toggleDark} openChat={() => openChat()} openModels={() => setSheet('models')} restartDemo={startDemo} /></SafeAreaView>}
+      {screen === 'connection' && <SafeAreaView edges={['bottom']} style={s.flex}><ConnectionScreen state={state} openConnect={openConnect} dark={dark} toggleDark={toggleDark} openChat={() => openChat()} openModels={() => setSheet('models')} openSessionControls={() => setSheet('session-controls')} restartDemo={startDemo} /></SafeAreaView>}
       {!!toast && <View accessibilityLiveRegion="polite" style={s.toast}><Text style={{ color: t.primaryInk, fontSize: 13 }}>{toast}</Text></View>}
     </View>
     <Modal visible={!desktop && drawerOpen} transparent animationType="fade" onRequestClose={() => setDrawerOpen(false)} statusBarTranslucent>
@@ -263,6 +266,9 @@ function Workspace({ state, dark, toggleDark }: { state: SessionSnapshot; dark: 
     <Sheet visible={sheet === 'models'} title="Choose a model" onClose={() => setSheet(null)} scroll={false}>
       {sheet === 'models' && <ModelPicker models={state.availableModels || []} selected={state.model} disabled={state.readOnly || !online(state) || state.isWorking || !!state.pendingQuestion || !!state.sessionAction} theme={t} onSelect={model => { if (model.provider) sessionStore.setModel(model.provider, model.id); setSheet(null); }} />}
     </Sheet>
+    <Sheet visible={sheet === 'session-controls'} title="Host session controls" onClose={() => setSheet(null)} scroll={false}>
+      {sheet === 'session-controls' && <SessionControls state={state} theme={t} />}
+    </Sheet>
   </SafeAreaView>;
 }
 
@@ -272,23 +278,23 @@ const styles = (t: Theme) => StyleSheet.create({
   flex: { flex: 1, minHeight: 0 }, row: { flexDirection: 'row', alignItems: 'center', gap: 9 }, between: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
   root: { flex: 1, flexDirection: 'row', backgroundColor: t.background }, main: { flex: 1, minWidth: 0, minHeight: 0, backgroundColor: t.background },
   page: { padding: 24, paddingTop: 24, paddingBottom: 36, width: '100%', maxWidth: 760, alignSelf: 'center' },
-  sidebar: { width: 280, height: '100%', flexShrink: 0, minHeight: 0, borderRightWidth: 1, borderRightColor: t.line, backgroundColor: t.surface },
-  sidebarHeader: { height: 72, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 20, paddingRight: 10 }, sidebarActions: { paddingHorizontal: 12, gap: 5 },
-  brandMark: { width: 30, height: 30, borderRadius: 10, backgroundColor: t.primary, alignItems: 'center', justifyContent: 'center' }, brandName: { fontSize: 25, fontWeight: '700', letterSpacing: -1.2, color: t.ink },
-  newChatButton: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: t.line, backgroundColor: t.primarySoft, borderRadius: 12, minHeight: 48, paddingHorizontal: 13 },
-  sidebarItem: { minHeight: 47, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 13, borderRadius: 11 }, sidebarSelected: { backgroundColor: t.surfaceAlt }, sidebarLabel: { fontSize: 13, lineHeight: 19, color: t.ink, fontWeight: '500' },
-  historyHeading: { fontSize: 10, fontWeight: '700', letterSpacing: 1.1, color: t.subtle, paddingHorizontal: 25, paddingTop: 26, paddingBottom: 10 }, historyList: { paddingHorizontal: 12, gap: 3, paddingBottom: 16 }, historyItem: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 13, borderRadius: 11 },
+  sidebar: { width: 280, height: '100%', flexShrink: 0, minHeight: 0, borderRightWidth: 1, borderRightColor: t.line, backgroundColor: t.chrome },
+  sidebarHeader: { height: 68, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 20, paddingRight: 10 }, sidebarActions: { paddingHorizontal: 12, gap: 4 },
+  brandMark: { width: 30, height: 30, borderRadius: 8, backgroundColor: t.primaryFill, alignItems: 'center', justifyContent: 'center' }, brandName: { fontSize: 24, fontWeight: '600', letterSpacing: -1, color: t.ink },
+  newChatButton: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: t.line, backgroundColor: t.surface, borderRadius: 8, minHeight: 48, paddingHorizontal: 13 },
+  sidebarItem: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 13, borderRadius: 8 }, sidebarSelected: { backgroundColor: t.primarySoft }, sidebarLabel: { fontSize: 13, lineHeight: 20, color: t.ink, fontWeight: '500' },
+  historyHeading: { fontSize: 11, fontWeight: '500', fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', letterSpacing: .6, color: t.subtle, paddingHorizontal: 25, paddingTop: 26, paddingBottom: 10 }, historyList: { paddingHorizontal: 12, gap: 3, paddingBottom: 16 }, historyItem: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 13, borderRadius: 8 },
   sidebarFooter: { padding: 12, gap: 3, borderTopWidth: 1, borderTopColor: t.line }, sidebarStatus: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 13, paddingTop: 10, paddingBottom: 4 },
-  drawerRoot: { flex: 1, flexDirection: 'row' }, drawerPanel: { height: '100%', backgroundColor: t.surface },
-  iconButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 13 },
-  eyebrow: { fontSize: 10, letterSpacing: 1.5, color: t.muted, fontWeight: '700' }, title: { fontSize: 30, lineHeight: 37, letterSpacing: -1, color: t.ink, fontWeight: '600', marginTop: 12 },
+  drawerRoot: { flex: 1, flexDirection: 'row' }, drawerPanel: { height: '100%', backgroundColor: t.chrome },
+  iconButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 8 },
+  eyebrow: { fontSize: 11, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', letterSpacing: .6, color: t.muted, fontWeight: '500' }, title: { fontSize: 28, lineHeight: 36, letterSpacing: -.7, color: t.ink, fontWeight: '600', marginTop: 12 },
   sectionTitle: { color: t.ink, fontSize: 18, fontWeight: '600', letterSpacing: -.3 }, cardTitle: { color: t.ink, fontSize: 15, fontWeight: '600', lineHeight: 21 }, body: { color: t.muted, fontSize: 13, lineHeight: 21 }, smallMuted: { color: t.muted, fontSize: 11, lineHeight: 17 }, noteTitle: { color: t.ink, fontSize: 13, fontWeight: '600', lineHeight: 20 },
-  card: { backgroundColor: t.surface, borderWidth: 1, borderColor: t.line, borderRadius: 18, overflow: 'hidden' }, sessionIcon: { width: 43, height: 43, borderRadius: 13, backgroundColor: t.primarySoft, alignItems: 'center', justifyContent: 'center' }, topLine: { borderTopWidth: 1, borderTopColor: t.line },
-  textAction: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 4 }, actionText: { color: t.primary, fontSize: 12, fontWeight: '600' }, dot: { width: 5, height: 5, borderRadius: 5 }, pill: { flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 20, backgroundColor: t.primarySoft, maxWidth: '78%' },
-  chatHeader: { minHeight: 64, flexDirection: 'row', gap: 4, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: t.line }, headerTitle: { flex: 1, minWidth: 0, gap: 1, paddingHorizontal: 7 }, modelPicker: { minHeight: 44, flexDirection: 'row', gap: 5, alignItems: 'center', alignSelf: 'flex-start' },
+  card: { backgroundColor: t.surface, borderWidth: 1, borderColor: t.line, borderRadius: 12, overflow: 'hidden' }, sessionIcon: { width: 43, height: 43, borderRadius: 8, backgroundColor: t.primarySoft, alignItems: 'center', justifyContent: 'center' }, topLine: { borderTopWidth: 1, borderTopColor: t.line },
+  textAction: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 4 }, actionText: { color: t.primary, fontSize: 12, fontWeight: '600' }, dot: { width: 6, height: 6, borderRadius: 3 }, pill: { flexDirection: 'row', gap: 6, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 6, backgroundColor: t.primarySoft, maxWidth: '78%' },
+  chatHeader: { minHeight: 60, flexDirection: 'row', gap: 4, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, backgroundColor: t.background, borderBottomWidth: 1, borderBottomColor: t.line }, headerTitle: { flex: 1, minWidth: 0, gap: 1, paddingHorizontal: 7 }, modelPicker: { minHeight: 44, flexDirection: 'row', gap: 5, alignItems: 'center', alignSelf: 'flex-start' },
   banner: { backgroundColor: t.amberSoft, flexDirection: 'row', alignItems: 'center', gap: 11, paddingHorizontal: 18, paddingVertical: 11 }, demoActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', paddingHorizontal: 20, minHeight: 40 },
   detail: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, borderBottomWidth: 1, borderBottomColor: t.line }, settingRow: { flexDirection: 'row', alignItems: 'center', gap: 13, padding: 17, minHeight: 63 },
-  modalRoot: { flex: 1, justifyContent: 'flex-end', alignItems: 'center' }, sheet: { backgroundColor: t.surface, width: '100%', maxWidth: 580, maxHeight: '90%', paddingHorizontal: 24, paddingTop: 12, borderTopLeftRadius: 28, borderTopRightRadius: 28 }, sheetHandle: { width: 35, height: 4, borderRadius: 4, backgroundColor: t.line, alignSelf: 'center', marginBottom: 10 },
-  inputLabel: { color: t.ink, fontWeight: '600', fontSize: 12, marginTop: 15, marginBottom: 8 }, input: { borderWidth: 1, borderColor: t.line, borderRadius: 12, backgroundColor: t.background, minHeight: 50, padding: 14, color: t.ink, fontSize: 15, lineHeight: 22 }, option: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: t.line, padding: 16, borderRadius: 14, minHeight: 62, marginBottom: 8 }, radio: { width: 20, height: 20, borderRadius: 12, borderWidth: 1.5, borderColor: t.subtle, alignItems: 'center', justifyContent: 'center' }, harnessTabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginBottom: 19 }, harnessTab: { flexBasis: '47%', flexGrow: 1, minHeight: 48, borderWidth: 1, borderColor: t.line, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  toast: { position: 'absolute', bottom: 160, left: 20, right: 20, maxWidth: 600, alignSelf: 'center', backgroundColor: t.primary, padding: 16, borderRadius: 16 },
+  modalRoot: { flex: 1, justifyContent: 'flex-end', alignItems: 'center' }, sheet: { backgroundColor: t.surface, width: '100%', maxWidth: 580, maxHeight: '90%', paddingHorizontal: 24, paddingTop: 12, borderTopLeftRadius: 16, borderTopRightRadius: 16 }, sheetHandle: { width: 35, height: 4, borderRadius: 4, backgroundColor: t.controlLine, alignSelf: 'center', marginBottom: 10 },
+  inputLabel: { color: t.ink, fontWeight: '600', fontSize: 12, marginTop: 15, marginBottom: 8 }, input: { borderWidth: 1, borderColor: t.controlLine, borderRadius: 8, backgroundColor: t.background, minHeight: 50, padding: 14, color: t.ink, fontSize: 15, lineHeight: 22 }, option: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: t.line, padding: 16, borderRadius: 12, minHeight: 62, marginBottom: 8 }, radio: { width: 20, height: 20, borderRadius: 12, borderWidth: 1.5, borderColor: t.subtle, alignItems: 'center', justifyContent: 'center' }, harnessTabs: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginBottom: 19 }, harnessTab: { flexBasis: '47%', flexGrow: 1, minHeight: 48, borderWidth: 1, borderColor: t.line, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  toast: { position: 'absolute', bottom: 160, left: 20, right: 20, maxWidth: 600, alignSelf: 'center', backgroundColor: t.primaryFill, padding: 16, borderRadius: 12 },
 });

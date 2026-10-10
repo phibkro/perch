@@ -1,5 +1,11 @@
 # Perch, Tern, and OMP: integration surface map
 
+> **Version note:** This inventory records the pinned pre-0.9 baseline.
+> [Perch 0.9 additions](TERN-OMP-0.9.md) cover the new session controls,
+> captured file downloads, pane focus and diagrams.
+> [Runtime qualification](RUNTIME-QUALIFICATION-2026-10-10.md) adds the supplied
+> Tern 0.7 and OMP executable evidence.
+
 **Audit date:** 10 October 2026. **Perch baseline:** 0.8.0 / Android code 9,
 commit `3f2fef0bc6457dd8eee7f2359867beaa5fd974e4` (application release source
 `61bf8cbfb39409b590f84ad3c38b4ff324683d51`). This is an inventory and development

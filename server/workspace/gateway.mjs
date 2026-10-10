@@ -113,7 +113,7 @@ async function httpHealth(connection, signal) {
 function allowedRoute(kind, method, path) {
   if (kind === 'remote') {
     if (method === 'GET' && ['/perch/health', '/perch/sessions'].includes(path)) return true;
-    if (method === 'GET' && new RegExp(`^/perch/sessions/${ID}(?:/operations/${ID})?$`).test(path)) return true;
+    if (method === 'GET' && new RegExp(`^/perch/sessions/${ID}(?:/(?:operations|artifacts)/${ID})?$`).test(path)) return true;
     return method === 'POST' && new RegExp(`^/perch/sessions/${ID}/commands$`).test(path);
   }
   if (kind === 'durable') {
@@ -349,7 +349,7 @@ export function createWorkspaceGateway(input) {
           streamed = true; return response;
         }
         if (upstream.status === 204) { await upstream.body?.cancel(); return new Response(null, { status: 204, headers: responseHeaders(origin) }); }
-        const artifact = route.kind === 'durable' && /\/artifacts\//.test(path);
+        const artifact = ['durable', 'remote'].includes(route.kind) && /\/artifacts\//.test(path);
         if (!artifact && !jsonType(upstream.headers.get('content-type'))) { await upstream.body?.cancel(); reject(502, 'The local adapter returned an unexpected content type.'); }
         const bytes = await boundedBytes(upstream.body, artifact ? MAX_STORED_ARTIFACT_BYTES : route.kind === 'remote' ? MAX_REMOTE_BYTES : MAX_RESPONSE_BYTES, abort.signal, upstream.headers.get('content-length'));
         const headers = responseHeaders(origin, { 'Content-Type': artifact ? 'application/octet-stream' : 'application/json', 'Content-Length': String(bytes.byteLength) });

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { FlatList, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { FlatList, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Check, Search } from 'lucide-react-native';
 import type { ModelMetadata } from '../session';
 import type { Theme } from './theme';
@@ -20,12 +20,12 @@ export function ModelPicker({ models, selected, disabled, theme: t, onSelect }: 
   }, [models, provider, query]);
   return <View style={{ flex: 1, minHeight: 0, gap: 12 }}>
     <Text style={{ color: t.muted, fontSize: 13, lineHeight: 20 }}>Choose from models available on your host. The next message uses your selection.</Text>
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: t.line, borderRadius: 12, paddingHorizontal: 13, backgroundColor: t.background }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: t.controlLine, borderRadius: 8, paddingHorizontal: 13, backgroundColor: t.background }}>
       <Search size={18} color={t.muted} />
       <TextInput accessibilityLabel="Search models and providers" placeholder="Search models or providers…" placeholderTextColor={t.subtle} value={query} onChangeText={setQuery} autoCapitalize="none" autoCorrect={false} style={{ flex: 1, minHeight: 48, color: t.ink, fontSize: 15 }} />
     </View>
     <View><ScrollView horizontal showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ gap: 7 }}>
-      {[null, ...providers].map(id => <Pressable key={JSON.stringify(id)} accessibilityRole="button" accessibilityLabel={id ? `Filter provider ${id}` : 'All providers'} aria-selected={provider === id} accessibilityState={{ selected: provider === id }} onPress={() => setProvider(id)} style={{ minHeight: 44, justifyContent: 'center', paddingHorizontal: 13, borderRadius: 22, borderWidth: 1, borderColor: provider === id ? t.primary : t.line, backgroundColor: provider === id ? t.primarySoft : t.surface }}>
+      {[null, ...providers].map(id => <Pressable key={JSON.stringify(id)} accessibilityRole="button" accessibilityLabel={id ? `Filter provider ${id}` : 'All providers'} aria-selected={provider === id} accessibilityState={{ selected: provider === id }} onPress={() => setProvider(id)} style={{ minHeight: 44, justifyContent: 'center', paddingHorizontal: 13, borderRadius: 8, borderWidth: 1, borderColor: provider === id ? t.primary : t.line, backgroundColor: provider === id ? t.primarySoft : t.surface }}>
         <Text style={{ color: provider === id ? t.primary : t.muted, fontSize: 12 }}>{id || 'All providers'}</Text>
       </Pressable>)}
     </ScrollView></View>
@@ -36,8 +36,8 @@ export function ModelPicker({ models, selected, disabled, theme: t, onSelect }: 
       ListEmptyComponent={<Text style={{ color: t.muted, fontSize: 14, lineHeight: 22, paddingVertical: 22 }}>No matching models. Try another search or provider.</Text>}
       renderItem={({ item: model }) => {
         const isSelected = selected?.id === model.id && selected?.provider === model.provider;
-        return <Pressable accessibilityRole="radio" accessibilityLabel={`${model.name || model.id} · ${model.provider || 'Host provider'}`} aria-checked={isSelected} accessibilityState={{ checked: isSelected, disabled: disabled || !model.provider }} disabled={disabled || !model.provider} onPress={() => onSelect(model)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 15, marginBottom: 8, borderRadius: 13, minHeight: 68, borderWidth: 1, borderColor: isSelected ? t.primary : t.line, backgroundColor: isSelected ? t.primarySoft : t.surface, opacity: disabled ? .6 : 1 }}>
-          <View style={{ flex: 1 }}><Text numberOfLines={2} style={{ color: t.ink, fontSize: 13, fontWeight: '600', lineHeight: 20 }}>{model.name || model.id}</Text><Text numberOfLines={2} style={{ color: t.muted, fontSize: 11, lineHeight: 17 }}>{model.provider || 'Host provider'} · {model.id}</Text></View>
+        return <Pressable accessibilityRole="radio" accessibilityLabel={`${model.name || model.id} · ${model.provider || 'Host provider'}`} aria-checked={isSelected} accessibilityState={{ checked: isSelected, disabled: disabled || !model.provider }} disabled={disabled || !model.provider} onPress={() => onSelect(model)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 15, marginBottom: 8, borderRadius: 12, minHeight: 68, borderWidth: 1, borderColor: isSelected ? t.primary : t.line, backgroundColor: isSelected ? t.primarySoft : t.surface, opacity: disabled ? .6 : 1 }}>
+          <View style={{ flex: 1 }}><Text numberOfLines={2} style={{ color: t.ink, fontSize: 14, fontWeight: '600', lineHeight: 21 }}>{model.name || model.id}</Text><Text numberOfLines={2} style={{ color: t.muted, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace', fontSize: 11, lineHeight: 18, marginTop: 3 }}>{model.provider || 'Host provider'} · {model.id}</Text></View>
           {isSelected && <Check size={18} color={t.primary} />}
         </Pressable>;
       }} />

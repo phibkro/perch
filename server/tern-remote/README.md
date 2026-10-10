@@ -20,14 +20,15 @@ expose Tern's general `ctl` endpoint to the phone.
 | Plan review | Shows the plan, selected execution strategy/model, and the owner's enabled choices |
 | Refine plan | Chooses the owner's Refine action; a separate ordinary chat message supplies feedback |
 | Interrupt | Calls `cx.agents:interrupt`, leaving the program alive |
+| Show in Tern | Explicitly calls `cx.layout:focus` for the current live pane; does not submit a message or answer a request |
 | Reconnect | Reads current host state; never resubmits a command |
 | Host location | Names the local or already attached remote host that owns each pane |
 | Artifact reading | Existing Perch readers derive documents/code from the supplied conversation text |
 
 The plugin currently inspects one pane per window at a time. Multiple windows
 have separate registrations, opaque session IDs, generations, command routes,
-and read targets. Selecting a pane on the phone does not focus or rearrange it on
-the desktop. The catalog contains agent panes, not every file, terminal, browser,
+and read targets. Attaching on the phone does not focus or rearrange the desktop;
+**Show in Tern** is a separate action. The catalog contains agent panes, not every file, terminal, browser,
 or database block Tern supports.
 
 ### Self-hosted and remote hosts
@@ -51,8 +52,10 @@ client.
 Requirements: Bun 1.4.2 or newer, a desktop Tern build with the documented
 `cx.agents`, `cx.hosts`, and `cx.session:surface/event` APIs, and OMP using its
 native TSP surface. The user's supplied
-**Tern 0.6.0 (`0e39682`)** exposes the required methods. We do not redistribute
-the closed beta binary. Owner controls were qualified with OMP **18.8.7**.
+**Tern 0.6.0 (`0e39682`)** and **0.7.0 (`9ca00e4`)** expose the required methods.
+We do not redistribute the closed beta binary. Owner controls were qualified
+with OMP **18.8.7**; [the runtime record](../../docs/RUNTIME-QUALIFICATION-2026-10-10.md)
+distinguishes the installed SDK and uploaded executable checks.
 
 Run these commands from the Perch checkout on the machine showing the Tern window:
 
@@ -97,7 +100,7 @@ paths inside the Perch checkout, including through linked directories. The
 bridge rejects HTTP requests carrying a browser `Origin`; browser clients use
 the authenticated workspace gateway. If the machine uses an HTTP proxy,
 its `NO_PROXY` setting must include `127.0.0.1` because Tern honors proxy settings.
-`readOnly: true` in the bridge config disables prompts, answers, and interrupts.
+`readOnly: true` in the bridge config disables prompts, answers, interrupts, and pane focus.
 
 ## Ownership and recovery
 

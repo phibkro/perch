@@ -38,7 +38,8 @@ describe('Tern remote HTTP boundary', () => {
     expect(snapshot.messages[1].text).toContain('Existing artifact');
     expect(snapshot.tools[0].status).toBe('done');
     expect(snapshot.availableModels).toEqual([]);
-    expect(snapshot.capabilities).toEqual({ prompt: true, interrupt: true, modelSelection: false, questions: true });
+    expect(snapshot.capabilities).toEqual({ prompt: true, interrupt: true, modelSelection: false, questions: true,
+      thinkingSelection: false, sessionRename: false, focusSession: false });
     const response = await exchange(f.origin, f.bridgeId, 2);
     expect(response.value.inspectPane).toBe(2);
     expect(response.value.commands).toEqual([]);
@@ -53,6 +54,28 @@ describe('Tern remote HTTP boundary', () => {
     expect((await f.command('extra-field', { rawKeys: '\u0003' })).status).toBe(400);
     expect((await requestJSON(f.origin, '/perch/ctl')).status).toBe(404);
     expect((await requestJSON(f.origin, '/perch/sessions', { method: 'DELETE' })).status).toBe(404);
+  });
+
+  test('pane focus is advertised by the current plugin, bound to its generation, and sent once', async () => {
+    const f = await fixture();
+    const focus = id => f.command(id, { type: 'focus-session', text: undefined });
+    expect((await focus('old_plugin')).value.status).toBe('rejected');
+    await exchange(f.origin, f.bridgeId, 2, { detail: { ...detail, canFocus: true, canPrompt: false } });
+    const snapshot = parseRemoteSnapshot((await requestJSON(f.origin, `/perch/sessions/${f.session.id}`)).value);
+    expect(snapshot.capabilities.focusSession).toBe(true);
+    expect(snapshot.capabilities.prompt).toBe(false);
+    expect((await focus('focus_once')).value.status).toBe('pending');
+    const delivered = await exchange(f.origin, f.bridgeId, 3, { detail: { ...detail, canFocus: true } });
+    expect(delivered.value.commands).toHaveLength(1);
+    expect(delivered.value.commands[0]).toMatchObject({ id: 'focus_once', type: 'focus-session', pane: 2, generation: '1' });
+    await exchange(f.origin, f.bridgeId, 4, { detail: { ...detail, canFocus: true }, receipts: [{ id: 'focus_once', status: 'forwarded' }] });
+    expect((await focus('focus_once')).value.status).toBe('forwarded');
+    expect((await exchange(f.origin, f.bridgeId, 5)).value.commands).toEqual([]);
+    expect((await f.command('wrong_focus', { type: 'focus-session', text: undefined, generation: 'old' })).value.status).toBe('rejected');
+    expect((await f.command('omp_setting', { type: 'rename-session', text: undefined, title: 'Requires OMP' })).value.status).toBe('rejected');
+    const readonly = await fixture({ readOnly: true });
+    await exchange(readonly.origin, readonly.bridgeId, 2, { detail: { ...detail, canFocus: true } });
+    expect((await readonly.command('readonly_focus', { type: 'focus-session', text: undefined })).value.status).toBe('rejected');
   });
 
   test('rejects browser origins even when either local credential is valid', async () => {

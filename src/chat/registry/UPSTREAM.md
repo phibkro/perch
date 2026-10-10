@@ -5,3 +5,8 @@ Copied from assistant-ui/assistant-ui at commit `78557063f8b70c540ca0b1e07eca5cc
 These are the actual React Native registry elements and their source dependencies. Perch supplies its session adapter and message/composer slots in the parent directory.
 
 Perch 0.3 adapts `thread.aui.tsx` presentation: the empty welcome has its own flexible scroll area and the composer stays docked at the bottom, matching populated conversations. The loading view also reserves that space. Runtime, message-list, keyboard, and composer primitives remain the upstream implementation.
+
+The October 2026 Tern/OMP refresh changes colors, shapes, touch target sizes and
+message styling in `thread.aui.tsx` and `markdown-text.tsx`. Behavior remains on the
+same primitives. Source rationale is in
+[TERN-OMP-VISUAL-DESIGN.md](../../../docs/TERN-OMP-VISUAL-DESIGN.md).

@@ -13,6 +13,7 @@ const tern = process.env.TERN_BIN;
 if (!tern) { console.error('Set TERN_BIN to your installed Tern executable. The beta is not bundled.'); process.exit(1); }
 const loopback = process.argv.includes('--loopback');
 const oversized = process.argv.includes('--oversized');
+const focus = process.argv.includes('--focus');
 const here = dirname(fileURLToPath(import.meta.url));
 const directory = await mkdtemp(join(tmpdir(), 'perch-tern-runtime-'));
 const crate = join(directory, 'crates', 'tern');
@@ -165,6 +166,30 @@ while True:
   assert.equal(snapshot.capabilities.prompt, true, JSON.stringify(snapshot));
   assert.equal(snapshot.messages.length, 2, JSON.stringify(snapshot));
   assert.match(snapshot.messages[1].text, /Existing artifact/);
+  if (focus) {
+    assert.equal(snapshot.capabilities.focusSession, true);
+    const target = Number(session.location.pane);
+    assert.ok(Number.isSafeInteger(target));
+    await ctl('new-blocks', 'shell');
+    await ctl('tab', 'new');
+    const other = (await ctl('state')).focused.id;
+    assert.notEqual(other, target);
+    const focusCommand = { id: 'explicit-pane-focus', epoch: health.epoch, generation: session.generation, type: 'focus-session' };
+    assert.equal((await requestJSON(origin, `${sessionPath}/commands`, { method: 'POST', value: focusCommand })).value.status, 'pending');
+    const focusReceipt = await until(async () => parseRemoteReceipt((await requestJSON(origin,
+      `${sessionPath}/operations/${focusCommand.id}`)).value), value => value.status !== 'pending', 'Tern focus receipt');
+    assert.equal(focusReceipt.status, 'forwarded', JSON.stringify(focusReceipt));
+    assert.equal((await ctl('state')).focused.id, target);
+    await ctl('tab', 'next');
+    assert.equal((await ctl('state')).focused.id, other);
+    assert.equal((await requestJSON(origin, `${sessionPath}/commands`, { method: 'POST', value: focusCommand })).value.status, 'forwarded');
+    await requestJSON(origin, '/perch/health');
+    await requestJSON(origin, '/perch/sessions');
+    await requestJSON(origin, `${sessionPath}/operations/${focusCommand.id}`);
+    await ctl('wait', '500');
+    assert.equal((await ctl('state')).focused.id, other, 'A repeated command receipt and reconnect reads must not refocus the desktop.');
+    await ctl('tab', 'prev');
+  }
   const command = { id: 'actual-atomic-send', epoch: health.epoch, generation: session.generation,
     type: 'prompt', text: 'One phone prompt 🦜\nWith another line.' };
   assert.equal((await requestJSON(origin, `${sessionPath}/commands`, { method: 'POST', value: command })).value.status, 'pending');
@@ -211,6 +236,7 @@ while True:
     checks: ['session catalog', 'native protocol parsing', 'two existing messages', 'atomic Unicode send',
       'four updated messages', 'same child PID', 'reconnect without replay', 'non-ready send rejected', 'interrupt without process exit',
       ...(oversized ? ['actual Tern-capped plan stays read-only', 'no approval event for incomplete plan'] : []),
+      ...(focus ? ['explicit Perch focus changes the actual Tern pane', 'duplicate focus and reconnect reads do not steal focus'] : []),
       ...(loopback ? ['already-attached remote host membership', 'prompt and interrupt through remote daemon'] : [])],
     limitations: ['No real OMP/model call', 'Headless fixture window; no restored user desktop', 'No physical Android device'] }, null, 2));
 } catch (error) {
